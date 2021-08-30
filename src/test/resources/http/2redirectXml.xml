@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?><ajax-response><component id="okBtn2" ><![CDATA[<input type="submit" id="okBtn2" class="button button-primary" name="loginButton" tabindex="2" alt="DALEJ" value="Dalej"/><span style="display:none;" class="wicket-ajax-indicator" id="okBtn2--ajax-indicator"><img src="./indicator-ver-75BEEBCC0A276C3974D2524B7F0619E1.gif" alt=""/></span>]]></component><header-contribution><![CDATA[<head xmlns:wicket="http://wicket.apache.org"><script type="text/javascript" src="./jquery-ver-8FB8FEE4FCC3CC86FF6C724154C49C42.js"></script>
+<script type="text/javascript" src="./wicket-ajax-ver-04D5389C5F00ED98AD39E57EBB5AA818.js"></script>
+<script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="login?x=vJL0iClolC8";
+/*]]]]><![CDATA[>*/
+</script>
+</head>]]></header-contribution><priority-evaluate><![CDATA[(function(){var e = Wicket.$('okBtn2--ajax-indicator'); if (e != null && typeof(e.parentNode) != 'undefined') e.parentNode.removeChild(e);})();]]></priority-evaluate><evaluate><![CDATA[(function(){Wicket.Ajax.ajax({"u":"./login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg","m":"POST","c":"okBtn2","f":"nikForm","sc":"loginButton","i":"okBtn2--ajax-indicator","e":"click","pd":true});})();]]></evaluate></ajax-response>

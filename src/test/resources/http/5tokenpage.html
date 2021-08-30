@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" xml:lang="pl" lang="pl">
+<head>
+  <meta charset="utf-8">
+
+
+  <title>Logowanie do Santander internet</title>
+  <script type="text/javascript" src="/centrum24-web/ruxitagentjs_ICA2SVfqru_10221210805073954.js" data-dtconfig="app=f3c5c6e953934040|ssc=1|rcdec=1209600000|featureHash=ICA2SVfqru|vcv=2|rdnt=1|uxrgce=1|bp=3|srmcrv=10|cuc=15r85uh5|mel=100000|dpvc=1|ssv=4|lastModification=1629364801322|dtVersion=10221210805073954|srmcrl=1|tp=500,50,0,1|uxdcw=1500|vs=2|agentUri=/centrum24-web/ruxitagentjs_ICA2SVfqru_10221210805073954.js|reportUrl=/centrum24-web/rb_07ab5235-d303-44ce-97c9-86cf0e042d56|rid=RID_-215257138|rpid=1173204511|domain=centrum24.pl"></script><script type="text/javascript" id="utag-sync" src="//tags.tiqcdn.com/utag/santander/pl-main/prod/utag.sync.js"></script>
+  <script type="text/javascript" id="utag" defer="defer" src="//tags.tiqcdn.com/utag/santander/pl-main/prod/utag.js"></script>
+  <script type="text/javascript" id="TealiumInitialization.js">
+/*<![CDATA[*/
+var utag_data = {
+    event_action: "View",
+    product_type: "Centrum24SmsCodeLoginPage",
+    product_name: "Centrum24SmsCodeLoginPage",
+    step: "0",
+    isLastStep: "false",
+    productIds: "[]",
+    profile_roles: "[]",
+    profile_type_id: "-1"
+};
+
+/*]]>*/
+</script>
+  <link rel="stylesheet" type="text/css" href="../css/advisor-ver-13659DC20B22D5F50E0FD8239F09C896.css" media="screen" />
+
+  <style id="com-bzwbk-commons-web-view-info-ObsoleteBrowserNotificationPanel-0">
+/*<![CDATA[*/
+
+.obsolete-browser-container { position: relative; max-width: 860px; margin: 0 auto; }
+
+/*]]>*/
+</style>
+  <script type="text/javascript" src="../modernizr-ver-695C94B474D9E9704EFA2E99239D4CDA.js"></script>
+  <script type="text/javascript" src="../jquery-ver-8FB8FEE4FCC3CC86FF6C724154C49C42.js"></script>
+  <script type="text/javascript" src="../wicket-ajax-ver-04D5389C5F00ED98AD39E57EBB5AA818.js"></script>
+  <link rel="stylesheet" type="text/css" href="../crypt.fqPKkr8aHS-xAVw9f4AzZp-YIJmRIbdHQySm58tixitks5j5Jh2OWKVTKl5n0xFN1Hr1SOYqgQqx9nT67UYmpQRTiFCl8i-6eAwmC3K0iZc/fqP64/qPK3b/AzZd0" />
+  <style type="text/css" id="password-css">
+@font-face {
+    font-family: "pass-font";
+    src:
+    url("data:application/x-font-woff;charset=utf-8;base64,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") format("woff");
+    font-weight: normal;
+    font-style: normal;
+}
+</style>
+  <script type="text/javascript" src="../single-click-ver-0243B5D548484F54577007F82942DCBE.js"></script>
+  <link rel="stylesheet" type="text/css" href="../gain-access-ver-6AC4D55C4DB9F67BE6F207D39F9E8093.css" />
+  <link rel="stylesheet" type="text/css" href="../modal-window-ver-AEEF53CDE0FC9D41683717E687A34650.css" />
+  <script type="text/javascript" src="../bootstrap-transition-ver-0A47AAFF7AFCA3B3485A6A845782947F.js"></script>
+  <script type="text/javascript" src="../bootstrap-modal-ver-D73745175D40F05B339406F168BFD100.js"></script>
+  <link rel="stylesheet" type="text/css" href="../css/button-ver-CFFBA29161EABF7EB60C4DC1411DE0D2.css" media="screen" />
+  <script type="text/javascript" id="wicket-ajax-base-url">
+/*<![CDATA[*/
+Wicket.Ajax.baseUrl="crypt.brKnpZUkkttLUZSbDqELzA/brK0a";
+/*]]>*/
+</script>
+  <script type="text/javascript" src="../javascript/style_3/FYK14Fg1iU.min.js"></script>
+
+  <style type="text/css" id="com-bzwbk-commons-web-view-authentication-component-TopBarPanel-0">
+/*<![CDATA[*/
+
+.social_bzwbk span.aktualnosci{
+color: #ff0000;
+}
+
+/*]]>*/
+</style>
+  <script type="text/javascript" src="../top-bar-ver-73264633F57DB47A42D9237555AB56B0.js"></script>
+  <link rel="stylesheet" type="text/css" href="/css/eSmart/bar/topbar.css?mn=d0db5b6c" />
+
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <script type="text/javascript" charset="iso-8859-2" src="/css/eSmart/script_16.js"></script>
+  <link rel="shortcut icon" href="/css/eSmart/favicon.ico?mn=d0db5b6c" /><script type="text/javascript" src="/javascript/style_3/axs.min.js"></script>
+  <script type="text/javascript" src="/javascript/style_3/login.min.js?v=2"></script>
+  <link rel="stylesheet" type="text/css" href="../css/eSmart/logowanie-ver-38643DDEC04DED87182EA344967568CC.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="../css/eSmart/transfer24login-ver-F45DA177C5E26FBED495CE09CCC5C87C.css" media="screen" />
+  <link rel="stylesheet" type="text/css" href="../santander-font.css" />
+  <link rel="stylesheet" type="text/css" href="../opensans-font.css" />
+  <script type="text/javascript" src="../self-xss-warning-ver-7CAEBB35E0CDECA1634B74DDDD0F807C.js"></script>
+  <script type="text/javascript" src="../inputmask.min-ver-E0D4614B0EA23483270A3D16213B0826.js"></script>
+  <script type="text/javascript" >
+/*<![CDATA[*/
+Wicket.Event.add(window, "domready", function(event) {
+if(!((function(){try{return eval('var _\\u200c\\u200d = true; _\\u200c\\u200d;')}catch(e){return false;}})()&&(function(){'use strict';return !this;})()&&(function(){undefined=12345;var result=typeof undefined=='undefined';undefined=void 0;return result;})()&&Modernizr.cssanimations&&(function(){return Array.prototype.includes !== undefined})())){$('#browserNotification').css('display','block');};
+try { Inputmask().mask('input_nik'); } catch (error) {};
+document.getElementById('okBtn2').addEventListener('click', function() { disableClick('okBtn2', []); });;
+Wicket.Ajax.ajax({"u":"../crypt.brKnpZUkktvUK1iu4qXMi8eOyi_OVl9WmPw4odCTFu1qY67cqo6vt-P_xQFSI3vXl6pG0RroGao1Juew7LV4D9w38p-MHSpYopjEmudqyN17c7U69R6K6byiBIK86NVbCamPX84jB9o9Hkhb6N98GzePJ8PGxWlNTQ5HHb1MOYg/brK0a","c":"ida","e":"hide.bs.modal"});;
+initTopBarPanel();;
+printSelfXssWarning();;
+Wicket.Event.publish(Wicket.Event.Topic.AJAX_HANDLERS_BOUND);
+;});
+/*]]>*/
+</script>
+  <script type="text/javascript" >
+/*<![CDATA[*/
+Wicket.Event.add(window, "load", function(event) {
+document.getElementById('input_nik').focus();
+;});
+/*]]>*/
+</script>
+  <meta name="wicket.header.items"/>
+</head>
+<body>
+<div id="browserNotification" style="display: none;">
+  <div class="obsolete-browser-container">
+    <div>
+      <div class="help-line hmp-warning">
+
+        <div class="text screenonly" >
+          <div class="information-panel-icon primary">Nasza bankowość najlepiej działa w najnowszych przeglądarkach. Widzisz ten komunikat, ponieważ używasz starej lub niewspieranej przez nas wersji przeglądarki. Korzystanie ze starej lub niewspieranej wersji przeglądarki nie jest bezpieczne.<br />Wejdź <a href="https://www.santander.pl/klient-indywidualny/bankowosc-internetowa/wymagania-techniczne-bankowosci-internetowej-i-mobilnej#111=1" target="_blank">Tutaj</a> i zobacz, w jakich przeglądarkach bankowość internetowa będzie działać prawidłowo. To Ty decydujesz, z której przeglądarki skorzystasz. Nasza rekomendacja: Upewnij się, że używasz najnowszej wersji przeglądarki internetowej.</div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+<div id="wrapper" class="transfer24">
+  <div id="header" class="loginPanel">
+    <a rel="noreferrer noopener" class="bankLogo"  href="https://santander.pl/"><img alt="Santander" src="/css/images/santander-red.svg"/></a>
+    <div class="title"></div>
+    <div id="idb" class="top-bar">
+      <section id="page_head">
+        <div class="page_header_wrapper page">
+          <header>
+            <a href="#" class="contact">
+              Kontakt
+            </a>
+            <a rel="noreferrer noopener" href="https://santander.pl/" class="order2" >
+              Przejdź do santander.pl
+            </a>
+            <a href="#" class="signin">
+              Przejdź do innych serwisów
+            </a>
+          </header>
+        </div>
+      </section>
+      <section class="loginPanel contact_details">
+        <a class="window-close" href="#" title="Zamknij okno"></a>
+        <article>
+          <p class="header">infolinia</p>
+          <div class="infolinia">
+            <span class="number">infolinia <a href="tel:19999"><b>1 9999</b></a></span>
+            <small>Z zagranicy</small>
+            <span class="small-number"><a href="tel:+48618119999">+48 61 81 19999</a></span> <br />
+            <a rel="noreferrer noopener" style="font-size: 11px;" href="https://santander.pl/informacje-o-banku/kontakt/menu-infolinii/menu-infolinii-1-9999.html">Menu infolinii »</a>
+          </div>
+          <div class="infolinia skype">
+            <span class="number"><a href="skype:infolinia.bzwbk">Skype</a></span>
+          </div>
+          <ul class="list">
+            <li>Zastrzeganie kart, pomoc w zakresie kart, bankomatów, bankowości elektronicznej - <b>24h</b></li>
+            <li>Zamawianie produktów (konta, kredyty, karty) <b>8.00 - 20.00, w dni robocze</b></li>
+            <li class="disclimer">* Opłata za minutę połączenia zgodna z taryfą danego operatora.</li>
+          </ul>
+        </article>
+        <article>
+          <p class="header">Napisz do nas</p>
+          <ul class="list">
+            <li>Jeśli masz pytania dotyczące oferty banku, chcesz kupić produkt, przesłać swoją opinię zapraszamy do wypełnienia formularza:</li>
+            <li style="padding-bottom: 10px;">
+              <a rel="noreferrer noopener" class="formularz"  href="https://santander.pl/informacje-o-banku/kontakt/kontakt-zadaj-pytanie.html">Formularz kontaktowy</a>
+              lub wysłania wiadomości na adres:
+            </li>
+            <li class="mail_kontakt">
+              <a class="mail" href="mailto:kontakt@santander.pl">Wyślij email</a>
+            </li>
+            <li>
+              Jeśli chcesz złożyć reklamację, zaloguj się do Santander internet i napisz do nas, wybierając opcję w Poczcie lub zakładce Twoje sprawy. </li>
+            <li>
+              Potwierdzeniem dotarcia wiadomości do Santander Bank Polska S.A. jest otrzymanie autoodpowiedzi.
+            </li>
+            <li class="social"><span>Dołącz do nas:</span>
+              <a rel="noreferrer noopener" target="blank" href="https://pl-pl.facebook.com/santanderbankpolska" class="contact-button" onclick="javascript: trackClick(this,'/header/button/kontakt/button/facebook');return false;"><span class="fb"></span></a>
+              <a rel="noreferrer noopener" target="blank" href="http://www.youtube.com/user/BankZachodniWBK" class="contact-button" onclick="javascript: trackClick(this,'/header/button/kontakt/button/youtube');return false;"><span class="yt"></span></a>
+              <a rel="noreferrer noopener" onclick="javascript: trackClick(this,'/header/button/kontakt/text-link/blog');return false;" class="contact-button" href="http://blog.santander.pl" target="blank"><span class="blog"></span></a>
+              <a rel="noreferrer noopener" onclick="javascript: trackClick(this,'/header/button/kontakt/text-link/bank-pomyslow');return false;" class="contact-button" href="https://bankmozliwosci.santander.pl" target="blank"><span class="bankp"></span></a>
+            </li>
+          </ul>
+        </article>
+        <article class="hide-mobile">
+          <p class="header">Zgłaszanie cyberincydentów</p>
+          <ul class="list">
+            <li>
+              Jeśli ktoś przejął Twoje dane logowania do bankowości internetowej lub padłeś ofiarą oszustwa, skontaktuj się z nami.
+            </li>
+            <li class="mail_kontakt">
+              <a class="mail" href="mailto:csirt@santander.pl">Wyślij email</a>
+            </li>
+          </ul>
+          <p class="header">Moja Firma plus</p>
+          <ul class="list">
+            <li>
+              Wsparcie funkcjonalne i techniczne dla<br>użytkowników Moja Firma plus
+            </li>
+            <li>
+              <span class="small-number"> <a href="tel:+48618565484">+48 61 856 54 84</a></span>
+            </li>
+            <li class="mail_kontakt">
+              <a class="mail" href="mailto:MojaFirmaPlus@santander.pl">Wyślij email</a>
+            </li>
+            <li class="disclimer">* Opłata za minutę połączenia zgodna z taryfą danego operatora.</li>
+          </ul>
+        </article>
+        <article>
+          <p class="header">Public Relations</p>
+          <ul class="list">
+            <li>
+              Kontakt dla dziennikarzy <br><a href="mailto:biuro.prasowe@santander.pl">biuro.prasowe@santander.pl</a>
+            </li>
+            <li>
+              Zapytanie dot. sponsoringu <br><a href="mailto:sponsoring@santander.pl">sponsoring@santander.pl</a>
+            </li>
+            <li>
+              Oferty marketingowe <br><a href="mailto:marketing@santander.pl">marketing@santander.pl</a>
+            </li>
+            <li style="padding-top: 10px;border-top: 1px solid #ECEEEF;">
+              <a rel="noreferrer noopener" class="home"  href="https://santander.pl/przydatne-informacje/wyszukiwarka-placowek-i-bankomatow/wyszukiwarka-placowek-i-bankomatow.html">Znajdź oddziały i bankomaty</a>
+            </li>
+          </ul>
+        </article>
+      </section>
+      <section class="signin_box">
+        <a class="window-close" href="#" title="Zamknij okno"></a>
+        <div class="left">
+          <article>
+            <div class="wrapper info_logowanie">
+              Logowanie dla klientów indywidualnych i firm
+            </div>
+          </article>
+          <article class="last hide-mobile">
+            <div class="wrapper">
+              <a rel="noreferrer noopener" href="https://www.centrum24.pl/centrum24-web/login" class="button_signin" onclick="javascript: trackClick(this,'/header/button/zaloguj/button/bzwbk24');return false;">Santander internet<span></span></a>
+            </div>
+          </article>
+          <article class="last hide-mobile">
+            <div class="wrapper">
+              <a rel="noreferrer noopener" href="https://www.centrum24.pl/centrum24-web/login" class="button_signin" onclick="javascript: trackClick(this,'/header/button/zaloguj/button/bzwbk24');return false;">Mini Firma / Moja Firma plus<span></span></a>
+            </div>
+          </article>
+          <article class="last">
+            <div class="wrapper">
+              <a rel="noreferrer noopener" href="https://ibiznes24.pl/2.0/login/#/login" class="button_signin" onclick="javascript: trackClick(this,'/header/button/zaloguj/button/ibiznes24');return false;">iBiznes24<span></span></a>
+            </div>
+          </article>
+          <article class="last">
+            <div class="wrapper">
+              <a rel="noreferrer noopener" href="https://www.inwestoronline.pl/cbm/" class="button_signin" onclick="javascript: trackClick(this,'/header/button/zaloguj/button/inwestor-online');return false;">Inwestor online<span></span></a>
+            </div>
+          </article>
+          <article class="last">
+            <div class="wrapper">
+              <a rel="noreferrer noopener" href="https://www.centrum24.pl/prepaid/index?index=1491" class="button_signin" onclick="javascript: trackClick(this,'/header/button/zaloguj/button/serwis-prepaid');return false;">Serwis prepaid<span></span></a>
+            </div>
+          </article>
+        </div>
+      </section>
+    </div>
+  </div>
+  <div id="container">
+
+    <div id="content">
+
+      <div class="login-wrapper">
+
+        <div class="wider">
+
+
+
+          <input type="hidden" value="" name="navi" id="navi" scale-pitch="0" scale-hint="13041069" display="4798639" scale-ratio="1270487005" scale-peak="190222397" conversion="49"/>
+
+          <div id="logowanie" class="logowanie loginPanel">
+            <h1>
+              <div>
+                Logowanie KROK&nbsp;3
+              </div>
+            </h1>
+            <div id="logowanie-inner">
+              <form id="authenticationForm" method="post" class="f1" action="../crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a">
+
+                <div class="forms">
+                  <h4>W myśl dyrektywy PSD2 wymagamy tzw. silnego uwierzytelnienia klienta, czyli dodatkowego potwierdzenia dla logowania. <br/><a target="_blank" style="text-decoration: underline; color: #137e84;" href="https://www.santander.pl/lp/zaufany-komputer">Dowiedz się więcej</a></h4>
+                  <div class="labelsLine">
+                    <div>
+                      <div id="pinlabel3" style="padding-bottom: 10px">
+                        <span style="font-weight: 600">Wpisz smsKod</span>
+                        <input id="input_nik" class="input_sms_code" name="response" maxlength="7" size="8" type="text" autocomplete="off" value="" style="font-family: pass-font !important;" data-inputmask-mask="999-999"/>
+                        <span style="float: right; padding-right: 23px;">
+
+</span>
+                      </div>
+                    </div>
+                  </div>
+                  <div class="button-next">
+                    <input type="submit" id="okBtn2" class="button button-primary" name="loginButton" alt="DALEJ" value="Dalej"/>
+                  </div>
+                  <div id="akcjekrok2">
+                    <div id="accessDiv">
+
+
+                      <a data-toggle="modal" data-target="#ida">
+
+                        <img class="tooltip-image" src="../../css/images/tooltip-icon.svg" alt="Pomoc"/>
+
+                        <span>Jak uzyskać dostęp?</span>
+                      </a>
+
+
+                      <div id="ida" class="modal fade" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+                        <div class="modal-dialog">
+                          <div class="modal-content">
+                            <div class="modal-header">
+                              <h1 class="modal-title">
+                                <img class="modal-header-icon" src="/css/eSmart/images/log_question_big.png"/>
+                                <span>Jak uzyskać dostęp?</span>
+                              </h1>
+                              <button type="button" class="close" data-dismiss="modal" aria-hidden="true"></button>
+                            </div>
+                            <div class="modal-body">
+                              <div>
+                                <div id="tipGainAccess">
+                                  <p>Do zalogowania się potrzebujesz:</p>
+                                  <div id="tipGainAccessDiv">
+                                    <div>
+                                      <p><strong>Login</strong><br>To NIK lub Twój własny login. NIK znajdziesz w umowie bankowości internetowej i mobilnej. Własny login możesz samodzielnie zdefiniować i używać zamiennie z NIK.</p>
+                                    </div>
+                                    <div>
+                                      <p><strong>Hasło</strong><br>To hasło ustawione przez Ciebie lub hasło startowe, jeśli logujesz się po raz pierwszy. Hasło startowe znajdziesz w SMS-ie, w e-mailu lub w kopercie.</p>
+                                    </div>
+                                  </div>
+                                  <img id="exclamation-icon" src="/css/eSmart/images/log_excl_gray.png"/>
+                                  <p><b>Nie pamiętasz hasła?</b> Skontaktuj się z nami pod numerem 1 9999 lub +48 61 81 19999, jeśli dzwonisz z zagranicy. Możesz też pójść do oddziału. Doradca ustawi Ci nowe hasło.</p>
+                                  <p><b>Nie masz NIK-u?</b> Podpisz umowę bankowości internetowej i mobilnej. Odwiedź nasz oddział lub skontaktuj się z Doradcą online.</p>
+                                  <p></p>
+                                </div>
+                              </div>
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+
+
+                    </div>
+                  </div>
+                </div>
+              </form>
+            </div>
+          </div>
+          <script type="text/javascript">
+/*<![CDATA[*/
+
+if ( $(".feedbackPanel").length) {
+$('#input_nik').addClass("error");
+}
+
+/*]]>*/
+</script>
+
+
+        </div>
+
+      </div>
+      <noscript>
+        <div class="noscript logowanie loginPanel">
+          <style type="text/css">
+/*<![CDATA[*/
+
+#logowanie {
+display: none;
+}
+h1 {
+background: none;
+}
+.noscript p {
+padding-bottom: 30px;
+}
+.noscript p, .noscript h1 {
+color: red;
+}
+#kolumna-lewa ul {
+border: 1px solid #E2E5E6;
+padding: 5px;
+}
+
+/*]]>*/
+</style>
+          <h1>Zalogowanie nie jest możliwe!</h1>
+          <p>Aby zalogować się do serwisu, musisz włączyć w przeglądarce wykonywanie aktywnych skryptów.</p>
+        </div>
+      </noscript>
+      <div class="news">
+
+
+        <div id="bezpieczenstwo" class="bottom">
+          <div class="title">Bezpieczeństwo</div><ol id="bezpieczenstwoLista"><div class="item"><li></li><span>Nie udostępniaj swoich danych.</span></div><div class="item"><li></li><span> Czytaj treść smsKodów.</span></div> <div class="item"><li></li><span>Nie klikaj w linki i załączniki od nieznanych nadawców.</span></div></ol><div class="item"><a rel="noreferrer noopener" class="button button-secondary" target="_blank"  href="https://santander.pl/bankowosc-elektroniczna/bezpieczenstwo-i-prywatnosc/zelazne-zasady-bezpieczenstwa.html?utm_source=bzwbk24&utm_medium=tekst&utm_campaign=a5_2017-09-11_bezpieczenstwo-ogolny-9-2017&utm_content=log-le_bezp">Więcej</a></div>
+        </div>
+
+      </div>
+    </div>
+
+  </div>
+</div>
+
+
+
+
+<div id="foot">
+  <div class="inner-foot">
+    <div class="footContent"><strong>Santander Bank Polska S.A.</strong> z siedzibą w Warszawie, przy al. Jana Pawła II 17, 00-854 Warszawa, zarejestrowana w Sądzie Rejonowym dla m. st. Warszawy w Warszawie, XIII Wydział Gospodarczy Krajowego Rejestru Sądowego pod nr KRS 0000008723. NIP 896-000-56-73. REGON 930041341. Wysokość kapitału zakładowego 1 021 893 140 zł. Wysokość kapitału wpłaconego 1&nbsp;021&nbsp;893&nbsp;140&nbsp;zł.</div>
+    <div class="footContent">
+      <div><strong>Słowniczek pojęć i definicji</strong> dotyczących usług reprezentatywnych, wynikających z rozporządzenia Ministra Rozwoju i Finansów z dnia 14 lipca 2017 r. w sprawie wykazu usług reprezentatywnych powiązanych z rachunkiem płatniczym, dostępny jest na stronie <a rel="noreferrer noopener"  href="https://santander.pl/pad.html" target="_blank">santander.pl/PAD</a> oraz w placówkach banku.</div>
+
+    </div>
+  </div>
+</div>
+
+</body>
+</html>
