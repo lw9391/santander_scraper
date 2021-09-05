@@ -95,15 +95,23 @@ public class RequestHandler {
         return tokenPath;
     }
 
-    public Map<PathsNames,String> sendTokenRequest(String tokenConfirmationPath, String token) throws IOException {
+    public Map<PathsNames,String> sendTokenRequest(String tokenConfirmationPath, String token) throws IOException, InvalidCredentialsException {
         ResponseDto response = connectionHandler.POSTToken(tokenConfirmationPath, token, session.getCurrentReferer());
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during sending token");
+        }
+        if (!validateLoginCorrectness(response)) {
+            throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
         }
         Map<PathsNames,String> paths = dataScraper.scrapPathsFromDashboardPage(response.getResponseBody());
 
         session.updateReferer(response.getRequestUrl());
         return paths;
+    }
+
+    private boolean validateLoginCorrectness(ResponseDto tokenPOSTResponse) {
+        String logoutDiv = dataScraper.scrapeInvalidLoginDiv(tokenPOSTResponse.getResponseBody());
+        return logoutDiv.isEmpty();
     }
 
     public List<AccountDetails> scrapAccountsInformation(String path) throws IOException {

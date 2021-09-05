@@ -121,7 +121,7 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void sendTokenRequestTest() throws IOException {
+    void sendTokenRequestTest() throws IOException, InvalidCredentialsException {
         Path path = Paths.get("src/test/resources/http/6dashboard.html");
         String html = Files.readString(path, StandardCharsets.UTF_8);
 

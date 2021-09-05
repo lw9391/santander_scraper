@@ -59,6 +59,18 @@ class DataScraperTest {
     }
 
     @Test
+    void scrapeInvalidLoginDiv() throws IOException {
+        String invalidCrudPage = testDataSupplier("src/test/resources/http/8invalidCrudPage.html");
+        String invalidLoginInfo = scraper.scrapeInvalidLoginDiv(invalidCrudPage);
+        boolean expectedTrue = invalidLoginInfo.contains("wylogowanie");
+        assertTrue(expectedTrue);
+
+        String dashboard = testDataSupplier("src/test/resources/http/6dashboard.html");
+        String expectedEmpty = scraper.scrapeInvalidLoginDiv(dashboard);
+        assertTrue(expectedEmpty.isEmpty());
+    }
+
+    @Test
     void scrapPathsFromDashboardPage() throws IOException {
         String page = testDataSupplier("src/test/resources/http/6dashboard.html");
         Map<PathsNames,String> scrapedPaths = scraper.scrapPathsFromDashboardPage(page);

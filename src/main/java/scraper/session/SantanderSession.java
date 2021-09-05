@@ -55,7 +55,7 @@ public class SantanderSession {
         state = PASSWORD_ACCEPTED;
     }
 
-    public void sendTokenRequest(String token) throws IOException {
+    public void sendTokenRequest(String token) throws IOException, InvalidCredentialsException {
         if (state != PASSWORD_ACCEPTED || tokenConfirmationPath.isEmpty()) {
             throw new IllegalStateException("Wrong order of requests.");
         }

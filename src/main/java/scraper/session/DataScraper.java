@@ -87,6 +87,14 @@ public class DataScraper {
                 .attr(attribute);
     }
 
+    public final String scrapeInvalidLoginDiv(String tokenResponseHtml) {
+        Element logoutInfo = Jsoup.parse(tokenResponseHtml).getElementById("wylogowanie");
+        if (logoutInfo == null) {
+            return "";
+        }
+        return logoutInfo.outerHtml();
+    }
+
     public final Map<PathsNames,String> scrapPathsFromDashboardPage(String dashboardPageHtml) {
         String logoutDiv = getFromHtmlByClass(dashboardPageHtml, "logout");
         String logoutPath = Jsoup.parse(logoutDiv).select("a").attr("href").substring(1);

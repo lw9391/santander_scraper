@@ -1,5 +1,6 @@
 package scraper;
 
+import scraper.session.InvalidCredentialsException;
 import scraper.session.SantanderSession;
 
 import java.io.IOException;
@@ -43,6 +44,8 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
             session.sendTokenRequest(token);
         } catch (IOException e) {
             throw new RuntimeException(e);
+        } catch (InvalidCredentialsException ice) {
+            System.out.println("Wprowadzono złe dane logowania - nik, hasło, sms-kod lub kilka z nich.");
         }
         return true;
     }
