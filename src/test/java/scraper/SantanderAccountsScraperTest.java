@@ -4,6 +4,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import scraper.session.InvalidCredentialsException;
 import scraper.session.RequestHandler;
 import scraper.session.SantanderSession;
 import scraper.session.connections.ConnectionHandler;
@@ -12,7 +13,7 @@ import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -46,16 +47,16 @@ public class SantanderAccountsScraperTest {
     }
 
     @Test
-    void scraperTestInvalidPassword() {
-        Credentials invalid = new Credentials("111111","anypassword");
-        scraper.logIn(invalid);
-        assertFalse(scraper.confirmAccess(validToken));
+    void scraperTestIncorrectPassword() {
+        Credentials incorrect = new Credentials("111111","anypassword");
+        scraper.logIn(incorrect);
+        assertThrows(InvalidCredentialsException.class, () -> scraper.confirmAccess(validToken));
     }
 
     @Test
-    void scraperTestInvalidToken() {
-        String invalidToken = "123-123";
+    void scraperTestIncorrectToken() {
+        String incorrectToken = "123-123";
         scraper.logIn(validCredentials);
-        assertFalse(scraper.confirmAccess(invalidToken));
+        assertThrows(InvalidCredentialsException.class, () -> scraper.confirmAccess(incorrectToken));
     }
 }

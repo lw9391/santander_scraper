@@ -14,7 +14,6 @@ import java.util.HashMap;
 import static scraper.SantanderAccountsScraper.HOST;
 import static scraper.SantanderAccountsScraper.PATH;
 import static scraper.SantanderAccountsScraper.DASHBOARD_PATH;
-import static scraper.SantanderAccountsScraper.LOGOUT;
 import static org.mockito.Mockito.*;
 
 
@@ -22,7 +21,7 @@ public class ConnectionMockProvider {
     public static ConnectionHandler connectionHandlerMock(Credentials correctCredentials, String correctToken) throws IOException {
         ConnectionHandler connectionHandler = mock(ConnectionHandler.class);
 
-        final var crudVerStorage = new Object() {
+        final var credVerStorage = new Object() {
             boolean isNikCorrect = false;
             boolean isPassCorrect = false;
             boolean isTokenCorrect = false;
@@ -56,7 +55,7 @@ public class ConnectionMockProvider {
                 .thenAnswer((Answer<ResponseDto>) invocation -> {
                     String providedNik = invocation.getArgument(1);
                     if (providedNik.equals(correctCredentials.getAccountNumber())) {
-                        crudVerStorage.isNikCorrect = true;
+                        credVerStorage.isNikCorrect = true;
                     }
                     return responseOf(xmlWithPassPage,HOST + PATH + nikPath);
                 });
@@ -71,7 +70,7 @@ public class ConnectionMockProvider {
                 .thenAnswer((Answer<ResponseDto>) invocation -> {
                     String providedPassword = invocation.getArgument(1);
                     if (providedPassword.equals(correctCredentials.getPassword())) {
-                        crudVerStorage.isPassCorrect = true;
+                        credVerStorage.isPassCorrect = true;
                     }
                     return responseOf(tokenPage,HOST + PATH + passwordPath);
                 });
@@ -80,9 +79,9 @@ public class ConnectionMockProvider {
                 .thenAnswer((Answer<ResponseDto>) invocation -> {
                     String providedToken = invocation.getArgument(1);
                     if (providedToken.equals(correctToken)) {
-                        crudVerStorage.isTokenCorrect = true;
+                        credVerStorage.isTokenCorrect = true;
                     }
-                    if (crudVerStorage.isNikCorrect && crudVerStorage.isPassCorrect && crudVerStorage.isTokenCorrect) {
+                    if (credVerStorage.isNikCorrect && credVerStorage.isPassCorrect && credVerStorage.isTokenCorrect) {
                         return responseOf(dashboard,HOST + PATH + tokenPath);
                     } else {
                         return responseOf(invalidCrud,HOST + PATH + tokenPath);
