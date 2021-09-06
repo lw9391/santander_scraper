@@ -46,6 +46,7 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
             throw new RuntimeException(e);
         } catch (InvalidCredentialsException ice) {
             System.out.println("Wprowadzono złe dane logowania - nik, hasło, sms-kod lub kilka z nich.");
+            return false;
         }
         return true;
     }

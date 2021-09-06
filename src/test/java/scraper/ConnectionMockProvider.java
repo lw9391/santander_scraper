@@ -1,5 +1,6 @@
 package scraper;
 
+import org.mockito.stubbing.Answer;
 import scraper.session.connections.ConnectionHandler;
 import scraper.session.connections.ResponseDto;
 
@@ -18,8 +19,14 @@ import static org.mockito.Mockito.*;
 
 
 public class ConnectionMockProvider {
-    public static ConnectionHandler connectionHandlerMock(Credentials credentials, String token) throws IOException {
+    public static ConnectionHandler connectionHandlerMock(Credentials correctCredentials, String correctToken) throws IOException {
         ConnectionHandler connectionHandler = mock(ConnectionHandler.class);
+
+        final var crudVerStorage = new Object() {
+            boolean isNikCorrect = false;
+            boolean isPassCorrect = false;
+            boolean isTokenCorrect = false;
+        };
 
         String loginPage = testDataSupplier("src/test/resources/http/1logPage.html");
         String redirectXml = testDataSupplier("src/test/resources/http/2redirectXml.xml");
@@ -28,6 +35,7 @@ public class ConnectionMockProvider {
         String tokenPage = testDataSupplier("src/test/resources/http/5tokenpage.html");
         String dashboard = testDataSupplier("src/test/resources/http/6dashboard.html");
         String products = testDataSupplier("src/test/resources/http/7products.html");
+        String invalidCrud = testDataSupplier("src/test/resources/http/8invalidCrudPage.html");
 
         String xmlPath = "/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV";
         String nikPath = "/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg";
@@ -44,8 +52,14 @@ public class ConnectionMockProvider {
         when(connectionHandler.GETXmlWithPathForNikPage(contains(xmlPath),eq(HOST + PATH + "/login")))
                 .thenReturn(responseOf(redirectXml,HOST + PATH + xmlPath));
 
-        when(connectionHandler.POSTNik(nikPath,credentials.getAccountNumber(),HOST + PATH + "/login"))
-                .thenReturn(responseOf(xmlWithPassPage,HOST + PATH + nikPath));
+        when(connectionHandler.POSTNik(eq(nikPath), any(), eq(HOST + PATH + "/login")))
+                .thenAnswer((Answer<ResponseDto>) invocation -> {
+                    String providedNik = invocation.getArgument(1);
+                    if (providedNik.equals(correctCredentials.getAccountNumber())) {
+                        crudVerStorage.isNikCorrect = true;
+                    }
+                    return responseOf(xmlWithPassPage,HOST + PATH + nikPath);
+                });
 
         when(connectionHandler.GETPasswordPage(passPagePath,HOST + PATH + "/login"))
                 .thenReturn(responseOf(passPage,HOST + PATH + passPagePath));
@@ -53,16 +67,32 @@ public class ConnectionMockProvider {
         when(connectionHandler.GETSendSessionMap(contains(sessionMapPath),eq(HOST + PATH + passPagePath)))
                 .thenReturn(responseOf("<?xml version=\"1.0\" encoding=\"UTF-8\"?><ajax-response></ajax-response>",HOST + PATH + sessionMapPath));
 
-        when(connectionHandler.POSTPassword(passwordPath,credentials.getPassword(), HOST + PATH + passPagePath))
-                .thenReturn(responseOf(tokenPage,HOST + PATH + passwordPath));
+        when(connectionHandler.POSTPassword(eq(passwordPath), any(), eq(HOST + PATH + passPagePath)))
+                .thenAnswer((Answer<ResponseDto>) invocation -> {
+                    String providedPassword = invocation.getArgument(1);
+                    if (providedPassword.equals(correctCredentials.getPassword())) {
+                        crudVerStorage.isPassCorrect = true;
+                    }
+                    return responseOf(tokenPage,HOST + PATH + passwordPath);
+                });
 
-        when(connectionHandler.POSTToken(tokenPath,token,HOST + PATH + passwordPath))
-                .thenReturn(responseOf(dashboard,HOST + PATH + tokenPath));
+        when(connectionHandler.POSTToken(eq(tokenPath), any(), eq(HOST + PATH + passwordPath)))
+                .thenAnswer((Answer<ResponseDto>) invocation -> {
+                    String providedToken = invocation.getArgument(1);
+                    if (providedToken.equals(correctToken)) {
+                        crudVerStorage.isTokenCorrect = true;
+                    }
+                    if (crudVerStorage.isNikCorrect && crudVerStorage.isPassCorrect && crudVerStorage.isTokenCorrect) {
+                        return responseOf(dashboard,HOST + PATH + tokenPath);
+                    } else {
+                        return responseOf(invalidCrud,HOST + PATH + tokenPath);
+                    }
+                });
 
-        when(connectionHandler.GETLogout(logoutPath,HOST + PATH + tokenPath))
+        lenient().when(connectionHandler.GETLogout(logoutPath,HOST + PATH + tokenPath))
                 .thenReturn(responseOf("logout",HOST + DASHBOARD_PATH + logoutPath));
 
-        when(connectionHandler.GETProductsPage(productsPath,HOST + PATH + tokenPath))
+        lenient().when(connectionHandler.GETProductsPage(productsPath,HOST + PATH + tokenPath))
                 .thenReturn(responseOf(products,HOST + DASHBOARD_PATH + productsPath));
 
         return connectionHandler;
