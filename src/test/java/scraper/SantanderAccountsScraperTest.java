@@ -12,7 +12,6 @@ import scraper.session.connections.ConnectionHandler;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -43,29 +42,29 @@ public class SantanderAccountsScraperTest {
     void scraperTest() {
         when(viewControllerMock.readInput()).thenReturn(validToken);
 
-        scraper.logIn(validCredentials);
-        List<AccountDetails> accountDetails = scraper.scrapeAccountsInfo();
-        scraper.logOut();
-
-        assertEquals("112,00 PLN", accountDetails.get(0).getBalance());
-        assertEquals("Ekstrakonto Plus", accountDetails.get(0).getAccountName());
-        assertEquals("0,38 PLN", accountDetails.get(1).getBalance());
-        assertEquals("Konto Oszczednosciowe w PLN", accountDetails.get(1).getAccountName());
+        scraper.run(validCredentials);
 
         verify(connectionHandler, times(1)).GETLogout(any(), any());
+        verify(viewControllerMock,times(1)).displayOutput(expectedResult());
+    }
+
+    private static List<AccountDetails> expectedResult() {
+        AccountDetails accountOne = new AccountDetails("Ekstrakonto Plus","112,00 PLN");
+        AccountDetails accountTwo = new AccountDetails("Konto Oszczednosciowe w PLN","0,38 PLN");
+        return List.of(accountOne, accountTwo);
     }
 
     @Test
     void scraperTestIncorrectPassword() {
         when(viewControllerMock.readInput()).thenReturn(validToken);
         Credentials incorrect = new Credentials("111111","anypassword");
-        assertThrows(InvalidCredentialsException.class, () -> scraper.logIn(incorrect));
+        assertThrows(InvalidCredentialsException.class, () -> scraper.run(incorrect));
     }
 
     @Test
     void scraperTestIncorrectToken() {
         String incorrectToken = "123-123";
         when(viewControllerMock.readInput()).thenReturn(incorrectToken);
-        assertThrows(InvalidCredentialsException.class, () -> scraper.logIn(validCredentials));
+        assertThrows(InvalidCredentialsException.class, () -> scraper.run(validCredentials));
     }
 }

@@ -55,7 +55,14 @@ public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
     }
 
     @Override
-    public List<AccountDetails> scrapeAccountsInfo() {
-        return session.sendAccountsDetailsRequest();
+    public void scrapeAccountsInfo() {
+        List<AccountDetails> accountDetails = session.sendAccountsDetailsRequest();
+        viewController.displayOutput(accountDetails);
+    }
+
+    public void run(Credentials credentials) {
+        logIn(credentials);
+        scrapeAccountsInfo();
+        logOut();
     }
 }
