@@ -1,5 +1,6 @@
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
+import scraper.ConsoleController;
 import scraper.Credentials;
 import scraper.SantanderAccountsScraper;
 import scraper.session.RequestHandler;
@@ -9,7 +10,6 @@ import scraper.session.connections.OkHttpConnectionHandler;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
-import java.util.Scanner;
 
 public class App {
     private final SantanderAccountsScraper scraper;
@@ -18,7 +18,7 @@ public class App {
         ConnectionHandler connectionHandler = initConnectionHandler();
         RequestHandler requestHandler = new RequestHandler(connectionHandler);
         SantanderSession session = new SantanderSession(requestHandler);
-        scraper = new SantanderAccountsScraper(session);
+        scraper = new SantanderAccountsScraper(session, new ConsoleController());
     }
 
     private ConnectionHandler initConnectionHandler() {
@@ -36,17 +36,8 @@ public class App {
 
     public void printAccountsInformation(Credentials credentials) {
         scraper.logIn(credentials);
-        scraper.confirmAccess(readTokenFromCmd());
         scraper.scrapeAccountsInfo().forEach(System.out::println);
         scraper.logOut();
-    }
-
-    private String readTokenFromCmd() {
-        System.out.println("Wprowadź sms-kod:");
-        Scanner in = new Scanner((System.in));
-        String input = in.nextLine();
-        in.close();
-        return input;
     }
 
     public static void main(String[] args) {

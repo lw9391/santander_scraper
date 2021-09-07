@@ -1,5 +1,6 @@
 package scraper;
 
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -18,44 +19,53 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 public class SantanderAccountsScraperTest {
     private SantanderAccountsScraper scraper;
-    private Credentials validCredentials;
-    private String validToken;
+    private static Credentials validCredentials;
+    private static String validToken;
     private ConnectionHandler connectionHandler;
+    private static ViewController viewControllerMock;
+
+    @BeforeAll
+    static void beforeAll() {
+        validCredentials = new Credentials("111111","password");
+        validToken = "111-111";
+        viewControllerMock = mock(ViewController.class);
+    }
 
     @BeforeEach
     void beforeEach() {
-        this.validCredentials = new Credentials("111111","password");
-        this.validToken = "111-111";
         this.connectionHandler = ConnectionMockProvider.connectionHandlerMock(validCredentials, validToken);
         RequestHandler requestHandler = new RequestHandler(connectionHandler);
         SantanderSession session = new SantanderSession(requestHandler);
-        this.scraper = new SantanderAccountsScraper(session);
+        this.scraper = new SantanderAccountsScraper(session, viewControllerMock);
     }
 
     @Test
     void scraperTest() {
+        when(viewControllerMock.readInput()).thenReturn(validToken);
+
         scraper.logIn(validCredentials);
-        scraper.confirmAccess(validToken);
         List<AccountDetails> accountDetails = scraper.scrapeAccountsInfo();
+        scraper.logOut();
+
         assertEquals("112,00 PLN", accountDetails.get(0).getBalance());
         assertEquals("Ekstrakonto Plus", accountDetails.get(0).getAccountName());
         assertEquals("0,38 PLN", accountDetails.get(1).getBalance());
         assertEquals("Konto Oszczednosciowe w PLN", accountDetails.get(1).getAccountName());
-        scraper.logOut();
+
         verify(connectionHandler, times(1)).GETLogout(any(), any());
     }
 
     @Test
     void scraperTestIncorrectPassword() {
+        when(viewControllerMock.readInput()).thenReturn(validToken);
         Credentials incorrect = new Credentials("111111","anypassword");
-        scraper.logIn(incorrect);
-        assertThrows(InvalidCredentialsException.class, () -> scraper.confirmAccess(validToken));
+        assertThrows(InvalidCredentialsException.class, () -> scraper.logIn(incorrect));
     }
 
     @Test
     void scraperTestIncorrectToken() {
         String incorrectToken = "123-123";
-        scraper.logIn(validCredentials);
-        assertThrows(InvalidCredentialsException.class, () -> scraper.confirmAccess(incorrectToken));
+        when(viewControllerMock.readInput()).thenReturn(incorrectToken);
+        assertThrows(InvalidCredentialsException.class, () -> scraper.logIn(validCredentials));
     }
 }

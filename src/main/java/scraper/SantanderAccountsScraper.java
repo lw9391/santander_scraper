@@ -5,7 +5,7 @@ import scraper.session.SantanderSession;
 
 import java.util.List;
 
-public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, AccountsInfoScraper {
+public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
     public static final String HOST = "https://www.centrum24.pl";
     public static final String PATH = "/centrum24-web";
     public static final String DASHBOARD_PATH = "/centrum24-web/multi";
@@ -13,9 +13,11 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
 
     private final SantanderSession session;
     private final CredentialsVerifier credentialsVerifier;
+    private final ViewController viewController;
 
-    public SantanderAccountsScraper(SantanderSession session) {
+    public SantanderAccountsScraper(SantanderSession session, ViewController viewController) {
         this.session = session;
+        this.viewController = viewController;
         this.credentialsVerifier = new SantanderCredentialsVerifier();
     }
 
@@ -24,6 +26,11 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
         verifyCredentials(credentials);
         session.sendNikRequest(credentials.getAccountNumber());
         session.sendPasswordRequest(credentials.getPassword());
+
+        viewController.displayMessage("Wprowadz sms-kod:");
+        String token = viewController.readInput();
+        verifyToken(token);
+        session.sendTokenRequest(token);
         return true;
     }
 
@@ -36,22 +43,15 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
         }
     }
 
-    @Override
-    public void logOut() {
-        session.logOut();
-    }
-
-    @Override
-    public boolean confirmAccess(String token) {
-        verifyToken(token);
-        session.sendTokenRequest(token);
-        return true;
-    }
-
     private void verifyToken(String token) {
         if (!credentialsVerifier.verifyToken(token)) {
             throw new InvalidCredentialsException("Provided token has invalid format.");
         }
+    }
+
+    @Override
+    public void logOut() {
+        session.logOut();
     }
 
     @Override
