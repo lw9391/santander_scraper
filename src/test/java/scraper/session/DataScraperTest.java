@@ -23,28 +23,28 @@ class DataScraperTest {
     }
 
     @Test
-    void scrapXmlPathFromLoginPage() throws IOException {
+    void scrapXmlPathFromLoginPage() {
         String logPage = testDataSupplier("src/test/resources/http/1logPage.html");
         String scrapedPath = scraper.scrapXmlPathFromLoginPage(logPage);
         assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", scrapedPath);
     }
 
     @Test
-    void scrapNikPagePathFromRedirectXml() throws IOException {
+    void scrapNikPagePathFromRedirectXml() {
         String xml = testDataSupplier("src/test/resources/http/2redirectXml.xml");
         String scrapedPath = scraper.scrapNikPagePathFromRedirectXml(xml);
         assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", scrapedPath);
     }
 
     @Test
-    void scrapPasswordPagePathFromNikResponse() throws IOException {
+    void scrapPasswordPagePathFromNikResponse() {
         String page = testDataSupplier("src/test/resources/http/3redirectXml.xml");
         String scrapedPath = scraper.scrapPasswordPagePathFromNikResponse(page);
         assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", scrapedPath);
     }
 
     @Test
-    void scrapPathsFromPasswordPage() throws IOException {
+    void scrapPathsFromPasswordPage() {
         String page = testDataSupplier("src/test/resources/http/4loginpage.html");
         Map<PathsNames,String> scrapedPaths = scraper.scrapPathsFromPasswordPage(page);
         assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", scrapedPaths.get(PathsNames.PASSWORD));
@@ -52,14 +52,14 @@ class DataScraperTest {
     }
 
     @Test
-    void scrapTokenPathFromPasswordResponse() throws IOException {
+    void scrapTokenPathFromPasswordResponse() {
         String page = testDataSupplier("src/test/resources/http/5tokenpage.html");
         String scrapedPath = scraper.scrapTokenPathFromPasswordResponse(page);
         assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", scrapedPath);
     }
 
     @Test
-    void scrapeInvalidLoginDiv() throws IOException {
+    void scrapeInvalidLoginDiv() {
         String invalidCrudPage = testDataSupplier("src/test/resources/http/8invalidCrudPage.html");
         String invalidLoginInfo = scraper.scrapeInvalidLoginDiv(invalidCrudPage);
         boolean expectedTrue = invalidLoginInfo.contains("wylogowanie");
@@ -71,7 +71,7 @@ class DataScraperTest {
     }
 
     @Test
-    void scrapPathsFromDashboardPage() throws IOException {
+    void scrapPathsFromDashboardPage() {
         String page = testDataSupplier("src/test/resources/http/6dashboard.html");
         Map<PathsNames,String> scrapedPaths = scraper.scrapPathsFromDashboardPage(page);
         assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", scrapedPaths.get(PathsNames.LOGOUT));
@@ -79,14 +79,18 @@ class DataScraperTest {
     }
 
     @Test
-    void scrapAccountsInformationFromProductsPage() throws IOException {
+    void scrapAccountsInformationFromProductsPage() {
         String page = testDataSupplier("src/test/resources/http/7products.html");
         List<AccountDetails> accountDetails = scraper.scrapAccountsInformationFromProductsPage(page);
         assertEquals(2, accountDetails.size());
     }
 
-    private String testDataSupplier(String filePath) throws IOException {
+    private String testDataSupplier(String filePath) {
         Path path = Paths.get(filePath);
-        return Files.readString(path, StandardCharsets.UTF_8);
+        try {
+            return Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

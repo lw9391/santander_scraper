@@ -3,7 +3,6 @@ package scraper;
 import scraper.session.InvalidCredentialsException;
 import scraper.session.SantanderSession;
 
-import java.io.IOException;
 import java.util.List;
 
 public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, AccountsInfoScraper {
@@ -23,13 +22,9 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
     @Override
     public boolean logIn(Credentials credentials) {
         verifyCredentials(credentials);
-        try {
-            session.sendNikRequest(credentials.getAccountNumber());
-            session.sendPasswordRequest(credentials.getPassword());
-            return true;
-        } catch (IOException | InterruptedException e) {
-            throw new RuntimeException(e);
-        }
+        session.sendNikRequest(credentials.getAccountNumber());
+        session.sendPasswordRequest(credentials.getPassword());
+        return true;
     }
 
     private void verifyCredentials(Credentials credentials) {
@@ -43,21 +38,13 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
 
     @Override
     public void logOut() {
-        try {
-            session.logOut();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        session.logOut();
     }
 
     @Override
     public boolean confirmAccess(String token) {
         verifyToken(token);
-        try {
-            session.sendTokenRequest(token);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        session.sendTokenRequest(token);
         return true;
     }
 
@@ -69,10 +56,6 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
 
     @Override
     public List<AccountDetails> scrapAccountsInfo() {
-        try {
-            return session.sendAccountsDetailsRequest();
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        return session.sendAccountsDetailsRequest();
     }
 }

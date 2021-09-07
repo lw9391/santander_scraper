@@ -35,9 +35,8 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void sendRequestForLoginPageParamTest() throws IOException {
-        Path path = Paths.get("src/test/resources/http/1logPage.html");
-        String logPage = Files.readString(path, StandardCharsets.UTF_8);
+    void sendRequestForLoginPageParamTest() {
+        String logPage = testDataSupplier("src/test/resources/http/1logPage.html");
 
         ResponseDto response = mock(ResponseDto.class);
         when(response.getResponseBody()).thenReturn(logPage);
@@ -51,9 +50,8 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void sendRequestForXmlWithParamTest() throws IOException {
-        Path path = Paths.get("src/test/resources/http/2redirectXml.xml");
-        String xml = Files.readString(path, StandardCharsets.UTF_8);
+    void sendRequestForXmlWithParamTest() {
+        String xml = testDataSupplier("src/test/resources/http/2redirectXml.xml");
 
         ResponseDto responseMock = mock(ResponseDto.class);
 
@@ -67,9 +65,8 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void sendNikRequestAndGetXmlRedirectTest() throws IOException {
-        Path path = Paths.get("src/test/resources/http/3redirectXml.xml");
-        String xml = Files.readString(path, StandardCharsets.UTF_8);
+    void sendNikRequestAndGetXmlRedirectTest() {
+        String xml = testDataSupplier("src/test/resources/http/3redirectXml.xml");
 
         ResponseDto responseMock = mock(ResponseDto.class);
         when(responseMock.getResponseBody()).thenReturn(xml);
@@ -83,8 +80,7 @@ class OkHttpRequestsHandlerTest {
 
     @Test
     void sendPasswordPageRequestTest() throws IOException {
-        Path path = Paths.get("src/test/resources/http/4loginpage.html");
-        String html = Files.readString(path, StandardCharsets.UTF_8);
+        String html = testDataSupplier("src/test/resources/http/4loginpage.html");
 
         ResponseDto passPageMock = mock(ResponseDto.class);
 
@@ -104,8 +100,7 @@ class OkHttpRequestsHandlerTest {
 
     @Test
     void sendPasswordRequestAndGetAccessPageTest() throws IOException {
-        Path path = Paths.get("src/test/resources/http/5tokenpage.html");
-        String html = Files.readString(path, StandardCharsets.UTF_8);
+        String html = testDataSupplier("src/test/resources/http/5tokenpage.html");
 
         ResponseDto htmlWithTokenMock = mock(ResponseDto.class);
         when(htmlWithTokenMock.getResponseBody()).thenReturn(html);
@@ -121,9 +116,8 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void sendTokenRequestTest() throws IOException, InvalidCredentialsException {
-        Path path = Paths.get("src/test/resources/http/6dashboard.html");
-        String html = Files.readString(path, StandardCharsets.UTF_8);
+    void sendTokenRequestTest() throws IOException {
+        String html = testDataSupplier("src/test/resources/http/6dashboard.html");
 
         ResponseDto htmlWithDashboardMock = mock(ResponseDto.class);
 
@@ -140,9 +134,8 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void scrapAccountsInformationTest() throws IOException {
-        Path path = Paths.get("src/test/resources/http/7products.html");
-        String html = Files.readString(path, StandardCharsets.UTF_8);
+    void scrapAccountsInformationTest() {
+        String html = testDataSupplier("src/test/resources/http/7products.html");
 
         ResponseDto productsPage = mock(ResponseDto.class);
         when(productsPage.getResponseBody()).thenReturn(html);
@@ -153,5 +146,14 @@ class OkHttpRequestsHandlerTest {
         assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).getAccountName());
         assertEquals("0,38 PLN", accountDetailsList.get(1).getBalance());
         assertEquals("Konto Oszczednosciowe w PLN", accountDetailsList.get(1).getAccountName());
+    }
+
+    private String testDataSupplier(String filePath) {
+        Path path = Paths.get(filePath);
+        try {
+            return Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

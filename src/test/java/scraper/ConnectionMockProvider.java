@@ -18,7 +18,7 @@ import static org.mockito.Mockito.*;
 
 
 public class ConnectionMockProvider {
-    public static ConnectionHandler connectionHandlerMock(Credentials correctCredentials, String correctToken) throws IOException {
+    public static ConnectionHandler connectionHandlerMock(Credentials correctCredentials, String correctToken) {
         ConnectionHandler connectionHandler = mock(ConnectionHandler.class);
 
         final var credVerStorage = new Object() {
@@ -106,8 +106,12 @@ public class ConnectionMockProvider {
         return builder.build();
     }
 
-    private static String testDataSupplier(String filePath) throws IOException {
+    private static String testDataSupplier(String filePath) {
         Path path = Paths.get(filePath);
-        return Files.readString(path, StandardCharsets.UTF_8);
+        try {
+            return Files.readString(path, StandardCharsets.UTF_8);
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

@@ -27,7 +27,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETLoginPage() throws IOException {
+    public ResponseDto GETLoginPage() {
         Request request = new Request.Builder().url(HOST + PATH + "/login")
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -40,7 +40,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETXmlWithPathForNikPage(String path, String referer) throws IOException {
+    public ResponseDto GETXmlWithPathForNikPage(String path, String referer) {
         Request request = new Request.Builder().url(HOST + PATH + path)
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -57,7 +57,8 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
         return sendHttpRequest(request);
     }
 
-    public ResponseDto POSTNik(String path, String nik, String referer) throws IOException {
+    @Override
+    public ResponseDto POSTNik(String path, String nik, String referer) {
         RequestBody body = new FormBody.Builder()
                 .add("nik", nik)
                 .add("dp", "")
@@ -82,7 +83,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETPasswordPage(String path, String referer) throws IOException {
+    public ResponseDto GETPasswordPage(String path, String referer) {
         Request request = new Request.Builder().url(HOST + PATH + path)
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -96,7 +97,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETSendSessionMap(String path, String referer) throws IOException {
+    public ResponseDto GETSendSessionMap(String path, String referer) {
         Request request = new Request.Builder().url(HOST + PATH + path)
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -114,7 +115,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto POSTPassword(String path, String password, String referer) throws IOException {
+    public ResponseDto POSTPassword(String path, String password, String referer) {
         RequestBody body = new FormBody.Builder()
                 .add("pinFragment:pin", password)
                 .add("loginButton", "Dalej")
@@ -134,7 +135,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto POSTToken(String path, String token, String referer) throws IOException {
+    public ResponseDto POSTToken(String path, String token, String referer) {
         RequestBody body = new FormBody.Builder()
                 .add("response", token)
                 .add("loginButton", "Dalej")
@@ -154,7 +155,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETLogout(String path, String referer) throws IOException {
+    public ResponseDto GETLogout(String path, String referer) {
         Request request = new Request.Builder().url(HOST + DASHBOARD_PATH + path)
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -168,7 +169,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETProductsPage(String path, String referer) throws IOException {
+    public ResponseDto GETProductsPage(String path, String referer) {
         Request request = new Request.Builder().url(HOST + DASHBOARD_PATH + path)
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -182,7 +183,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     }
 
     @Override
-    public ResponseDto GETEmergencyLogout(String referer) throws IOException {
+    public ResponseDto GETEmergencyLogout(String referer) {
         Request request = new Request.Builder().url(LOGOUT)
                 .header(ACCEPT.name, ACCEPT.value)
                 .header(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
@@ -195,10 +196,14 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
         return sendHttpRequest(request);
     }
 
-    private ResponseDto sendHttpRequest(Request request) throws IOException {
-        Response response = client.newCall(request).execute();
-        ResponseDto responseDto = ResponseMapper.mapToDto(response);
-        response.close();
-        return responseDto;
+    private ResponseDto sendHttpRequest(Request request) {
+        try {
+            Response response = client.newCall(request).execute();
+            ResponseDto responseDto = ResponseMapper.mapToDto(response);
+            response.close();
+            return responseDto;
+        } catch (IOException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

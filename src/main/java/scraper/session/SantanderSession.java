@@ -2,7 +2,6 @@ package scraper.session;
 
 import scraper.AccountDetails;
 
-import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 
@@ -28,7 +27,7 @@ public class SantanderSession {
         this.state = NONE;
     }
 
-    public void sendNikRequest(String nik) throws IOException {
+    public void sendNikRequest(String nik) {
         if (state != NONE) {
             throw new IllegalStateException("Wrong order of requests.");
         }
@@ -40,7 +39,7 @@ public class SantanderSession {
         state = NIK_ACCEPTED;
     }
 
-    public void sendPasswordRequest(String password) throws IOException, InterruptedException {
+    public void sendPasswordRequest(String password) {
         if (state != NIK_ACCEPTED) {
             throw new IllegalStateException("Wrong order of requests.");
         }
@@ -50,12 +49,20 @@ public class SantanderSession {
         String pathForSessionMap = paths.get(PathsNames.SESSION_MAP);
 
         requestHandler.sendSessionMapRequest(pathForSessionMap);
-        Thread.sleep(2500);
+        pauseExecution();
         tokenConfirmationPath = requestHandler.sendPasswordRequest(pathForPasswordRequest, password);
         state = PASSWORD_ACCEPTED;
     }
 
-    public void sendTokenRequest(String token) throws IOException, InvalidCredentialsException {
+    private void pauseExecution() {
+        try {
+            Thread.sleep(2500);
+        } catch (InterruptedException e) {
+            throw new RuntimeException("This should never happen.",e);
+        }
+    }
+
+    public void sendTokenRequest(String token) {
         if (state != PASSWORD_ACCEPTED || tokenConfirmationPath.isEmpty()) {
             throw new IllegalStateException("Wrong order of requests.");
         }
@@ -66,14 +73,14 @@ public class SantanderSession {
         state = FULLY_LOGGED;
     }
 
-    public List<AccountDetails> sendAccountsDetailsRequest() throws IOException {
+    public List<AccountDetails> sendAccountsDetailsRequest() {
         if (state != FULLY_LOGGED || productsPath.isEmpty()) {
             throw new IllegalStateException("Wrong order of requests.");
         }
         return requestHandler.scrapAccountsInformation(productsPath);
     }
 
-    public void logOut() throws IOException {
+    public void logOut() {
         if (state != FULLY_LOGGED) {
             throw new IllegalStateException("Wrong order of requests.");
         }

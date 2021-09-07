@@ -9,7 +9,6 @@ import scraper.session.RequestHandler;
 import scraper.session.SantanderSession;
 import scraper.session.connections.ConnectionHandler;
 
-import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -24,7 +23,7 @@ public class SantanderAccountsScraperTest {
     private ConnectionHandler connectionHandler;
 
     @BeforeEach
-    void beforeEach() throws IOException {
+    void beforeEach() {
         this.validCredentials = new Credentials("111111","password");
         this.validToken = "111-111";
         this.connectionHandler = ConnectionMockProvider.connectionHandlerMock(validCredentials, validToken);
@@ -34,7 +33,7 @@ public class SantanderAccountsScraperTest {
     }
 
     @Test
-    void scraperTest() throws IOException {
+    void scraperTest() {
         scraper.logIn(validCredentials);
         scraper.confirmAccess(validToken);
         List<AccountDetails> accountDetails = scraper.scrapAccountsInfo();
