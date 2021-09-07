@@ -32,7 +32,7 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
             throw new InvalidCredentialsException("Nik must be between 6 and 20 characters.");
         }
         if (!credentialsVerifier.verifyPassword(credentials.getPassword())) {
-            throw new InvalidCredentialsException("Password must be between  and 20 characters.");
+            throw new InvalidCredentialsException("Password must be between 4 and 20 characters.");
         }
     }
 
@@ -55,7 +55,7 @@ public class SantanderAccountsScraper implements Logable, LoginCodeConfirmable, 
     }
 
     @Override
-    public List<AccountDetails> scrapAccountsInfo() {
+    public List<AccountDetails> scrapeAccountsInfo() {
         return session.sendAccountsDetailsRequest();
     }
 }

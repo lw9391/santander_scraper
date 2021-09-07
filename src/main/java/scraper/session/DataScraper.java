@@ -19,14 +19,14 @@ import static scraper.session.PathsNames.SESSION_MAP;
 
 public class DataScraper {
 
-    public final String scrapXmlPathFromLoginPage(String loginPageHtml) {
+    public final String scrapeXmlPathFromLoginPage(String loginPageHtml) {
         String scriptWithQuery = getFromHtmlById(loginPageHtml, "DpsBtnEnable");
         String regexToFindJson = "\\{\"u\":\".*?\"\\}";
         String json = findInString(scriptWithQuery, regexToFindJson).get(0);
         return getJsonValue(json, "u").substring(1);
     }
 
-    public final String scrapNikPagePathFromRedirectXml(String redirectXml) {
+    public final String scrapeNikPagePathFromRedirectXml(String redirectXml) {
         String jsFunction = getXmlElement(redirectXml, "evaluate");
         String regexToFindJson = "\\{\"u\":\".*?\\}";
         String json = findInString(jsFunction, regexToFindJson).get(0);
@@ -41,7 +41,7 @@ public class DataScraper {
         return jsonObject.get(fields[fields.length - 1]).getAsString();
     }
 
-    public final String scrapPasswordPagePathFromNikResponse(String nikResponsePageHtml) {
+    public final String scrapePasswordPagePathFromNikResponse(String nikResponsePageHtml) {
         String redirectElement = getXmlElement(nikResponsePageHtml, "redirect");
         return getSubstringBetween(redirectElement,"/","]");
     }
@@ -51,8 +51,8 @@ public class DataScraper {
         return xmlDoc.select(tagName).html();
     }
 
-    public final Map<PathsNames, String> scrapPathsFromPasswordPage(String passwordPageHtml) {
-        String pathForSessionMap = scrapPathForSessionMapRequest(passwordPageHtml);
+    public final Map<PathsNames, String> scrapePathsFromPasswordPage(String passwordPageHtml) {
+        String pathForSessionMap = scrapePathForSessionMapRequest(passwordPageHtml);
 
         String attribute = getAttributeFromHtml(passwordPageHtml, "pinForm", "action");
         int startIndex = attribute.indexOf("/crypt.");
@@ -61,7 +61,7 @@ public class DataScraper {
         return Map.of(SESSION_MAP, pathForSessionMap, PASSWORD, pathForPasswordRequest);
     }
 
-    private String scrapPathForSessionMapRequest(String html) {
+    private String scrapePathForSessionMapRequest(String html) {
         Document document = Jsoup.parse(html);
         Elements head = document.select("head");
         String script = head.select("script").not("[src]").not("[id]").html();
@@ -75,7 +75,7 @@ public class DataScraper {
         return part.substring(0, endIndex);
     }
 
-    public final String scrapTokenPathFromPasswordResponse(String passwordResponesPageHtml) {
+    public final String scrapeTokenPathFromPasswordResponse(String passwordResponesPageHtml) {
         String attribute = getAttributeFromHtml(passwordResponesPageHtml, "authenticationForm", "action");
         int startIndex = attribute.indexOf("/crypt.");
         return attribute.substring(startIndex);
@@ -95,7 +95,7 @@ public class DataScraper {
         return logoutInfo.outerHtml();
     }
 
-    public final Map<PathsNames,String> scrapPathsFromDashboardPage(String dashboardPageHtml) {
+    public final Map<PathsNames,String> scrapePathsFromDashboardPage(String dashboardPageHtml) {
         String logoutDiv = getFromHtmlByClass(dashboardPageHtml, "logout");
         String logoutPath = Jsoup.parse(logoutDiv).select("a").attr("href").substring(1);
 
@@ -117,7 +117,7 @@ public class DataScraper {
                 .html();
     }
 
-    public final List<AccountDetails> scrapAccountsInformationFromProductsPage(String productsPageHtml) {
+    public final List<AccountDetails> scrapeAccountsInformationFromProductsPage(String productsPageHtml) {
         List<AccountDetails> accountDetails = new ArrayList<>();
         List<AccountDetails> personalAccounts = getInformationAbout(productsPageHtml, "avistaAccountsBoxContent");
         accountDetails.addAll(personalAccounts);

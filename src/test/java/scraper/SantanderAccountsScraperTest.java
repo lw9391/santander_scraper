@@ -36,7 +36,7 @@ public class SantanderAccountsScraperTest {
     void scraperTest() {
         scraper.logIn(validCredentials);
         scraper.confirmAccess(validToken);
-        List<AccountDetails> accountDetails = scraper.scrapAccountsInfo();
+        List<AccountDetails> accountDetails = scraper.scrapeAccountsInfo();
         assertEquals("112,00 PLN", accountDetails.get(0).getBalance());
         assertEquals("Ekstrakonto Plus", accountDetails.get(0).getAccountName());
         assertEquals("0,38 PLN", accountDetails.get(1).getBalance());

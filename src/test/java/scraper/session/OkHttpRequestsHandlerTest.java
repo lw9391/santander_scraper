@@ -134,14 +134,14 @@ class OkHttpRequestsHandlerTest {
     }
 
     @Test
-    void scrapAccountsInformationTest() {
+    void scrapeAccountsInformationTest() {
         String html = testDataSupplier("src/test/resources/http/7products.html");
 
         ResponseDto productsPage = mock(ResponseDto.class);
         when(productsPage.getResponseBody()).thenReturn(html);
         when(productsPage.getStatus()).thenReturn(200);
         when(connectionHandlerMock.GETProductsPage("/path", "referer")).thenReturn(productsPage);
-        List<AccountDetails> accountDetailsList = requestsHandler.scrapAccountsInformation("/path");
+        List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation("/path");
         assertEquals("112,00 PLN", accountDetailsList.get(0).getBalance());
         assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).getAccountName());
         assertEquals("0,38 PLN", accountDetailsList.get(1).getBalance());

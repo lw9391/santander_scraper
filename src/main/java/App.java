@@ -37,7 +37,7 @@ public class App {
     public void printAccountsInformation(Credentials credentials) {
         scraper.logIn(credentials);
         scraper.confirmAccess(readTokenFromCmd());
-        scraper.scrapAccountsInfo().forEach(System.out::println);
+        scraper.scrapeAccountsInfo().forEach(System.out::println);
         scraper.logOut();
     }
 

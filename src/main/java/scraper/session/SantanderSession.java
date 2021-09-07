@@ -77,7 +77,7 @@ public class SantanderSession {
         if (state != FULLY_LOGGED || productsPath.isEmpty()) {
             throw new IllegalStateException("Wrong order of requests.");
         }
-        return requestHandler.scrapAccountsInformation(productsPath);
+        return requestHandler.scrapeAccountsInformation(productsPath);
     }
 
     public void logOut() {

@@ -23,38 +23,38 @@ class DataScraperTest {
     }
 
     @Test
-    void scrapXmlPathFromLoginPage() {
+    void scrapeXmlPathFromLoginPage() {
         String logPage = testDataSupplier("src/test/resources/http/1logPage.html");
-        String scrapedPath = scraper.scrapXmlPathFromLoginPage(logPage);
+        String scrapedPath = scraper.scrapeXmlPathFromLoginPage(logPage);
         assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", scrapedPath);
     }
 
     @Test
-    void scrapNikPagePathFromRedirectXml() {
+    void scrapeNikPagePathFromRedirectXml() {
         String xml = testDataSupplier("src/test/resources/http/2redirectXml.xml");
-        String scrapedPath = scraper.scrapNikPagePathFromRedirectXml(xml);
+        String scrapedPath = scraper.scrapeNikPagePathFromRedirectXml(xml);
         assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", scrapedPath);
     }
 
     @Test
-    void scrapPasswordPagePathFromNikResponse() {
+    void scrapePasswordPagePathFromNikResponse() {
         String page = testDataSupplier("src/test/resources/http/3redirectXml.xml");
-        String scrapedPath = scraper.scrapPasswordPagePathFromNikResponse(page);
+        String scrapedPath = scraper.scrapePasswordPagePathFromNikResponse(page);
         assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", scrapedPath);
     }
 
     @Test
-    void scrapPathsFromPasswordPage() {
+    void scrapePathsFromPasswordPage() {
         String page = testDataSupplier("src/test/resources/http/4loginpage.html");
-        Map<PathsNames,String> scrapedPaths = scraper.scrapPathsFromPasswordPage(page);
+        Map<PathsNames,String> scrapedPaths = scraper.scrapePathsFromPasswordPage(page);
         assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", scrapedPaths.get(PathsNames.PASSWORD));
         assertEquals("/crypt.brKnpZUkktsTyMD4fDym_YLJ6XzBNKJtQSbN-NdTTUaXMzfLzxBZ9EURsRnaBBQxR_jFThmXQm0zbzjNSjxOtMufJ-0MGGRcS6TA4seUNnspto52VanATw/brK0a", scrapedPaths.get(PathsNames.SESSION_MAP));
     }
 
     @Test
-    void scrapTokenPathFromPasswordResponse() {
+    void scrapeTokenPathFromPasswordResponse() {
         String page = testDataSupplier("src/test/resources/http/5tokenpage.html");
-        String scrapedPath = scraper.scrapTokenPathFromPasswordResponse(page);
+        String scrapedPath = scraper.scrapeTokenPathFromPasswordResponse(page);
         assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", scrapedPath);
     }
 
@@ -71,17 +71,17 @@ class DataScraperTest {
     }
 
     @Test
-    void scrapPathsFromDashboardPage() {
+    void scrapePathsFromDashboardPage() {
         String page = testDataSupplier("src/test/resources/http/6dashboard.html");
-        Map<PathsNames,String> scrapedPaths = scraper.scrapPathsFromDashboardPage(page);
+        Map<PathsNames,String> scrapedPaths = scraper.scrapePathsFromDashboardPage(page);
         assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", scrapedPaths.get(PathsNames.LOGOUT));
         assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", scrapedPaths.get(PathsNames.PRODUCTS));
     }
 
     @Test
-    void scrapAccountsInformationFromProductsPage() {
+    void scrapeAccountsInformationFromProductsPage() {
         String page = testDataSupplier("src/test/resources/http/7products.html");
-        List<AccountDetails> accountDetails = scraper.scrapAccountsInformationFromProductsPage(page);
+        List<AccountDetails> accountDetails = scraper.scrapeAccountsInformationFromProductsPage(page);
         assertEquals(2, accountDetails.size());
     }
 

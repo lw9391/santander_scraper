@@ -36,7 +36,7 @@ public class RequestHandler {
             throw new RuntimeException("Status code error during getting login page.");
         }
 
-        String scrapedPath =  dataScraper.scrapXmlPathFromLoginPage(response.getResponseBody());
+        String scrapedPath =  dataScraper.scrapeXmlPathFromLoginPage(response.getResponseBody());
         session.updateReferer(response.getRequestUrl());
         return scrapedPath;
     }
@@ -49,7 +49,7 @@ public class RequestHandler {
             throw new RuntimeException("Status code error during getting redirect xml.");
         }
 
-        return dataScraper.scrapNikPagePathFromRedirectXml(response.getResponseBody());
+        return dataScraper.scrapeNikPagePathFromRedirectXml(response.getResponseBody());
     }
 
     public String sendNikRequest(String queryParam, String nik) {
@@ -58,7 +58,7 @@ public class RequestHandler {
             throw new RuntimeException("Status code error during sending nik.");
         }
 
-        return dataScraper.scrapPasswordPagePathFromNikResponse(response.getResponseBody());
+        return dataScraper.scrapePasswordPagePathFromNikResponse(response.getResponseBody());
     }
 
     public Map<PathsNames,String> sendPasswordPageRequest(String path) {
@@ -67,7 +67,7 @@ public class RequestHandler {
             throw new RuntimeException("Status code error during getting password page");
         }
 
-        Map<PathsNames, String> paths = dataScraper.scrapPathsFromPasswordPage(response.getResponseBody());
+        Map<PathsNames, String> paths = dataScraper.scrapePathsFromPasswordPage(response.getResponseBody());
         session.updateReferer(response.getRequestUrl());
         return paths;
     }
@@ -88,7 +88,7 @@ public class RequestHandler {
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during sending password");
         }
-        String tokenPath = dataScraper.scrapTokenPathFromPasswordResponse(response.getResponseBody());
+        String tokenPath = dataScraper.scrapeTokenPathFromPasswordResponse(response.getResponseBody());
 
         session.updateReferer(response.getRequestUrl());
         return tokenPath;
@@ -102,7 +102,7 @@ public class RequestHandler {
         if (!validateLoginCorrectness(response)) {
             throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
         }
-        Map<PathsNames,String> paths = dataScraper.scrapPathsFromDashboardPage(response.getResponseBody());
+        Map<PathsNames,String> paths = dataScraper.scrapePathsFromDashboardPage(response.getResponseBody());
 
         session.updateReferer(response.getRequestUrl());
         return paths;
@@ -113,14 +113,14 @@ public class RequestHandler {
         return logoutDiv.isEmpty();
     }
 
-    public List<AccountDetails> scrapAccountsInformation(String path) {
+    public List<AccountDetails> scrapeAccountsInformation(String path) {
         ResponseDto response = connectionHandler.GETProductsPage(path, session.getCurrentReferer());
         if (!(response.getStatus() == 200)) {
             connectionHandler.GETEmergencyLogout(session.getCurrentReferer());
             throw new RuntimeException("Status code error during getting product page.");
         }
 
-        return dataScraper.scrapAccountsInformationFromProductsPage(response.getResponseBody());
+        return dataScraper.scrapeAccountsInformationFromProductsPage(response.getResponseBody());
     }
 
     public void sendLogoutRequest(String query) {
