@@ -1,0 +1,84 @@
+package scraper.session.connections;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Objects;
+
+public class RequestDto {
+    private final Map<String,String> headers;
+    private final String url;
+    private final List<FormBodyPair> formBody;
+
+    private RequestDto(Map<String, String> headers, String url, List<FormBodyPair> formBody) {
+        this.headers = headers;
+        this.url = url;
+        this.formBody = formBody;
+    }
+
+    public static RequestDto.Builder builder() {
+        return new RequestDto.Builder();
+    }
+
+    public Map<String, String> getHeaders() {
+        return headers;
+    }
+
+    public String getUrl() {
+        return url;
+    }
+
+    public List<FormBodyPair> getFormBody() {
+        return formBody;
+    }
+
+    public static class Builder {
+        private Map<String,String> headers = new HashMap<>();
+        private String url;
+        private List<FormBodyPair> formBodyPairs = new ArrayList<>();
+
+        public RequestDto.Builder setHeader(String headerName, String headerValue) {
+            headers.put(headerName, headerValue);
+            return this;
+        }
+
+        public RequestDto.Builder setUrl(String url) {
+            this.url = url;
+            return this;
+        }
+
+        public RequestDto.Builder addFormBodyPair(String name, String value) {
+            formBodyPairs.add(new FormBodyPair(name, value));
+            return this;
+        }
+
+        public RequestDto build() {
+            return new RequestDto(Collections.unmodifiableMap(headers), url, Collections.unmodifiableList(formBodyPairs));
+        }
+    }
+
+    public static class FormBodyPair {
+        public final String name;
+        public final String value;
+
+        public FormBodyPair(String name, String value) {
+            this.name = name;
+            this.value = value;
+        }
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        RequestDto that = (RequestDto) o;
+        return Objects.equals(headers, that.headers) && Objects.equals(url, that.url) && Objects.equals(formBody, that.formBody);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(headers, url, formBody);
+    }
+}

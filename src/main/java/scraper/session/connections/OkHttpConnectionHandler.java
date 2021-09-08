@@ -199,7 +199,7 @@ public class OkHttpConnectionHandler implements ConnectionHandler {
     private ResponseDto sendHttpRequest(Request request) {
         try {
             Response response = client.newCall(request).execute();
-            ResponseDto responseDto = ResponseMapper.mapToDto(response);
+            ResponseDto responseDto = OkHttpMapper.mapToDto(response);
             response.close();
             return responseDto;
         } catch (IOException e) {
