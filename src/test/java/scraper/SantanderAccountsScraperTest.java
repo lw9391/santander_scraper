@@ -5,10 +5,11 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
-import scraper.session.InvalidCredentialsException;
-import scraper.session.RequestHandler;
-import scraper.session.SantanderSession;
-import scraper.session.connections.SantanderConnectionHandler;
+import scraper.santander.SantanderAccountsScraper;
+import scraper.santander.session.RequestHandler;
+import scraper.santander.session.SantanderSession;
+import scraper.santander.session.SantanderConnectionHandler;
+import scraper.view.ViewController;
 
 import java.util.List;
 

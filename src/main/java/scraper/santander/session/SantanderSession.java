@@ -1,6 +1,7 @@
-package scraper.session;
+package scraper.santander.session;
 
 import scraper.AccountDetails;
+import scraper.santander.PathsNames;
 
 import java.util.List;
 import java.util.Map;

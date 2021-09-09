@@ -1,8 +1,11 @@
-package scraper.session.connections;
+package scraper.connections.okhttp;
 
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
+import scraper.connections.HttpRequestSender;
+import scraper.connections.RequestDto;
+import scraper.connections.ResponseDto;
 
 import java.io.IOException;
 

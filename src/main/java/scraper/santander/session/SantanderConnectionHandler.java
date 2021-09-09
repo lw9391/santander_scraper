@@ -1,4 +1,8 @@
-package scraper.session.connections;
+package scraper.santander.session;
+
+import scraper.connections.HttpRequestSender;
+import scraper.connections.RequestDto;
+import scraper.connections.ResponseDto;
 
 public class SantanderConnectionHandler {
     private final HttpRequestSender requestSender;

@@ -1,4 +1,4 @@
-package scraper.session.connections;
+package scraper.connections;
 
 import java.util.ArrayList;
 import java.util.Collections;

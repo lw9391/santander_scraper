@@ -1,8 +1,10 @@
-package scraper.session;
+package scraper.santander.session;
 
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scraper.AccountDetails;
+import scraper.santander.DataScraper;
+import scraper.santander.PathsNames;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

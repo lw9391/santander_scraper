@@ -1,4 +1,6 @@
-package scraper;
+package scraper.view;
+
+import scraper.AccountDetails;
 
 import java.util.List;
 

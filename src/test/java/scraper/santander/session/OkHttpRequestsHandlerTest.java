@@ -1,12 +1,12 @@
-package scraper.session;
+package scraper.santander.session;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import scraper.AccountDetails;
-import scraper.session.connections.SantanderConnectionHandler;
-import scraper.session.connections.ResponseDto;
+import scraper.santander.PathsNames;
+import scraper.connections.ResponseDto;
 
 import java.io.IOException;
 import java.net.URL;

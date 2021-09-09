@@ -1,4 +1,4 @@
-package scraper.session;
+package scraper.santander;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -14,8 +14,8 @@ import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static scraper.session.PathsNames.PASSWORD;
-import static scraper.session.PathsNames.SESSION_MAP;
+import static scraper.santander.PathsNames.PASSWORD;
+import static scraper.santander.PathsNames.SESSION_MAP;
 
 public class DataScraper {
 

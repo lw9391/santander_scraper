@@ -1,4 +1,6 @@
-package scraper.session.connections;
+package scraper.santander.session;
+
+import scraper.connections.RequestDto;
 
 import static scraper.Header.ACCEPT;
 import static scraper.Header.ACCEPT_LANGUAGE;
@@ -6,10 +8,10 @@ import static scraper.Header.CACHE_CONTROL;
 import static scraper.Header.CONNECTION;
 import static scraper.Header.CONTENT_TYPE_URLENCODED;
 import static scraper.Header.USER_AGENT;
-import static scraper.SantanderAccountsScraper.DASHBOARD_PATH;
-import static scraper.SantanderAccountsScraper.HOST;
-import static scraper.SantanderAccountsScraper.LOGOUT;
-import static scraper.SantanderAccountsScraper.PATH;
+import static scraper.santander.SantanderAccountsScraper.DASHBOARD_PATH;
+import static scraper.santander.SantanderAccountsScraper.HOST;
+import static scraper.santander.SantanderAccountsScraper.LOGOUT;
+import static scraper.santander.SantanderAccountsScraper.PATH;
 
 public class SantanderRequestProvider {
     public static RequestDto GETLoginPage() {

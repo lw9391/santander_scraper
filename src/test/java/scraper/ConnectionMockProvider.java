@@ -1,8 +1,8 @@
 package scraper;
 
 import org.mockito.stubbing.Answer;
-import scraper.session.connections.ResponseDto;
-import scraper.session.connections.SantanderConnectionHandler;
+import scraper.connections.ResponseDto;
+import scraper.santander.session.SantanderConnectionHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -11,9 +11,9 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 
-import static scraper.SantanderAccountsScraper.HOST;
-import static scraper.SantanderAccountsScraper.PATH;
-import static scraper.SantanderAccountsScraper.DASHBOARD_PATH;
+import static scraper.santander.SantanderAccountsScraper.HOST;
+import static scraper.santander.SantanderAccountsScraper.PATH;
+import static scraper.santander.SantanderAccountsScraper.DASHBOARD_PATH;
 import static org.mockito.Mockito.*;
 
 

@@ -1,4 +1,4 @@
-package scraper.session;
+package scraper.santander;
 
 public enum PathsNames {
     PASSWORD,

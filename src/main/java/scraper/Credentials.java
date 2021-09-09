@@ -9,11 +9,11 @@ public class Credentials {
         this.password = password;
     }
 
-    String getAccountNumber() {
+    public String getAccountNumber() {
         return accountNumber;
     }
 
-    String getPassword() {
+    public String getPassword() {
         return password;
     }
 }

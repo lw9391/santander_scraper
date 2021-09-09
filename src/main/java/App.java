@@ -1,12 +1,12 @@
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
-import scraper.ConsoleController;
+import scraper.view.ConsoleController;
 import scraper.Credentials;
-import scraper.SantanderAccountsScraper;
-import scraper.session.RequestHandler;
-import scraper.session.SantanderSession;
-import scraper.session.connections.OkHttpRequestsSender;
-import scraper.session.connections.SantanderConnectionHandler;
+import scraper.santander.SantanderAccountsScraper;
+import scraper.santander.session.RequestHandler;
+import scraper.santander.session.SantanderSession;
+import scraper.connections.okhttp.OkHttpRequestsSender;
+import scraper.santander.session.SantanderConnectionHandler;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;

@@ -1,4 +1,4 @@
-package scraper.session.connections;
+package scraper.connections;
 
 public interface HttpRequestSender {
     ResponseDto sendGET(RequestDto requestDto);

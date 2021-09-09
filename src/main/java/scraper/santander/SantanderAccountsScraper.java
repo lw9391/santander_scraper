@@ -1,7 +1,13 @@
-package scraper;
+package scraper.santander;
 
-import scraper.session.InvalidCredentialsException;
-import scraper.session.SantanderSession;
+import scraper.AccountDetails;
+import scraper.AccountsInfoScraper;
+import scraper.Credentials;
+import scraper.CredentialsVerifier;
+import scraper.Logable;
+import scraper.santander.session.SantanderSession;
+import scraper.view.ViewController;
+import scraper.InvalidCredentialsException;
 
 import java.util.List;
 

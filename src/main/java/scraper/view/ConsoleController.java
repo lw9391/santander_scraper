@@ -1,9 +1,11 @@
-package scraper;
+package scraper.view;
+
+import scraper.AccountDetails;
 
 import java.util.List;
 import java.util.Scanner;
 
-public class ConsoleController implements ViewController{
+public class ConsoleController implements ViewController {
     @Override
     public String readInput() {
         Scanner in = new Scanner(System.in);
