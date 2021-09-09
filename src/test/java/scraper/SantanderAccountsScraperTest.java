@@ -8,7 +8,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import scraper.session.InvalidCredentialsException;
 import scraper.session.RequestHandler;
 import scraper.session.SantanderSession;
-import scraper.session.connections.ConnectionHandler;
+import scraper.session.connections.SantanderConnectionHandler;
 
 import java.util.List;
 
@@ -20,7 +20,7 @@ public class SantanderAccountsScraperTest {
     private SantanderAccountsScraper scraper;
     private static Credentials validCredentials;
     private static String validToken;
-    private ConnectionHandler connectionHandler;
+    private SantanderConnectionHandler connectionHandler;
     private static ViewController viewControllerMock;
 
     @BeforeAll

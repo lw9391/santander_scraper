@@ -5,7 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import scraper.AccountDetails;
-import scraper.session.connections.OkHttpConnectionHandler;
+import scraper.session.connections.SantanderConnectionHandler;
 import scraper.session.connections.ResponseDto;
 
 import java.io.IOException;
@@ -24,11 +24,11 @@ import static org.mockito.Mockito.*;
 class OkHttpRequestsHandlerTest {
     private RequestHandler requestsHandler;
     private SantanderSession session;
-    private OkHttpConnectionHandler connectionHandlerMock;
+    private SantanderConnectionHandler connectionHandlerMock;
 
     @BeforeEach
     void setUp() {
-        connectionHandlerMock = mock(OkHttpConnectionHandler.class);
+        connectionHandlerMock = mock(SantanderConnectionHandler.class);
         requestsHandler = new RequestHandler(connectionHandlerMock);
         session = new SantanderSession(requestsHandler);
         session.updateReferer("referer");

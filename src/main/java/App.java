@@ -5,8 +5,8 @@ import scraper.Credentials;
 import scraper.SantanderAccountsScraper;
 import scraper.session.RequestHandler;
 import scraper.session.SantanderSession;
-import scraper.session.connections.ConnectionHandler;
-import scraper.session.connections.OkHttpConnectionHandler;
+import scraper.session.connections.OkHttpRequestsSender;
+import scraper.session.connections.SantanderConnectionHandler;
 
 import java.net.CookieManager;
 import java.net.CookiePolicy;
@@ -23,13 +23,13 @@ public class App {
     }
 
     private static SantanderAccountsScraper initScraper() {
-        ConnectionHandler connectionHandler = initConnectionHandler();
+        SantanderConnectionHandler connectionHandler = initConnectionHandler();
         RequestHandler requestHandler = new RequestHandler(connectionHandler);
         SantanderSession session = new SantanderSession(requestHandler);
         return new SantanderAccountsScraper(session, new ConsoleController());
     }
 
-    private static ConnectionHandler initConnectionHandler() {
+    private static SantanderConnectionHandler initConnectionHandler() {
         CookieManager cookieManager = new CookieManager();
         cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
         JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
@@ -39,6 +39,7 @@ public class App {
                 .cookieJar(cookieJar)
                 .build();
 
-        return new OkHttpConnectionHandler(client);
+        OkHttpRequestsSender okHttpRequestsSender = new OkHttpRequestsSender(client);
+        return new SantanderConnectionHandler(okHttpRequestsSender);
     }
 }

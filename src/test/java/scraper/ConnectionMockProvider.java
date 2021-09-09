@@ -1,8 +1,8 @@
 package scraper;
 
 import org.mockito.stubbing.Answer;
-import scraper.session.connections.ConnectionHandler;
 import scraper.session.connections.ResponseDto;
+import scraper.session.connections.SantanderConnectionHandler;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -18,8 +18,8 @@ import static org.mockito.Mockito.*;
 
 
 public class ConnectionMockProvider {
-    public static ConnectionHandler connectionHandlerMock(Credentials correctCredentials, String correctToken) {
-        ConnectionHandler connectionHandler = mock(ConnectionHandler.class);
+    public static SantanderConnectionHandler connectionHandlerMock(Credentials correctCredentials, String correctToken) {
+        SantanderConnectionHandler connectionHandler = mock(SantanderConnectionHandler.class);
 
         final var credVerStorage = new Object() {
             boolean isNikCorrect = false;
