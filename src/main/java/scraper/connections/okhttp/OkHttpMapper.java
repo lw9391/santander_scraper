@@ -10,6 +10,7 @@ import scraper.connections.RequestDto;
 import scraper.connections.ResponseDto;
 
 import java.io.IOException;
+import java.nio.charset.StandardCharsets;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -29,7 +30,7 @@ public class OkHttpMapper {
         ResponseBody responseBody = response.body();
         if (responseBody != null) {
             byte[] bytes = response.body().bytes();
-            responseBodyString = new String(bytes, "Cp1250");
+            responseBodyString = new String(bytes, StandardCharsets.UTF_8);
         }
 
         return builder.setResponseBody(responseBodyString)
