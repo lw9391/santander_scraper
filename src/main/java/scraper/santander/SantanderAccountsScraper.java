@@ -12,11 +12,6 @@ import scraper.InvalidCredentialsException;
 import java.util.List;
 
 public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
-    public static final String HOST = "https://www.centrum24.pl";
-    public static final String PATH = "/centrum24-web";
-    public static final String DASHBOARD_PATH = "/centrum24-web/multi";
-    public static final String LOGOUT = "https://www.centrum24.pl/centrum24-web/logout";
-
     private final SantanderSession session;
     private final CredentialsVerifier credentialsVerifier;
     private final ViewController viewController;

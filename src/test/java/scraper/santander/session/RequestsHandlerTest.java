@@ -5,6 +5,7 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
 import scraper.AccountDetails;
+import scraper.connections.HttpRequestSender;
 import scraper.santander.PathsNames;
 import scraper.connections.ResponseDto;
 
@@ -21,17 +22,19 @@ import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
-class OkHttpRequestsHandlerTest {
+class RequestsHandlerTest {
     private RequestHandler requestsHandler;
     private SantanderSession session;
-    private SantanderConnectionHandler connectionHandlerMock;
+    private HttpRequestSender senderMock;
+    private SantanderRequestProvider provider;
 
     @BeforeEach
     void setUp() {
-        connectionHandlerMock = mock(SantanderConnectionHandler.class);
-        requestsHandler = new RequestHandler(connectionHandlerMock);
+        senderMock = mock(HttpRequestSender.class);
+        provider = new SantanderRequestProvider("localhost");
+        requestsHandler = new RequestHandler(senderMock, provider);
         session = new SantanderSession(requestsHandler);
-        session.updateReferer("referer");
+        session.updateReferer("login?referer");
     }
 
     @Test
@@ -43,7 +46,7 @@ class OkHttpRequestsHandlerTest {
         when(response.getStatus()).thenReturn(200);
 
         when(response.getRequestUrl()).thenReturn("https://google.pl");
-        when(connectionHandlerMock.GETLoginPage()).thenReturn(response);
+        when(senderMock.sendGET(provider.GETLoginPage())).thenReturn(response);
         String loginPageParam = requestsHandler.sendLoginPageRequest();
         assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", loginPageParam);
         assertEquals(session.getCurrentReferer(), "https://google.pl");
@@ -58,7 +61,7 @@ class OkHttpRequestsHandlerTest {
         when(responseMock.getResponseBody()).thenReturn(xml);
         when(responseMock.getStatus()).thenReturn(200);
 
-        when(connectionHandlerMock.GETXmlWithPathForNikPage(any(), eq("referer"))).thenReturn(responseMock);
+        when(senderMock.sendGET(any())).thenReturn(responseMock);
 
         String response = requestsHandler.sendRedirectXmlRequest("query");
         assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", response);
@@ -72,7 +75,7 @@ class OkHttpRequestsHandlerTest {
         when(responseMock.getResponseBody()).thenReturn(xml);
         when(responseMock.getStatus()).thenReturn(200);
 
-        when(connectionHandlerMock.POSTNik("?x=query", "111111", "referer")).thenReturn(responseMock);
+        when(senderMock.sendPOST(provider.POSTNik("?x=query", "111111", "login?referer"))).thenReturn(responseMock);
 
         String response = requestsHandler.sendNikRequest("?x=query", "111111");
         assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", response);
@@ -88,9 +91,8 @@ class OkHttpRequestsHandlerTest {
         when(passPageMock.getStatus()).thenReturn(200);
         when(passPageMock.getRequestUrl()).thenReturn("https://google.pl");
 
-        when(connectionHandlerMock.GETPasswordPage("path", "referer")).thenReturn(passPageMock);
+        when(senderMock.sendGET(provider.GETPasswordPage("path", "login?referer"))).thenReturn(passPageMock);
         URL url = new URL("https://google.pl");
-
 
         Map<PathsNames,String> paths = requestsHandler.sendPasswordPageRequest("path");
         assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", paths.get(PathsNames.PASSWORD));
@@ -107,7 +109,7 @@ class OkHttpRequestsHandlerTest {
         when(htmlWithTokenMock.getStatus()).thenReturn(200);
         when(htmlWithTokenMock.getRequestUrl()).thenReturn("https://google.pl");
 
-        when(connectionHandlerMock.POSTPassword("path", "password", "referer")).thenReturn(htmlWithTokenMock);
+        when(senderMock.sendPOST(provider.POSTPassword("path", "password", "login?referer"))).thenReturn(htmlWithTokenMock);
         URL url = new URL("https://google.pl");
 
         String response = requestsHandler.sendPasswordRequest("path", "password");
@@ -124,7 +126,8 @@ class OkHttpRequestsHandlerTest {
         when(htmlWithDashboardMock.getResponseBody()).thenReturn(html);
         when(htmlWithDashboardMock.getStatus()).thenReturn(200);
         when(htmlWithDashboardMock.getRequestUrl()).thenReturn("https://google.pl");
-        when(connectionHandlerMock.POSTToken("path", "111-111", "referer")).thenReturn(htmlWithDashboardMock);
+
+        when(senderMock.sendPOST(provider.POSTToken("path", "111-111", "login?referer"))).thenReturn(htmlWithDashboardMock);
         URL url = new URL("https://google.pl");
 
         var paths = requestsHandler.sendTokenRequest("path", "111-111");
@@ -140,7 +143,7 @@ class OkHttpRequestsHandlerTest {
         ResponseDto productsPage = mock(ResponseDto.class);
         when(productsPage.getResponseBody()).thenReturn(html);
         when(productsPage.getStatus()).thenReturn(200);
-        when(connectionHandlerMock.GETProductsPage("/path", "referer")).thenReturn(productsPage);
+        when(senderMock.sendGET(provider.GETProductsPage("/path", "login?referer"))).thenReturn(productsPage);
         List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation("/path");
         assertEquals("112,00 PLN", accountDetailsList.get(0).getBalance());
         assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).getAccountName());

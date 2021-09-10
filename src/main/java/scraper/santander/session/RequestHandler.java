@@ -2,6 +2,8 @@ package scraper.santander.session;
 
 import scraper.AccountDetails;
 import scraper.InvalidCredentialsException;
+import scraper.connections.HttpRequestSender;
+import scraper.connections.RequestDto;
 import scraper.connections.ResponseDto;
 import scraper.santander.DataScraper;
 import scraper.santander.PathsNames;
@@ -13,27 +15,31 @@ import java.util.List;
 import java.util.Map;
 
 public class RequestHandler {
-    private final SantanderConnectionHandler connectionHandler;
+    private final HttpRequestSender sender;
+    private final SantanderRequestProvider provider;
     private final DataBuilder dataBuilder;
     private final DataScraper dataScraper;
 
     private SantanderSession session;
 
-    public RequestHandler(SantanderConnectionHandler connectionHandler, SantanderSession session) {
-        this.connectionHandler = connectionHandler;
+    public RequestHandler(HttpRequestSender sender, SantanderRequestProvider provider, SantanderSession session) {
         this.session = session;
         this.dataBuilder = new DataBuilder();
         this.dataScraper = new DataScraper();
+        this.sender = sender;
+        this.provider = provider;
     }
 
-    public RequestHandler(SantanderConnectionHandler connectionHandler) {
-        this.connectionHandler = connectionHandler;
+    public RequestHandler(HttpRequestSender sender, SantanderRequestProvider provider) {
         this.dataBuilder = new DataBuilder();
         this.dataScraper = new DataScraper();
+        this.sender = sender;
+        this.provider = provider;
     }
 
     public String sendLoginPageRequest() {
-        ResponseDto response = connectionHandler.GETLoginPage();
+        RequestDto requestDto = provider.GETLoginPage();
+        ResponseDto response = sender.sendGET(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during getting login page.");
@@ -47,7 +53,9 @@ public class RequestHandler {
     public String sendRedirectXmlRequest(String queryParam) {
         long timestamp = new Date().getTime();
         String queryForXml = queryParam + "&_=" + timestamp;
-        ResponseDto response = connectionHandler.GETXmlWithPathForNikPage(queryForXml, session.getCurrentReferer());
+
+        RequestDto requestDto = provider.GETXmlWithPathForNikPage(queryForXml, session.getCurrentReferer());
+        ResponseDto response = sender.sendGET(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during getting redirect xml.");
@@ -57,7 +65,8 @@ public class RequestHandler {
     }
 
     public String sendNikRequest(String queryParam, String nik) {
-        ResponseDto response = connectionHandler.POSTNik(queryParam, nik, session.getCurrentReferer());
+        RequestDto requestDto = provider.POSTNik(queryParam, nik, session.getCurrentReferer());
+        ResponseDto response = sender.sendPOST(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during sending nik.");
@@ -67,7 +76,8 @@ public class RequestHandler {
     }
 
     public Map<PathsNames,String> sendPasswordPageRequest(String path) {
-        ResponseDto response = connectionHandler.GETPasswordPage(path, session.getCurrentReferer());
+        RequestDto requestDto = provider.GETPasswordPage(path, session.getCurrentReferer());
+        ResponseDto response = sender.sendGET(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during getting password page");
@@ -83,7 +93,9 @@ public class RequestHandler {
                 "true%2Ctrue%2Ctrue%2Ctrue%2Cfalse%2Ctrue%2Cfalse%2C1300%2C1.5%2C1300%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Cfalse%2Cfalse%2Cfalse%2Cfalse%2Cfalse%2Cfalse%2Ctrue%2Cfalse%2Cfalse";
         long timestamp = new Date().getTime();
         String queryParams = dataBuilder.buildQueryParams("sessionMap", mapSettings, "_", String.valueOf(timestamp));
-        ResponseDto response = connectionHandler.GETSendSessionMap(path + queryParams, session.getCurrentReferer());
+
+        RequestDto requestDto = provider.GETSendSessionMap(path + queryParams, session.getCurrentReferer());
+        ResponseDto response = sender.sendGET(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during sending session map.");
@@ -91,7 +103,8 @@ public class RequestHandler {
     }
 
     public String sendPasswordRequest(String path, String password) {
-        ResponseDto response = connectionHandler.POSTPassword(path, password, session.getCurrentReferer());
+        RequestDto requestDto = provider.POSTPassword(path, password, session.getCurrentReferer());
+        ResponseDto response = sender.sendPOST(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during sending password");
@@ -103,7 +116,8 @@ public class RequestHandler {
     }
 
     public Map<PathsNames,String> sendTokenRequest(String tokenConfirmationPath, String token) {
-        ResponseDto response = connectionHandler.POSTToken(tokenConfirmationPath, token, session.getCurrentReferer());
+        RequestDto requestDto = provider.POSTToken(tokenConfirmationPath, token, session.getCurrentReferer());
+        ResponseDto response = sender.sendPOST(requestDto);
 
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during sending token");
@@ -123,10 +137,12 @@ public class RequestHandler {
     }
 
     public List<AccountDetails> scrapeAccountsInformation(String path) {
-        ResponseDto response = connectionHandler.GETProductsPage(path, session.getCurrentReferer());
+        RequestDto requestDto = provider.GETProductsPage(path, session.getCurrentReferer());
+        ResponseDto response = sender.sendGET(requestDto);
 
         if (!(response.getStatus() == 200)) {
-            connectionHandler.GETEmergencyLogout(session.getCurrentReferer());
+            RequestDto logout = provider.GETEmergencyLogout(session.getCurrentReferer());
+            sender.sendGET(logout);
             throw new RuntimeException("Status code error during getting product page.");
         }
 
@@ -134,14 +150,15 @@ public class RequestHandler {
     }
 
     public void sendLogoutRequest(String query) {
-        ResponseDto response = connectionHandler.GETLogout(query, session.getCurrentReferer());
-
+        RequestDto requestDto = provider.GETLogout(query, session.getCurrentReferer());
+        ResponseDto response = sender.sendGET(requestDto);
         if (!(response.getStatus() == 200)) {
             throw new RuntimeException("Status code error during logout");
         }
 
-        if (!response.getRequestUrl().equals(SantanderAccountsScraper.LOGOUT)) {
-            connectionHandler.GETEmergencyLogout(session.getCurrentReferer());
+        if (!response.getRequestUrl().equals(provider.LOGOUT)) {
+            RequestDto logout = provider.GETEmergencyLogout(session.getCurrentReferer());
+            sender.sendGET(logout);
         }
     }
 
