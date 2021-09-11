@@ -11,7 +11,7 @@ repositories {
 }
 
 application {
-    mainClass.set('App')
+    mainClass.set('scraper/App')
 }
 
 run {
