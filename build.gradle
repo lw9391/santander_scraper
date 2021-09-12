@@ -18,6 +18,8 @@ run {
     standardInput = System.in
 }
 
+defaultTasks('build')
+
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
     implementation 'com.squareup.okhttp3:okhttp-urlconnection:4.9.1'
