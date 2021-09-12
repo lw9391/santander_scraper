@@ -19,21 +19,21 @@ import static scraper.santander.PathsNames.SESSION_MAP;
 
 public class DataScraper {
 
-    public final String scrapeXmlPathFromLoginPage(String loginPageHtml) {
+    public static String scrapeXmlPathFromLoginPage(String loginPageHtml) {
         String scriptWithQuery = getFromHtmlById(loginPageHtml, "DpsBtnEnable");
         String regexToFindJson = "\\{\"u\":\".*?\"\\}";
         String json = findInString(scriptWithQuery, regexToFindJson).get(0);
         return getJsonValue(json, "u").substring(1);
     }
 
-    public final String scrapeNikPagePathFromRedirectXml(String redirectXml) {
+    public static String scrapeNikPagePathFromRedirectXml(String redirectXml) {
         String jsFunction = getXmlElement(redirectXml, "evaluate");
         String regexToFindJson = "\\{\"u\":\".*?\\}";
         String json = findInString(jsFunction, regexToFindJson).get(0);
         return getJsonValue(json, "u").substring(1);
     }
 
-    private String getJsonValue(String json, String... fields) {
+    private static String getJsonValue(String json, String... fields) {
         JsonObject jsonObject = JsonParser.parseString(json).getAsJsonObject();
         for (int i = 0; i < fields.length - 1; i++) {
             jsonObject = jsonObject.get(fields[i]).getAsJsonObject();
@@ -41,17 +41,17 @@ public class DataScraper {
         return jsonObject.get(fields[fields.length - 1]).getAsString();
     }
 
-    public final String scrapePasswordPagePathFromNikResponse(String nikResponsePageHtml) {
+    public static String scrapePasswordPagePathFromNikResponse(String nikResponsePageHtml) {
         String redirectElement = getXmlElement(nikResponsePageHtml, "redirect");
         return getSubstringBetween(redirectElement,"/","]");
     }
 
-    private String getXmlElement(String xml, String tagName) {
+    private static String getXmlElement(String xml, String tagName) {
         Document xmlDoc = Jsoup.parse(xml, "", org.jsoup.parser.Parser.xmlParser());
         return xmlDoc.select(tagName).html();
     }
 
-    public final Map<PathsNames, String> scrapePathsFromPasswordPage(String passwordPageHtml) {
+    public static Map<PathsNames, String> scrapePathsFromPasswordPage(String passwordPageHtml) {
         String pathForSessionMap = scrapePathForSessionMapRequest(passwordPageHtml);
 
         String attribute = getAttributeFromHtml(passwordPageHtml, "pinForm", "action");
@@ -61,33 +61,33 @@ public class DataScraper {
         return Map.of(SESSION_MAP, pathForSessionMap, PASSWORD, pathForPasswordRequest);
     }
 
-    private String scrapePathForSessionMapRequest(String html) {
+    private static String scrapePathForSessionMapRequest(String html) {
         Document document = Jsoup.parse(html);
         Elements head = document.select("head");
         String script = head.select("script").not("[src]").not("[id]").html();
         return getSubstringBetween(script, "/crypt", "\"");
     }
 
-    private String getSubstringBetween(String input, String start, String end) {
+    private static String getSubstringBetween(String input, String start, String end) {
         int startIndex = input.indexOf(start);
         String part = input.substring(startIndex);
         int endIndex = part.indexOf(end);
         return part.substring(0, endIndex);
     }
 
-    public final String scrapeTokenPathFromPasswordResponse(String passwordResponesPageHtml) {
+    public static String scrapeTokenPathFromPasswordResponse(String passwordResponesPageHtml) {
         String attribute = getAttributeFromHtml(passwordResponesPageHtml, "authenticationForm", "action");
         int startIndex = attribute.indexOf("/crypt.");
         return attribute.substring(startIndex);
     }
 
-    private String getAttributeFromHtml(String html, String id, String attribute) {
+    private static String getAttributeFromHtml(String html, String id, String attribute) {
         return Jsoup.parse(html)
                 .getElementById(id)
                 .attr(attribute);
     }
 
-    public final String scrapeInvalidLoginDiv(String tokenResponseHtml) {
+    public static String scrapeInvalidLoginDiv(String tokenResponseHtml) {
         Element logoutInfo = Jsoup.parse(tokenResponseHtml).getElementById("wylogowanie");
         if (logoutInfo == null) {
             return "";
@@ -95,7 +95,7 @@ public class DataScraper {
         return logoutInfo.outerHtml();
     }
 
-    public final Map<PathsNames,String> scrapePathsFromDashboardPage(String dashboardPageHtml) {
+    public static Map<PathsNames,String> scrapePathsFromDashboardPage(String dashboardPageHtml) {
         String logoutDiv = getFromHtmlByClass(dashboardPageHtml, "logout");
         String logoutPath = Jsoup.parse(logoutDiv).select("a").attr("href").substring(1);
 
@@ -105,19 +105,19 @@ public class DataScraper {
         return Map.of(PathsNames.LOGOUT, logoutPath, PathsNames.PRODUCTS, productsPath);
     }
 
-    private String getFromHtmlByClass(String html, String clazz) {
+    private static String getFromHtmlByClass(String html, String clazz) {
         return Jsoup.parse(html)
                 .getElementsByClass(clazz)
                 .outerHtml();
     }
 
-    private String getFromHtmlById(String html, String id) {
+    private static String getFromHtmlById(String html, String id) {
         return Jsoup.parse(html)
                 .getElementById(id)
                 .html();
     }
 
-    public final List<AccountDetails> scrapeAccountsInformationFromProductsPage(String productsPageHtml) {
+    public static List<AccountDetails> scrapeAccountsInformationFromProductsPage(String productsPageHtml) {
         List<AccountDetails> accountDetails = new ArrayList<>();
         List<AccountDetails> personalAccounts = getInformationAbout(productsPageHtml, "avistaAccountsBoxContent");
         accountDetails.addAll(personalAccounts);
@@ -128,7 +128,7 @@ public class DataScraper {
         return accountDetails;
     }
 
-    private List<AccountDetails> getInformationAbout(String html, String categoryId) {
+    private static List<AccountDetails> getInformationAbout(String html, String categoryId) {
         List<AccountDetails> personalAccounts = new ArrayList<>();
         Element table = Jsoup.parse(html)
                 .getElementById(categoryId)
@@ -154,7 +154,7 @@ public class DataScraper {
         return personalAccounts;
     }
 
-    private List<String> findInString(String input, String regex) {
+    private static List<String> findInString(String input, String regex) {
         List<String> result = new ArrayList<>();
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(input);

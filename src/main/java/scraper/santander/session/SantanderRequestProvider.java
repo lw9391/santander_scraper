@@ -11,7 +11,7 @@ import static scraper.Header.USER_AGENT;
 
 public class SantanderRequestProvider {
     public final String HOST;
-    public final String PATH = "/centrum24-web";;
+    public final String PATH = "/centrum24-web";
     public final String DASHBOARD_PATH = "/centrum24-web/multi";
     public final String LOGOUT = "/logout";
 
@@ -120,7 +120,7 @@ public class SantanderRequestProvider {
                 .build();
     }
 
-    private RequestDto.Builder setCommonHeaders(RequestDto.Builder builder) {
+    private static RequestDto.Builder setCommonHeaders(RequestDto.Builder builder) {
         return builder.setHeader(ACCEPT.name, ACCEPT.value)
                 .setHeader(ACCEPT_LANGUAGE.name, ACCEPT_LANGUAGE.value)
                 .setHeader(CACHE_CONTROL.name, CACHE_CONTROL.value)

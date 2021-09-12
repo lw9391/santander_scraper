@@ -151,7 +151,7 @@ class RequestsHandlerTest {
         assertEquals("Konto Oszczednosciowe w PLN", accountDetailsList.get(1).getAccountName());
     }
 
-    private String testDataSupplier(String filePath) {
+    private static String testDataSupplier(String filePath) {
         Path path = Paths.get(filePath);
         try {
             return Files.readString(path, StandardCharsets.UTF_8);

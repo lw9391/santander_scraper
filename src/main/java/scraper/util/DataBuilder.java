@@ -1,11 +1,11 @@
 package scraper.util;
 
 public class DataBuilder {
-    public String buildQueryParams(String... keyValuePairs) {
+    public static String buildQueryParams(String... keyValuePairs) {
         return "?" + buildX_www_form_urlencoded(keyValuePairs);
     }
 
-    public String buildX_www_form_urlencoded(String... keyValuePairs) {
+    public static String buildX_www_form_urlencoded(String... keyValuePairs) {
         if (keyValuePairs.length == 0 || keyValuePairs.length %2 != 0) {
             throw new IllegalArgumentException("Arguments must be provided as key - value pairs.");
         }
