@@ -113,7 +113,11 @@ public class MockWebServerProvider {
                         return productsPage();
                     }
 
-                    case HOST + DASHBOARD_PATH + logoutPath, LOGOUT -> {
+                    case HOST + DASHBOARD_PATH + logoutPath -> {
+                        return logoutRedirect();
+                    }
+
+                    case LOGOUT -> {
                         return logoutPage();
                     }
 
@@ -227,6 +231,12 @@ public class MockWebServerProvider {
         return new MockResponse()
                 .setBody("Poprawnie wylogowany")
                 .setHeader("Content-Type", "text/html; charset=UTF-8");
+    }
+
+    private static MockResponse logoutRedirect() {
+        return new MockResponse()
+                .setResponseCode(302)
+                .setHeader("Location", LOGOUT);
     }
 
     private static MockResponse productsPage() {

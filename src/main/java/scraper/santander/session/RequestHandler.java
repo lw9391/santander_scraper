@@ -99,8 +99,7 @@ public class RequestHandler {
     public void sendLogoutRequest(String query) {
         Supplier<RequestDto> request = () -> provider.GETLogout(query, session.getCurrentReferer());
         ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendGET, Function.identity());
-
-        if (!processedResult.response.getRequestUrl().equals(provider.LOGOUT)) {
+        if (!processedResult.response.getRequestUrl().equals(provider.HOST + provider.PATH + provider.LOGOUT)) {
             RequestDto logout = provider.GETEmergencyLogout(session.getCurrentReferer());
             sender.sendGET(logout);
         }

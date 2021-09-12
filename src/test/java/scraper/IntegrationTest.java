@@ -12,6 +12,7 @@ import scraper.view.ViewController;
 import java.io.IOException;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.Mockito.*;
 
@@ -44,6 +45,7 @@ public class IntegrationTest {
         App.setLocalhost(true);
         App.main(args);
         verify(viewControllerMock,times(1)).displayOutput(expectedResult());
+        assertEquals(11, mockWebServer.getRequestCount());
     }
 
     private static List<AccountDetails> expectedResult() {
