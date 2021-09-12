@@ -7,12 +7,14 @@ Simple CLI app that signs into Santander bank account and prints a lists of acco
 * Gradle 7.0.0
 * Gson 2.8.7
 * OkHttp 4.9.1
+* MockWebServer 4.9.1
 * Jsoup 1.14.1
 * JUnit 5.7.1
 * Mockito 3.11.2
 
 ## Launch
-Navigate to the project folder and build it with a gradle wrapper using ./gradlew build command. 
+Build project by launching gradlew script (gradlew runs 'build' task by default) 
+or do it classic way using './gradlew build' command in console in project folder.
 After that you can unpack a zip file from build/distribution folder, navigate to the bin and start it by 
 typing `SantanderScraper <nik> <password>`.
 After a short while program will ask you to type sms token to confirm your signing in.
