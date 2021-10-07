@@ -1,5 +1,6 @@
 package scraper.connections.okhttp;
 
+import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
@@ -8,13 +9,22 @@ import scraper.connections.RequestDto;
 import scraper.connections.ResponseDto;
 
 import java.io.IOException;
+import java.net.CookieManager;
+import java.net.CookiePolicy;
 
 public class OkHttpRequestsSender implements HttpRequestSender {
 
     private final OkHttpClient client;
 
-    public OkHttpRequestsSender(OkHttpClient client) {
-        this.client = client;
+    public OkHttpRequestsSender() {
+        CookieManager cookieManager = new CookieManager();
+        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+        JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
+
+        OkHttpClient.Builder builder = new OkHttpClient.Builder();
+        this.client = builder.cache(null)
+                .cookieJar(cookieJar)
+                .build();
     }
 
     @Override

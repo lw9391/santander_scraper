@@ -1,7 +1,5 @@
 package scraper;
 
-import okhttp3.JavaNetCookieJar;
-import okhttp3.OkHttpClient;
 import scraper.connections.HttpRequestSender;
 import scraper.connections.okhttp.OkHttpRequestsSender;
 import scraper.santander.SantanderAccountsScraper;
@@ -10,9 +8,6 @@ import scraper.santander.session.SantanderRequestProvider;
 import scraper.santander.session.SantanderSession;
 import scraper.view.ConsoleController;
 import scraper.view.ViewController;
-
-import java.net.CookieManager;
-import java.net.CookiePolicy;
 
 public class App {
     private static ViewController controller;
@@ -33,7 +28,7 @@ public class App {
     }
 
     private static SantanderAccountsScraper initScraper(String host) {
-        HttpRequestSender sender = initRequestSender();
+        HttpRequestSender sender = new OkHttpRequestsSender();
         SantanderRequestProvider provider = new SantanderRequestProvider(host);
         RequestHandler requestHandler = new RequestHandler(sender, provider);
         SantanderSession session = new SantanderSession(requestHandler);
@@ -41,19 +36,6 @@ public class App {
             controller = new ConsoleController();
         }
         return new SantanderAccountsScraper(session, controller);
-    }
-
-    private static HttpRequestSender initRequestSender() {
-        CookieManager cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
-
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        OkHttpClient client = builder.cache(null)
-                .cookieJar(cookieJar)
-                .build();
-
-        return new OkHttpRequestsSender(client);
     }
 
     public static void setViewController(ViewController viewController) {
