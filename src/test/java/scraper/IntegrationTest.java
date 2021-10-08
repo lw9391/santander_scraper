@@ -7,13 +7,18 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
+import scraper.connections.HttpRequestSender;
+import scraper.connections.okhttp.OkHttpRequestsSender;
+import scraper.santander.SantanderAccountsScraper;
+import scraper.santander.session.RequestHandler;
+import scraper.santander.session.SantanderRequestProvider;
+import scraper.santander.session.SantanderSession;
 import scraper.view.ViewController;
 
 import java.io.IOException;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -38,14 +43,11 @@ public class IntegrationTest {
     }
 
     @Test
-    void testScraper() {
+    void runAndGetExpectedResult() {
         when(viewControllerMock.readInput()).thenReturn(token);
-        String[] args = {credentials.getAccountNumber(), credentials.getPassword()};
-        App.setViewController(viewControllerMock);
-        App.setLocalhost(true);
-        App.main(args);
+        SantanderAccountsScraper scraper = new SantanderAccountsScraper(initTestSession(), viewControllerMock);
+        scraper.run(credentials);
         verify(viewControllerMock,times(1)).displayOutput(expectedResult());
-        assertEquals(11, mockWebServer.getRequestCount());
     }
 
     private static List<AccountDetails> expectedResult() {
@@ -55,23 +57,31 @@ public class IntegrationTest {
     }
 
     @Test
-    void testIncorrectPassword() {
+    void runWithInvalidCredentialsThrowsException() {
         when(viewControllerMock.readInput()).thenReturn(token);
         Credentials incorrect = new Credentials("111111","anypassword");
-        String[] args = {incorrect.getAccountNumber(), incorrect.getPassword()};
-        App.setViewController(viewControllerMock);
-        App.setLocalhost(true);
-        assertThrows(InvalidCredentialsException.class, () -> App.main(args));
+        SantanderAccountsScraper scraper = new SantanderAccountsScraper(initTestSession(), viewControllerMock);
+        assertThrows(InvalidCredentialsException.class, () -> scraper.run(incorrect));
     }
 
     @Test
-    void testIncorrectToken() {
+    void runWithInvalidTokenThrowsException() {
         String incorrectToken = "111-111";
         when(viewControllerMock.readInput()).thenReturn(incorrectToken);
-        String[] args = {credentials.getAccountNumber(), credentials.getPassword()};
-        App.setViewController(viewControllerMock);
-        App.setLocalhost(true);
-        assertThrows(InvalidCredentialsException.class, () -> App.main(args));
+        SantanderAccountsScraper scraper = new SantanderAccountsScraper(initTestSession(), viewControllerMock);
+        assertThrows(InvalidCredentialsException.class, () -> scraper.run(credentials));
+    }
+
+    private SantanderSession initTestSession() {
+        HttpRequestSender sender = new OkHttpRequestsSender();
+        SantanderRequestProvider provider = new SantanderRequestProvider(readHostFromMockServer());
+        RequestHandler requestHandler = new RequestHandler(sender, provider);
+        return new SantanderSession(requestHandler);
+    }
+
+    private String readHostFromMockServer() {
+        String host = mockWebServer.url("").toString();
+        return host.substring(0, host.length() - 1); //rid of ending backslash
     }
 
     @AfterEach

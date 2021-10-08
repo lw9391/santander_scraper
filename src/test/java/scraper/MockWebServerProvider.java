@@ -15,10 +15,9 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class MockWebServerProvider {
-    public static final String HOST = "http://127.0.0.1:8889";
     public static final String PATH = "/centrum24-web";
     public static final String DASHBOARD_PATH = "/centrum24-web/multi";
-    public static final String LOGOUT = HOST + "/centrum24-web/logout";
+    public static final String LOGOUT = "/centrum24-web/logout";
 
     private static final String xmlPath = "/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV";
     private static final String nikPath = "/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg";
@@ -47,22 +46,22 @@ public class MockWebServerProvider {
             @NotNull
             @Override
             public MockResponse dispatch(@NotNull RecordedRequest recordedRequest) throws InterruptedException {
-                String url = recordedRequest.getRequestUrl().toString();
+                String path = recordedRequest.getPath();
                 String body = recordedRequest.getBody().readUtf8();
 
-                switch (url) {
+                switch (path) {
                     /* login page request */
-                    case HOST + PATH + "/login" -> {
+                    case PATH + "/login" -> {
                         return loginRedirect();
                     }
 
                     /* redirect from login page */
-                    case HOST + PATH + "/login?x=vJL0iClolC8" -> {
+                    case PATH + "/login?x=vJL0iClolC8" -> {
                         return loginPage();
                     }
 
                     /* post request with nik */
-                    case HOST + PATH + nikPath -> {
+                    case PATH + nikPath -> {
                         if (nikBodyCheck(body)) {
                             int start = 4;
                             int end = body.indexOf("&dp");
@@ -76,12 +75,12 @@ public class MockWebServerProvider {
                     }
 
                     /* request for page with password form */
-                    case HOST + PATH + passPagePath -> {
+                    case PATH + passPagePath -> {
                         return passwordPage();
                     }
 
                     /* post request with password */
-                    case HOST + PATH + passwordPath -> {
+                    case PATH + passwordPath -> {
                         if (passBodyCheck(body)) {
                             int start = body.indexOf("=") + 1;
                             int end = body.indexOf("&loginButton");
@@ -94,7 +93,7 @@ public class MockWebServerProvider {
                     }
 
                     /* post request with token */
-                    case HOST + PATH + tokenPath -> {
+                    case PATH + tokenPath -> {
                         if (tokenBodyCheck(body)) {
                             int start = body.indexOf("=") + 1;
                             int end = body.indexOf("&loginButton");
@@ -109,11 +108,11 @@ public class MockWebServerProvider {
                     }
 
                     /* products page request */
-                    case HOST + DASHBOARD_PATH + productsPath -> {
+                    case DASHBOARD_PATH + productsPath -> {
                         return productsPage();
                     }
 
-                    case HOST + DASHBOARD_PATH + logoutPath -> {
+                    case DASHBOARD_PATH + logoutPath -> {
                         return logoutRedirect();
                     }
 
@@ -123,11 +122,11 @@ public class MockWebServerProvider {
 
                 }
 
-                if (matchesXmlRequestPath(url)) {
+                if (matchesXmlRequestPath(path)) {
                     return xmlWithPathForNikPage();
                 }
 
-                if (matchesSessionMapPath(url)) {
+                if (matchesSessionMapPath(path)) {
                     return sessionMapResponse();
                 }
 
@@ -152,7 +151,7 @@ public class MockWebServerProvider {
     }
 
     private static boolean matchesXmlRequestPath(String url) {
-        String regex = HOST + PATH + xmlPath + "&_=\\d+";
+        String regex = PATH + xmlPath + "&_=\\d+";
         regex = regex.replaceAll("/","\\/")
                 .replaceAll("\\.","\\\\.")
                 .replaceAll("\\?","\\\\?");
@@ -160,7 +159,7 @@ public class MockWebServerProvider {
     }
 
     private static boolean matchesSessionMapPath(String url) {
-        String regex = HOST + PATH + sessionMapPath + "?sessionMap=" + sessionMap + "&_=\\d+";
+        String regex = PATH + sessionMapPath + "?sessionMap=" + sessionMap + "&_=\\d+";
         regex = regex.replaceAll("/","\\/")
                 .replaceAll("\\.","\\\\.")
                 .replaceAll("\\?","\\\\?");
@@ -176,7 +175,7 @@ public class MockWebServerProvider {
     private static MockResponse loginRedirect() {
         return new MockResponse()
                 .setResponseCode(302)
-                .setHeader("Location", HOST + PATH + "/login?x=vJL0iClolC8");
+                .setHeader("Location", PATH + "/login?x=vJL0iClolC8");
     }
 
     private static MockResponse loginPage() {
