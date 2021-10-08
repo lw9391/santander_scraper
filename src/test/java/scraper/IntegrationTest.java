@@ -3,7 +3,6 @@ package scraper;
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.junit.jupiter.MockitoExtension;
@@ -36,14 +35,9 @@ public class IntegrationTest {
         viewControllerMock = mock(ViewController.class);
     }
 
-    @BeforeEach
-    void setUp() throws IOException {
-        mockWebServer = MockWebServerProvider.getMockWebServer(credentials, token);
-        mockWebServer.start(8889);
-    }
-
     @Test
-    void runAndGetExpectedResult() {
+    void runAndGetExpectedResult() throws IOException {
+        setUpServer(MockWebServerProvider.getServer());
         when(viewControllerMock.readInput()).thenReturn(token);
         SantanderAccountsScraper scraper = new SantanderAccountsScraper(initTestSession(), viewControllerMock);
         scraper.run(credentials);
@@ -57,19 +51,16 @@ public class IntegrationTest {
     }
 
     @Test
-    void runWithInvalidCredentialsThrowsException() {
+    void runWithInvalidCredentialsThrowsException() throws IOException {
+        setUpServer(MockWebServerProvider.getServerWithResponsesForInvalidCred());
         when(viewControllerMock.readInput()).thenReturn(token);
-        Credentials incorrect = new Credentials("111111","anypassword");
-        SantanderAccountsScraper scraper = new SantanderAccountsScraper(initTestSession(), viewControllerMock);
-        assertThrows(InvalidCredentialsException.class, () -> scraper.run(incorrect));
-    }
-
-    @Test
-    void runWithInvalidTokenThrowsException() {
-        String incorrectToken = "111-111";
-        when(viewControllerMock.readInput()).thenReturn(incorrectToken);
         SantanderAccountsScraper scraper = new SantanderAccountsScraper(initTestSession(), viewControllerMock);
         assertThrows(InvalidCredentialsException.class, () -> scraper.run(credentials));
+    }
+
+    private void setUpServer(MockWebServer server) throws IOException {
+        mockWebServer = server;
+        server.start(8889);
     }
 
     private SantanderSession initTestSession() {
