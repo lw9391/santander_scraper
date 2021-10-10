@@ -14,11 +14,41 @@ application {
     mainClass.set('scraper/App')
 }
 
+sourceSets {
+    acceptance {
+        java.srcDir "$projectDir/src/acceptance/java"
+        resources.srcDir "$projectDir/src/acceptance/resources"
+        compileClasspath += main.output + test.output
+        runtimeClasspath += main.output + test.output
+    }
+}
+
+configurations {
+    acceptanceImplementation.extendsFrom testImplementation
+    acceptanceRuntime.extendsFrom testRuntime
+}
+
+task acceptanceTest(type: Test) {
+    useJUnitPlatform()
+    testClassesDirs = sourceSets.acceptance.output.classesDirs
+    classpath = sourceSets.acceptance.runtimeClasspath
+}
+
+distributions {
+    distTar.enabled = false
+}
+
+task unzipApplication(type: Copy) {
+    dependsOn build
+    from zipTree('build/distributions/SantanderScraper-1.0-SNAPSHOT.zip')
+    into('application')
+}
+
 run {
     standardInput = System.in
 }
 
-defaultTasks('build')
+defaultTasks('build','unzipApplication')
 
 dependencies {
     implementation 'com.squareup.okhttp3:okhttp:4.9.1'
