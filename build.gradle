@@ -28,10 +28,15 @@ configurations {
     acceptanceRuntime.extendsFrom testRuntime
 }
 
-task acceptanceTest(type: Test) {
-    useJUnitPlatform()
-    testClassesDirs = sourceSets.acceptance.output.classesDirs
+task runAcceptanceTests(type: JavaExec) {
+    group = "Execution"
+    description = "Run acceptance tests"
     classpath = sourceSets.acceptance.runtimeClasspath
+    mainClass.set("src/acceptance/java/AcceptanceTestsRunner.java")
+}
+
+processAcceptanceResources {
+    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
 }
 
 distributions {
@@ -61,6 +66,8 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:3.11.2'
     testImplementation 'org.mockito:mockito-junit-jupiter:3.11.2'
     testImplementation 'com.squareup.okhttp3:mockwebserver:4.9.1'
+    implementation 'org.junit.platform:junit-platform-launcher:1.8.1'
+    implementation 'org.apiguardian:apiguardian-api:1.1.2'
 }
 
 test {

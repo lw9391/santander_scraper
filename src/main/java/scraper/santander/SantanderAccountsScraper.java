@@ -12,6 +12,7 @@ import scraper.InvalidCredentialsException;
 import java.util.List;
 
 public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
+    public static final String PROMPT_FOR_SMS_CODE = "Wprowadz sms-kod:";
     private final SantanderSession session;
     private final CredentialsVerifier credentialsVerifier;
     private final ViewController viewController;
@@ -28,7 +29,7 @@ public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
         session.sendNikRequest(credentials.getAccountNumber());
         session.sendPasswordRequest(credentials.getPassword());
 
-        viewController.displayMessage("Wprowadz sms-kod:");
+        viewController.displayMessage(PROMPT_FOR_SMS_CODE);
         String token = viewController.readInput();
         verifyToken(token);
         session.sendTokenRequest(token);
