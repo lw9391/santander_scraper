@@ -7,28 +7,28 @@ import java.util.List;
 
 public class ViewControllerStub implements ViewController {
 
-    private final List<AccountDetails> storedDetails;
+  private final List<AccountDetails> storedDetails;
 
-    public ViewControllerStub() {
-        storedDetails = new ArrayList<>();
-    }
+  public ViewControllerStub() {
+    storedDetails = new ArrayList<>();
+  }
 
-    @Override
-    public String readInput() {
-        return "111-111";
-    }
+  @Override
+  public String readInput() {
+    return "111-111";
+  }
 
-    @Override
-    public void displayMessage(String message) {
+  @Override
+  public void displayMessage(String message) {
 
-    }
+  }
 
-    @Override
-    public void displayOutput(List<AccountDetails> accountsList) {
-        storedDetails.addAll(accountsList);
-    }
+  @Override
+  public void displayOutput(List<AccountDetails> accountsList) {
+    storedDetails.addAll(accountsList);
+  }
 
-    public List<AccountDetails> getStoredDetails() {
-        return storedDetails;
-    }
+  public List<AccountDetails> getStoredDetails() {
+    return storedDetails;
+  }
 }

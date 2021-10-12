@@ -14,41 +14,41 @@ import java.net.CookiePolicy;
 
 public class OkHttpRequestsSender implements HttpRequestSender {
 
-    private final OkHttpClient client;
+  private final OkHttpClient client;
 
-    public OkHttpRequestsSender() {
-        CookieManager cookieManager = new CookieManager();
-        cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-        JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
+  public OkHttpRequestsSender() {
+    CookieManager cookieManager = new CookieManager();
+    cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
+    JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
 
-        OkHttpClient.Builder builder = new OkHttpClient.Builder();
-        this.client = builder.cache(null)
-                .cookieJar(cookieJar)
-                .build();
+    OkHttpClient.Builder builder = new OkHttpClient.Builder();
+    this.client = builder.cache(null)
+            .cookieJar(cookieJar)
+            .build();
+  }
+
+  @Override
+  public ResponseDto sendGET(RequestDto requestDto) {
+    Request request = OkHttpMapper.mapDtoToGetRequest(requestDto);
+
+    return sendHttpRequest(request);
+  }
+
+  @Override
+  public ResponseDto sendPOST(RequestDto requestDto) {
+    Request request = OkHttpMapper.mapDtoToPostRequest(requestDto);
+
+    return sendHttpRequest(request);
+  }
+
+  private ResponseDto sendHttpRequest(Request request) {
+    try {
+      Response response = client.newCall(request).execute();
+      ResponseDto responseDto = OkHttpMapper.mapToDto(response);
+      response.close();
+      return responseDto;
+    } catch (IOException e) {
+      throw new RuntimeException(e);
     }
-
-    @Override
-    public ResponseDto sendGET(RequestDto requestDto) {
-        Request request = OkHttpMapper.mapDtoToGetRequest(requestDto);
-
-        return sendHttpRequest(request);
-    }
-
-    @Override
-    public ResponseDto sendPOST(RequestDto requestDto) {
-        Request request = OkHttpMapper.mapDtoToPostRequest(requestDto);
-
-        return sendHttpRequest(request);
-    }
-
-    private ResponseDto sendHttpRequest(Request request) {
-        try {
-            Response response = client.newCall(request).execute();
-            ResponseDto responseDto = OkHttpMapper.mapToDto(response);
-            response.close();
-            return responseDto;
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-    }
+  }
 }

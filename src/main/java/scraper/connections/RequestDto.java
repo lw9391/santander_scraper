@@ -8,90 +8,90 @@ import java.util.Map;
 import java.util.Objects;
 
 public class RequestDto {
-    private final Map<String,String> headers;
-    private final String url;
-    private final List<FormBodyPair> formBody;
+  private final Map<String, String> headers;
+  private final String url;
+  private final List<FormBodyPair> formBody;
 
-    private RequestDto(Map<String, String> headers, String url, List<FormBodyPair> formBody) {
-        this.headers = headers;
-        this.url = url;
-        this.formBody = formBody;
+  private RequestDto(Map<String, String> headers, String url, List<FormBodyPair> formBody) {
+    this.headers = headers;
+    this.url = url;
+    this.formBody = formBody;
+  }
+
+  public static RequestDto.Builder builder() {
+    return new RequestDto.Builder();
+  }
+
+  public Map<String, String> getHeaders() {
+    return headers;
+  }
+
+  public String getUrl() {
+    return url;
+  }
+
+  public List<FormBodyPair> getFormBody() {
+    return formBody;
+  }
+
+  public static class Builder {
+    private Map<String, String> headers = new HashMap<>();
+    private String url;
+    private List<FormBodyPair> formBodyPairs = new ArrayList<>();
+
+    public RequestDto.Builder setHeader(String headerName, String headerValue) {
+      headers.put(headerName, headerValue);
+      return this;
     }
 
-    public static RequestDto.Builder builder() {
-        return new RequestDto.Builder();
+    public RequestDto.Builder setUrl(String url) {
+      this.url = url;
+      return this;
     }
 
-    public Map<String, String> getHeaders() {
-        return headers;
+    public RequestDto.Builder addFormBodyPair(String name, String value) {
+      formBodyPairs.add(new FormBodyPair(name, value));
+      return this;
     }
 
-    public String getUrl() {
-        return url;
+    public RequestDto build() {
+      return new RequestDto(Collections.unmodifiableMap(headers), url, Collections.unmodifiableList(formBodyPairs));
     }
+  }
 
-    public List<FormBodyPair> getFormBody() {
-        return formBody;
-    }
+  public static class FormBodyPair {
+    public final String name;
+    public final String value;
 
-    public static class Builder {
-        private Map<String,String> headers = new HashMap<>();
-        private String url;
-        private List<FormBodyPair> formBodyPairs = new ArrayList<>();
-
-        public RequestDto.Builder setHeader(String headerName, String headerValue) {
-            headers.put(headerName, headerValue);
-            return this;
-        }
-
-        public RequestDto.Builder setUrl(String url) {
-            this.url = url;
-            return this;
-        }
-
-        public RequestDto.Builder addFormBodyPair(String name, String value) {
-            formBodyPairs.add(new FormBodyPair(name, value));
-            return this;
-        }
-
-        public RequestDto build() {
-            return new RequestDto(Collections.unmodifiableMap(headers), url, Collections.unmodifiableList(formBodyPairs));
-        }
-    }
-
-    public static class FormBodyPair {
-        public final String name;
-        public final String value;
-
-        public FormBodyPair(String name, String value) {
-            this.name = name;
-            this.value = value;
-        }
-
-        @Override
-        public boolean equals(Object o) {
-            if (this == o) return true;
-            if (o == null || getClass() != o.getClass()) return false;
-            FormBodyPair that = (FormBodyPair) o;
-            return Objects.equals(name, that.name) && Objects.equals(value, that.value);
-        }
-
-        @Override
-        public int hashCode() {
-            return Objects.hash(name, value);
-        }
+    public FormBodyPair(String name, String value) {
+      this.name = name;
+      this.value = value;
     }
 
     @Override
     public boolean equals(Object o) {
-        if (this == o) return true;
-        if (o == null || getClass() != o.getClass()) return false;
-        RequestDto that = (RequestDto) o;
-        return Objects.equals(headers, that.headers) && Objects.equals(url, that.url) && Objects.equals(formBody, that.formBody);
+      if (this == o) return true;
+      if (o == null || getClass() != o.getClass()) return false;
+      FormBodyPair that = (FormBodyPair) o;
+      return Objects.equals(name, that.name) && Objects.equals(value, that.value);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(headers, url, formBody);
+      return Objects.hash(name, value);
     }
+  }
+
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    RequestDto that = (RequestDto) o;
+    return Objects.equals(headers, that.headers) && Objects.equals(url, that.url) && Objects.equals(formBody, that.formBody);
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(headers, url, formBody);
+  }
 }

@@ -7,22 +7,22 @@ import scraper.santander.SantanderCredentialsVerifier;
 import static org.junit.jupiter.api.Assertions.*;
 
 class SantanderCredentialsVerifierTest {
-    private SantanderCredentialsVerifier verifier;
+  private SantanderCredentialsVerifier verifier;
 
-    @BeforeEach
-    void setUp() {
-        this.verifier = new SantanderCredentialsVerifier();
-    }
+  @BeforeEach
+  void setUp() {
+    this.verifier = new SantanderCredentialsVerifier();
+  }
 
-    @Test
-    void verifyToken() {
-        String valid = "123-123";
-        String invalid1 = "12-123";
-        String invalid2 = "";
-        String invalid3 = "123123";
-        assertTrue(verifier.verifyToken(valid));
-        assertFalse(verifier.verifyToken(invalid1));
-        assertFalse(verifier.verifyToken(invalid2));
-        assertFalse(verifier.verifyToken(invalid3));
-    }
+  @Test
+  void verifyToken() {
+    String valid = "123-123";
+    String invalid1 = "12-123";
+    String invalid2 = "";
+    String invalid3 = "123123";
+    assertTrue(verifier.verifyToken(valid));
+    assertFalse(verifier.verifyToken(invalid1));
+    assertFalse(verifier.verifyToken(invalid2));
+    assertFalse(verifier.verifyToken(invalid3));
+  }
 }
