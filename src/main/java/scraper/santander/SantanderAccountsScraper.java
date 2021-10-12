@@ -1,17 +1,15 @@
 package scraper.santander;
 
 import scraper.AccountDetails;
-import scraper.AccountsInfoScraper;
 import scraper.Credentials;
 import scraper.CredentialsVerifier;
-import scraper.Logable;
 import scraper.santander.session.SantanderSession;
 import scraper.view.ViewController;
 import scraper.InvalidCredentialsException;
 
 import java.util.List;
 
-public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
+public class SantanderAccountsScraper {
   public static final String PROMPT_FOR_SMS_CODE = "Wprowadz sms-kod:";
   private final SantanderSession session;
   private final CredentialsVerifier credentialsVerifier;
@@ -23,8 +21,13 @@ public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
     this.credentialsVerifier = new SantanderCredentialsVerifier();
   }
 
-  @Override
-  public boolean logIn(Credentials credentials) {
+  public void run(Credentials credentials) {
+    logIn(credentials);
+    scrapeAccountsInfo();
+    session.logOut();
+  }
+
+  private void logIn(Credentials credentials) {
     verifyCredentials(credentials);
     session.sendNikRequest(credentials.getAccountNumber());
     session.sendPasswordRequest(credentials.getPassword());
@@ -33,7 +36,6 @@ public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
     String token = viewController.readInput();
     verifyToken(token);
     session.sendTokenRequest(token);
-    return true;
   }
 
   private void verifyCredentials(Credentials credentials) {
@@ -51,20 +53,8 @@ public class SantanderAccountsScraper implements Logable, AccountsInfoScraper {
     }
   }
 
-  @Override
-  public void logOut() {
-    session.logOut();
-  }
-
-  @Override
-  public void scrapeAccountsInfo() {
+  private void scrapeAccountsInfo() {
     List<AccountDetails> accountDetails = session.sendAccountsDetailsRequest();
     viewController.displayOutput(accountDetails);
-  }
-
-  public void run(Credentials credentials) {
-    logIn(credentials);
-    scrapeAccountsInfo();
-    logOut();
   }
 }
