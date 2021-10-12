@@ -27,7 +27,7 @@ public class AcceptanceTest {
 
   @Test
   void testAppCheckIfScrapedAnyInformation() {
-    App.main(credentials.getAccountNumber(), credentials.getPassword());
+    App.main(credentials.accountNumber, credentials.password);
     String scrapedAccountsData = originalOut.toString();
     assertTrue(scrapedAccountsData.length() > PROMPT_FOR_SMS_CODE.length());
   }

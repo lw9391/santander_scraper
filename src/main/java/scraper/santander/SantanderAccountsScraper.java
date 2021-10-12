@@ -29,8 +29,8 @@ public class SantanderAccountsScraper {
 
   private void logIn(Credentials credentials) {
     verifyCredentials(credentials);
-    session.sendNikRequest(credentials.getAccountNumber());
-    session.sendPasswordRequest(credentials.getPassword());
+    session.sendNikRequest(credentials.accountNumber);
+    session.sendPasswordRequest(credentials.password);
 
     viewController.displayMessage(PROMPT_FOR_SMS_CODE);
     String token = viewController.readInput();
@@ -39,10 +39,10 @@ public class SantanderAccountsScraper {
   }
 
   private void verifyCredentials(Credentials credentials) {
-    if (!credentialsVerifier.verifyAccountNumber(credentials.getAccountNumber())) {
+    if (!credentialsVerifier.verifyAccountNumber(credentials.accountNumber)) {
       throw new InvalidCredentialsException("Nik must be between 6 and 20 characters.");
     }
-    if (!credentialsVerifier.verifyPassword(credentials.getPassword())) {
+    if (!credentialsVerifier.verifyPassword(credentials.password)) {
       throw new InvalidCredentialsException("Password must be between 4 and 20 characters.");
     }
   }
