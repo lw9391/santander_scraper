@@ -1,7 +1,6 @@
 package scraper.santander;
 
 import scraper.AccountDetails;
-import scraper.Credentials;
 import scraper.santander.session.SantanderSession;
 import scraper.view.ViewController;
 import scraper.InvalidCredentialsException;

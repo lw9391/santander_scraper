@@ -1,4 +1,6 @@
-package scraper;
+package scraper.santander;
+
+import scraper.InvalidCredentialsException;
 
 public class Credentials {
   public final String accountNumber;

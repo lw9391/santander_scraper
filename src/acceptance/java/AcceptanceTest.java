@@ -3,7 +3,7 @@ import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import scraper.App;
-import scraper.Credentials;
+import scraper.santander.Credentials;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
