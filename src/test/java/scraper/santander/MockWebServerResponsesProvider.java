@@ -9,13 +9,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MockWebServerProvider {
+public class MockWebServerResponsesProvider {
   public static final String PATH = "/centrum24-web";
   public static final String LOGOUT = "/centrum24-web/logout";
 
-  public static MockWebServer getServer() {
-    MockWebServer server = new MockWebServer();
-
+  public static MockWebServer enqueueResponses(MockWebServer server) {
     server.enqueue(loginRedirect());
     server.enqueue(loginPage());
     server.enqueue(xmlWithPathForNikPage());
@@ -31,9 +29,7 @@ public class MockWebServerProvider {
     return server;
   }
 
-  public static MockWebServer getServerWithResponsesForInvalidCred() {
-    MockWebServer server = new MockWebServer();
-
+  public static MockWebServer enqueueResponsesForInvalidCredentials(MockWebServer server) {
     server.enqueue(loginRedirect());
     server.enqueue(loginPage());
     server.enqueue(xmlWithPathForNikPage());

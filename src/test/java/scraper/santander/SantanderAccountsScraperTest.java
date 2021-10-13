@@ -1,7 +1,8 @@
 package scraper.santander;
 
 import okhttp3.mockwebserver.MockWebServer;
-import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scraper.AccountDetails;
 import scraper.InvalidCredentialsException;
@@ -17,14 +18,20 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SantanderAccountsScraperTest {
-  private MockWebServer mockWebServer;
+  private static MockWebServer mockWebServer;
+
+  @BeforeAll
+  static void initServer() throws IOException {
+    mockWebServer = new MockWebServer();
+    mockWebServer.start(8889);
+  }
 
   @Test
-  void runAndGetExpectedResult() throws IOException {
+  void runAndGetExpectedResult() {
     String nik = "111111";
     String password = "password";
     ViewControllerStub viewControllerStub = new ViewControllerStub();
-    setUpServer(MockWebServerProvider.getServer());
+    MockWebServerResponsesProvider.enqueueResponses(mockWebServer);
     SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
 
     scraper.run(nik, password);
@@ -39,19 +46,14 @@ public class SantanderAccountsScraperTest {
   }
 
   @Test
-  void runWithInvalidCredentialsThrowsException() throws IOException {
+  void runWithInvalidCredentialsThrowsException() {
     String nik = "111111";
     String password = "password";
     ViewControllerStub viewControllerStub = new ViewControllerStub();
-    setUpServer(MockWebServerProvider.getServerWithResponsesForInvalidCred());
+    MockWebServerResponsesProvider.enqueueResponsesForInvalidCredentials(mockWebServer);
     SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
 
     assertThrows(InvalidCredentialsException.class, () -> scraper.run(nik, password));
-  }
-
-  private void setUpServer(MockWebServer server) throws IOException {
-    mockWebServer = server;
-    server.start(8889);
   }
 
   private SantanderSession initSession() {
@@ -66,8 +68,8 @@ public class SantanderAccountsScraperTest {
     return host.substring(0, host.length() - 1); //rid of ending backslash
   }
 
-  @AfterEach
-  void tearDown() throws IOException {
+  @AfterAll
+  static void tearDown() throws IOException {
     mockWebServer.shutdown();
   }
 }
