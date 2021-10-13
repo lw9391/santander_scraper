@@ -17,22 +17,22 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class IntegrationTest {
-  private static Credentials credentials;
   private static ViewControllerStub viewControllerStub;
 
   private MockWebServer mockWebServer;
 
   @BeforeAll
   static void beforeAll() {
-    credentials = new Credentials("111111", "password");
     viewControllerStub = new ViewControllerStub();
   }
 
   @Test
   void runAndGetExpectedResult() throws IOException {
+    String nik = "111111";
+    String password = "password";
     setUpServer(MockWebServerProvider.getServer());
     SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
-    scraper.run(credentials);
+    scraper.run(nik, password);
     assertEquals(expectedResult(), viewControllerStub.getStoredDetails());
   }
 
@@ -44,9 +44,11 @@ public class IntegrationTest {
 
   @Test
   void runWithInvalidCredentialsThrowsException() throws IOException {
+    String nik = "111111";
+    String password = "password";
     setUpServer(MockWebServerProvider.getServerWithResponsesForInvalidCred());
     SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
-    assertThrows(InvalidCredentialsException.class, () -> scraper.run(credentials));
+    assertThrows(InvalidCredentialsException.class, () -> scraper.run(nik, password));
   }
 
   private void setUpServer(MockWebServer server) throws IOException {
