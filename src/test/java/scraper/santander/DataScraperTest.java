@@ -1,9 +1,7 @@
-package scraper.santander.session;
+package scraper.santander;
 
 import org.junit.jupiter.api.Test;
 import scraper.AccountDetails;
-import scraper.santander.DataScraper;
-import scraper.santander.PathsNames;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +11,8 @@ import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 class DataScraperTest {
 

@@ -1,5 +1,6 @@
-package scraper;
+package scraper.santander;
 
+import scraper.AccountDetails;
 import scraper.view.ViewController;
 
 import java.util.ArrayList;
