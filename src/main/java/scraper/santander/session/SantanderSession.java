@@ -1,66 +1,52 @@
 package scraper.santander.session;
 
 import scraper.AccountDetails;
+import scraper.santander.Credentials;
 import scraper.santander.PathsNames;
 
 import java.util.List;
 import java.util.Map;
 
+import static scraper.santander.PathsNames.*;
+
 public class SantanderSession {
   private final RequestHandler requestHandler;
   private String currentReferer;
-
-  private String passwordPath = "";
-  private String tokenConfirmationPath = "";
-  private String logOutPath = "";
-  private String productsPath = "";
-
 
   public SantanderSession(RequestHandler requestHandler) {
     this.requestHandler = requestHandler;
     requestHandler.setSession(this);
   }
 
-  public void sendNikRequest(String nik) {
+  public FirstAuthFactorToken firstAuthorizationFactor(Credentials credentials) {
     String pathForXml = requestHandler.sendLoginPageRequest();
     String pathForNikPage = requestHandler.sendRedirectXmlRequest(pathForXml);
-    String pathForPassPage = requestHandler.sendNikRequest(pathForNikPage, nik);
-
-    passwordPath = pathForPassPage;
+    pauseExecution();
+    String pathForPassPage = requestHandler.sendNikRequest(pathForNikPage, credentials.accountNumber);
+    Map<PathsNames, String> pathsForSessionMapAndPassword = requestHandler.sendPasswordPageRequest(pathForPassPage);
+    requestHandler.sendSessionMapRequest(pathsForSessionMapAndPassword.get(SESSION_MAP));
+    pauseExecution();
+    String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(pathsForSessionMapAndPassword.get(PASSWORD), credentials.password);
+    return new FirstAuthFactorToken(smsCodeConfirmationPath);
   }
 
-  public void sendPasswordRequest(String password) {
-    Map<PathsNames, String> paths = requestHandler.sendPasswordPageRequest(passwordPath);
+  public SecondAuthFactorToken secondAuthorizationFactor(FirstAuthFactorToken token, String smsCode) {
+    Map<PathsNames, String> paths = requestHandler.sendTokenRequest(token.smsCodeConfirmationPath, smsCode);
+    return new SecondAuthFactorToken(paths.get(LOGOUT), paths.get(PRODUCTS));
+  }
 
-    String pathForPasswordRequest = paths.get(PathsNames.PASSWORD);
-    String pathForSessionMap = paths.get(PathsNames.SESSION_MAP);
-
-    requestHandler.sendSessionMapRequest(pathForSessionMap);
-    pauseExecution();
-    tokenConfirmationPath = requestHandler.sendPasswordRequest(pathForPasswordRequest, password);
+  public List<AccountDetails> scrapeAccountsDetails(SecondAuthFactorToken token) {
+    List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(token.productsPath);
+    requestHandler.sendLogoutRequest(token.logOutPath);
+    return accountsDetails;
   }
 
   private void pauseExecution() {
     try {
-      Thread.sleep(2500);
+      Thread.sleep(1500);
     } catch (InterruptedException e) {
       throw new RuntimeException("This should never happen.", e);
     }
-  }
-
-  public void sendTokenRequest(String token) {
-    Map<PathsNames, String> paths = requestHandler.sendTokenRequest(tokenConfirmationPath, token);
-
-    logOutPath = paths.get(PathsNames.LOGOUT);
-    productsPath = paths.get(PathsNames.PRODUCTS);
-  }
-
-  public List<AccountDetails> sendAccountsDetailsRequest() {
-    return requestHandler.scrapeAccountsInformation(productsPath);
-  }
-
-  public void logOut() {
-    requestHandler.sendLogoutRequest(logOutPath);
   }
 
   void updateReferer(String referer) {
@@ -69,5 +55,23 @@ public class SantanderSession {
 
   String getCurrentReferer() {
     return currentReferer;
+  }
+
+  public static class FirstAuthFactorToken {
+    private final String smsCodeConfirmationPath;
+
+    private FirstAuthFactorToken(String smsCodeConfirmationPath) {
+      this.smsCodeConfirmationPath = smsCodeConfirmationPath;
+    }
+  }
+
+  public static class SecondAuthFactorToken {
+    private final String logOutPath;
+    private final String productsPath;
+
+    private SecondAuthFactorToken(String logOutPath, String productsPath) {
+      this.logOutPath = logOutPath;
+      this.productsPath = productsPath;
+    }
   }
 }

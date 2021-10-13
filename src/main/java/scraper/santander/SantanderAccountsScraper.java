@@ -9,6 +9,9 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
+import static scraper.santander.session.SantanderSession.FirstAuthFactorToken;
+import static scraper.santander.session.SantanderSession.SecondAuthFactorToken;
+
 public class SantanderAccountsScraper {
   public static final String PROMPT_FOR_SMS_CODE = "Wprowadz sms-kod:";
   private final SantanderSession session;
@@ -21,19 +24,17 @@ public class SantanderAccountsScraper {
 
   public void run(String nik, String password) {
     Credentials credentials = new Credentials(nik, password);
-    logIn(credentials);
-    scrapeAccountsInfo();
-    session.logOut();
+    FirstAuthFactorToken firstAuthFactorToken = session.firstAuthorizationFactor(credentials);
+    SecondAuthFactorToken secondAuthFactorToken = session.secondAuthorizationFactor(firstAuthFactorToken, readSmsCode());
+    List<AccountDetails> accountDetails = session.scrapeAccountsDetails(secondAuthFactorToken);
+    viewController.displayOutput(accountDetails);
   }
 
-  private void logIn(Credentials credentials) {
-    session.sendNikRequest(credentials.accountNumber);
-    session.sendPasswordRequest(credentials.password);
-
+  private String readSmsCode() {
     viewController.displayMessage(PROMPT_FOR_SMS_CODE);
-    String token = viewController.readInput();
-    verifyToken(token);
-    session.sendTokenRequest(token);
+    String smsCode = viewController.readInput();
+    verifyToken(smsCode);
+    return smsCode;
   }
 
   private void verifyToken(String token) {
@@ -43,10 +44,5 @@ public class SantanderAccountsScraper {
     if (!matcher.matches()) {
       throw new InvalidCredentialsException("Provided token has invalid format.");
     }
-  }
-
-  private void scrapeAccountsInfo() {
-    List<AccountDetails> accountDetails = session.sendAccountsDetailsRequest();
-    viewController.displayOutput(accountDetails);
   }
 }
