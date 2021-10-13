@@ -1,7 +1,3 @@
-import org.junit.jupiter.api.AfterAll;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import scraper.App;
 import scraper.santander.Credentials;
 
@@ -12,7 +8,6 @@ import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
 
-import static org.junit.jupiter.api.Assertions.*;
 import static scraper.santander.SantanderAccountsScraper.PROMPT_FOR_SMS_CODE;
 
 public class AcceptanceTest {
@@ -20,16 +15,17 @@ public class AcceptanceTest {
   private static final PrintStream originalOut = System.out;
   private static final Credentials credentials = readCredentials();
 
-  @BeforeEach
-  void setUpStream() {
+  public static void main(String[] args) throws IOException {
     System.setOut(new PrintStream(outContent));
-  }
-
-  @Test
-  void testAppCheckIfScrapedAnyInformation() {
     App.main(credentials.accountNumber, credentials.password);
-    String scrapedAccountsData = originalOut.toString();
-    assertTrue(scrapedAccountsData.length() > PROMPT_FOR_SMS_CODE.length());
+    String scrapedAccountsData = outContent.toString();
+    System.setOut(originalOut);
+    outContent.close();
+    if (scrapedAccountsData.length() > PROMPT_FOR_SMS_CODE.length()) {
+      System.out.println("Test passed");
+    } else {
+      System.out.println("Test failed");
+    }
   }
 
   private static Credentials readCredentials() {
@@ -47,15 +43,5 @@ public class AcceptanceTest {
     } catch (FileNotFoundException e) {
       throw new RuntimeException("File with credentials not found.");
     }
-  }
-
-  @AfterEach
-  void restoreStream() {
-    System.setOut(originalOut);
-  }
-
-  @AfterAll
-  static void closeStream() throws IOException {
-    outContent.close();
   }
 }

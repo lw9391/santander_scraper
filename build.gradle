@@ -14,31 +14,6 @@ application {
     mainClass.set('scraper/App')
 }
 
-sourceSets {
-    acceptance {
-        java.srcDir "$projectDir/src/acceptance/java"
-        resources.srcDir "$projectDir/src/acceptance/resources"
-        compileClasspath += main.output + test.output
-        runtimeClasspath += main.output + test.output
-    }
-}
-
-configurations {
-    acceptanceImplementation.extendsFrom testImplementation
-    acceptanceRuntime.extendsFrom testRuntime
-}
-
-task runAcceptanceTests(type: JavaExec) {
-    group = "Execution"
-    description = "Run acceptance tests"
-    classpath = sourceSets.acceptance.runtimeClasspath
-    mainClass.set("src/acceptance/java/AcceptanceTestsRunner.java")
-}
-
-processAcceptanceResources {
-    duplicatesStrategy(DuplicatesStrategy.EXCLUDE)
-}
-
 distributions {
     distTar.enabled = false
 }
