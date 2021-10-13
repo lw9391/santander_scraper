@@ -25,13 +25,7 @@ public class OkHttpMapper {
             .url()
             .toString();
 
-    String responseBodyString = "";
-
-    ResponseBody responseBody = response.body();
-    if (responseBody != null) {
-      byte[] bytes = response.body().bytes();
-      responseBodyString = new String(bytes, StandardCharsets.UTF_8);
-    }
+    String responseBodyString = extractResponseBody(response);
 
     return builder.setResponseBody(responseBodyString)
             .setResponseHeaders(responseHeaders)
@@ -46,12 +40,23 @@ public class OkHttpMapper {
     return result;
   }
 
+  private static String extractResponseBody(Response response) throws IOException {
+    String responseBodyString = "";
+
+    ResponseBody responseBody = response.body();
+    if (responseBody != null) {
+      byte[] bytes = response.body().bytes();
+      responseBodyString = new String(bytes, StandardCharsets.UTF_8);
+    }
+    return responseBodyString;
+  }
+
   public static Request mapDtoToGetRequest(RequestDto requestDto) {
-    if (!requestDto.getFormBody().isEmpty()) {
+    if (!requestDto.formBody.isEmpty()) {
       throw new UnsupportedOperationException("GET with request body is not allowed.");
     }
-    Headers headers = Headers.of(requestDto.getHeaders());
-    String url = requestDto.getUrl();
+    Headers headers = Headers.of(requestDto.headers);
+    String url = requestDto.url;
 
     return new Request.Builder()
             .url(url)
@@ -61,9 +66,9 @@ public class OkHttpMapper {
   }
 
   public static Request mapDtoToPostRequest(RequestDto requestDto) {
-    Headers headers = Headers.of(requestDto.getHeaders());
-    RequestBody body = buildFormBody(requestDto.getFormBody());
-    String url = requestDto.getUrl();
+    Headers headers = Headers.of(requestDto.headers);
+    RequestBody body = buildFormBody(requestDto.formBody);
+    String url = requestDto.url;
 
     return new Request.Builder()
             .url(url)
