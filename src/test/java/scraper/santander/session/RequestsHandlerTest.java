@@ -24,7 +24,6 @@ import static org.mockito.Mockito.*;
 @ExtendWith(MockitoExtension.class)
 class RequestsHandlerTest {
   private RequestHandler requestsHandler;
-  private SantanderSession session;
   private HttpRequestSender senderMock;
   private SantanderRequestProvider provider;
 
@@ -33,8 +32,6 @@ class RequestsHandlerTest {
     senderMock = mock(HttpRequestSender.class);
     provider = new SantanderRequestProvider("localhost");
     requestsHandler = new RequestHandler(senderMock, provider);
-    session = new SantanderSession(requestsHandler);
-    session.updateReferer("login?referer");
   }
 
   @Test
@@ -49,7 +46,6 @@ class RequestsHandlerTest {
     when(senderMock.sendGET(provider.GETLoginPage())).thenReturn(response);
     String loginPageParam = requestsHandler.sendLoginPageRequest();
     assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", loginPageParam);
-    assertEquals(session.getCurrentReferer(), "https://google.pl");
   }
 
   @Test
@@ -97,7 +93,6 @@ class RequestsHandlerTest {
     Map<PathsNames, String> paths = requestsHandler.sendPasswordPageRequest("path");
     assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", paths.get(PathsNames.PASSWORD));
     assertEquals("/crypt.brKnpZUkktsTyMD4fDym_YLJ6XzBNKJtQSbN-NdTTUaXMzfLzxBZ9EURsRnaBBQxR_jFThmXQm0zbzjNSjxOtMufJ-0MGGRcS6TA4seUNnspto52VanATw/brK0a", paths.get(PathsNames.SESSION_MAP));
-    assertEquals(session.getCurrentReferer(), url.toString());
   }
 
   @Test
@@ -114,7 +109,6 @@ class RequestsHandlerTest {
 
     String response = requestsHandler.sendPasswordRequest("path", "password");
     assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", response);
-    assertEquals(session.getCurrentReferer(), url.toString());
   }
 
   @Test
@@ -133,7 +127,6 @@ class RequestsHandlerTest {
     var paths = requestsHandler.sendTokenRequest("path", "111-111");
     assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", paths.get(PathsNames.LOGOUT));
     assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", paths.get(PathsNames.PRODUCTS));
-    assertEquals(session.getCurrentReferer(), url.toString());
   }
 
   @Test

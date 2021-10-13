@@ -11,11 +11,9 @@ import static scraper.santander.PathsNames.*;
 
 public class SantanderSession {
   private final RequestHandler requestHandler;
-  private String currentReferer;
 
   public SantanderSession(RequestHandler requestHandler) {
     this.requestHandler = requestHandler;
-    requestHandler.setSession(this);
   }
 
   public FirstAuthFactorToken firstAuthorizationFactor(Credentials credentials) {
@@ -47,14 +45,6 @@ public class SantanderSession {
     } catch (InterruptedException e) {
       throw new RuntimeException("This should never happen.", e);
     }
-  }
-
-  void updateReferer(String referer) {
-    this.currentReferer = referer;
-  }
-
-  String getCurrentReferer() {
-    return currentReferer;
   }
 
   public static class FirstAuthFactorToken {

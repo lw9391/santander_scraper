@@ -19,13 +19,7 @@ public class RequestHandler {
   private final HttpRequestSender sender;
   private final SantanderRequestProvider provider;
 
-  private SantanderSession session;
-
-  public RequestHandler(HttpRequestSender sender, SantanderRequestProvider provider, SantanderSession session) {
-    this.session = session;
-    this.sender = sender;
-    this.provider = provider;
-  }
+  private String currentReferer;
 
   public RequestHandler(HttpRequestSender sender, SantanderRequestProvider provider) {
     this.sender = sender;
@@ -34,7 +28,7 @@ public class RequestHandler {
 
   public String sendLoginPageRequest() {
     ProcessedResult<String> processedResult = sendAndProcess(provider::GETLoginPage, sender::sendGET, DataScraper::scrapeXmlPathFromLoginPage);
-    session.updateReferer(processedResult.response.getRequestUrl());
+    currentReferer = processedResult.response.getRequestUrl();
     return processedResult.data;
   }
 
@@ -42,20 +36,20 @@ public class RequestHandler {
     long timestamp = new Date().getTime();
     String queryForXml = queryParam + "&_=" + timestamp;
 
-    Supplier<RequestDto> request = () -> provider.GETXmlWithPathForNikPage(queryForXml, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.GETXmlWithPathForNikPage(queryForXml, currentReferer);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapeNikPagePathFromRedirectXml);
     return processedResult.data;
   }
 
   public String sendNikRequest(String queryParam, String nik) {
-    Supplier<RequestDto> request = () -> provider.POSTNik(queryParam, nik, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.POSTNik(queryParam, nik, currentReferer);
     return sendAndProcess(request, sender::sendPOST, DataScraper::scrapePasswordPagePathFromNikResponse).data;
   }
 
   public Map<PathsNames, String> sendPasswordPageRequest(String path) {
-    Supplier<RequestDto> request = () -> provider.GETPasswordPage(path, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.GETPasswordPage(path, currentReferer);
     ProcessedResult<Map<PathsNames, String>> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapePathsFromPasswordPage);
-    session.updateReferer(processedResult.response.getRequestUrl());
+    currentReferer = processedResult.response.getRequestUrl();
     return processedResult.data;
   }
 
@@ -65,42 +59,42 @@ public class RequestHandler {
     long timestamp = new Date().getTime();
     String queryParams = DataBuilder.buildQueryParams("sessionMap", mapSettings, "_", String.valueOf(timestamp));
 
-    Supplier<RequestDto> request = () -> provider.GETSendSessionMap(path + queryParams, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.GETSendSessionMap(path + queryParams, currentReferer);
     sendAndProcess(request, sender::sendGET, Function.identity());
   }
 
   public String sendPasswordRequest(String path, String password) {
-    Supplier<RequestDto> request = () -> provider.POSTPassword(path, password, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.POSTPassword(path, password, currentReferer);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendPOST, DataScraper::scrapeTokenPathFromPasswordResponse);
-    session.updateReferer(processedResult.response.getRequestUrl());
+    currentReferer = processedResult.response.getRequestUrl();
     return processedResult.data;
   }
 
   public Map<PathsNames, String> sendTokenRequest(String tokenConfirmationPath, String token) {
-    Supplier<RequestDto> request = () -> provider.POSTToken(tokenConfirmationPath, token, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.POSTToken(tokenConfirmationPath, token, currentReferer);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendPOST, DataScraper::scrapeInvalidLoginDiv);
     if (!processedResult.data.isEmpty()) {
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
     }
     Map<PathsNames, String> paths = DataScraper.scrapePathsFromDashboardPage(processedResult.response.getResponseBody());
 
-    session.updateReferer(processedResult.response.getRequestUrl());
+    currentReferer = processedResult.response.getRequestUrl();
     return paths;
   }
 
   public List<AccountDetails> scrapeAccountsInformation(String path) {
-    Supplier<RequestDto> request = () -> provider.GETProductsPage(path, session.getCurrentReferer());
-    Supplier<RequestDto> logout = () -> provider.GETEmergencyLogout(session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.GETProductsPage(path, currentReferer);
+    Supplier<RequestDto> logout = () -> provider.GETEmergencyLogout(currentReferer);
     ProcessedResult<List<AccountDetails>> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapeAccountsInformationFromProductsPage, logout);
 
     return processedResult.data;
   }
 
   public void sendLogoutRequest(String query) {
-    Supplier<RequestDto> request = () -> provider.GETLogout(query, session.getCurrentReferer());
+    Supplier<RequestDto> request = () -> provider.GETLogout(query, currentReferer);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendGET, Function.identity());
     if (!processedResult.response.getRequestUrl().equals(provider.HOST + provider.PATH + provider.LOGOUT)) {
-      RequestDto logout = provider.GETEmergencyLogout(session.getCurrentReferer());
+      RequestDto logout = provider.GETEmergencyLogout(currentReferer);
       sender.sendGET(logout);
     }
   }
@@ -124,10 +118,6 @@ public class RequestHandler {
     }
     T result = scrapingFunction.apply(responseDto.getResponseBody());
     return new ProcessedResult<>(responseDto, result);
-  }
-
-  public void setSession(SantanderSession session) {
-    this.session = session;
   }
 
   private static class ProcessedResult<T> {
