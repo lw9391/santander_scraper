@@ -4,32 +4,16 @@ import java.util.Collections;
 import java.util.Map;
 
 public class ResponseDto {
-  private final Map<String, String> responseHeaders;
-  private final String responseBody;
-  private final String requestUrl;
-  private final int status;
+  public final Map<String, String> responseHeaders;
+  public final String responseBody;
+  public final String requestUrl;
+  public final int status;
 
   private ResponseDto(Map<String, String> responseHeaders, String responseBody, String requestUrl, int status) {
     this.responseHeaders = responseHeaders;
     this.responseBody = responseBody;
     this.requestUrl = requestUrl;
     this.status = status;
-  }
-
-  public Map<String, String> getResponseHeaders() {
-    return responseHeaders;
-  }
-
-  public String getResponseBody() {
-    return responseBody;
-  }
-
-  public String getRequestUrl() {
-    return requestUrl;
-  }
-
-  public int getStatus() {
-    return status;
   }
 
   public static ResponseDtoBuilder builder() {

@@ -30,7 +30,7 @@ public class RequestHandler {
 
   public RequestSummary sendLoginPageRequest() {
     ProcessedResult<String> processedResult = sendAndProcess(provider::GETLoginPage, sender::sendGET, DataScraper::scrapeXmlPathFromLoginPage);
-    String referer = processedResult.response.getRequestUrl();
+    String referer = processedResult.response.requestUrl;
     return new RequestSummary(Map.of(REDIRECT_XML, processedResult.data), referer);
   }
 
@@ -58,7 +58,7 @@ public class RequestHandler {
     String referer = nikReqSummary.refererForNextRequest;
     Supplier<RequestDto> request = () -> provider.GETPasswordPage(path, referer);
     ProcessedResult<Map<PathsNames, String>> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapePathsFromPasswordPage);
-    String updatedReferer = processedResult.response.getRequestUrl();
+    String updatedReferer = processedResult.response.requestUrl;
     return new RequestSummary(processedResult.data, updatedReferer);
   }
 
@@ -79,7 +79,7 @@ public class RequestHandler {
     String referer = passPageReqSummary.refererForNextRequest;
     Supplier<RequestDto> request = () -> provider.POSTPassword(path, password, referer);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendPOST, DataScraper::scrapeSmsCodePathFromPasswordResponse);
-    String updatedReferer = processedResult.response.getRequestUrl();
+    String updatedReferer = processedResult.response.requestUrl;
     return new RequestSummary(Map.of(SMS_CODE, processedResult.data), updatedReferer);
   }
 
@@ -91,9 +91,9 @@ public class RequestHandler {
     if (!processedResult.data.isEmpty()) {
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
     }
-    Map<PathsNames, String> paths = DataScraper.scrapePathsFromDashboardPage(processedResult.response.getResponseBody());
+    Map<PathsNames, String> paths = DataScraper.scrapePathsFromDashboardPage(processedResult.response.responseBody);
 
-    String updatedReferer = processedResult.response.getRequestUrl();
+    String updatedReferer = processedResult.response.requestUrl;
     return new RequestSummary(paths, updatedReferer);
   }
 
@@ -112,7 +112,7 @@ public class RequestHandler {
     String referer = tokenReqSummary.refererForNextRequest;
     Supplier<RequestDto> request = () -> provider.GETLogout(path, referer);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendGET, Function.identity());
-    if (!processedResult.response.getRequestUrl().equals(provider.HOST + provider.PATH + provider.LOGOUT)) {
+    if (!processedResult.response.requestUrl.equals(provider.HOST + provider.PATH + provider.LOGOUT)) {
       RequestDto logout = provider.GETEmergencyLogout(referer);
       sender.sendGET(logout);
     }
@@ -121,21 +121,21 @@ public class RequestHandler {
   private static <T> ProcessedResult<T> sendAndProcess(Supplier<RequestDto> requestSupplier, Function<RequestDto, ResponseDto> httpSendMethod, Function<String, T> scrapingFunction) {
     RequestDto requestDto = requestSupplier.get();
     ResponseDto responseDto = httpSendMethod.apply(requestDto);
-    if (!(responseDto.getStatus() == 200)) {
+    if (!(responseDto.status == 200)) {
       throw new RuntimeException("Status code error during getting login page.");
     }
-    T result = scrapingFunction.apply(responseDto.getResponseBody());
+    T result = scrapingFunction.apply(responseDto.responseBody);
     return new ProcessedResult<>(responseDto, result);
   }
 
   private static <T> ProcessedResult<T> sendAndProcess(Supplier<RequestDto> requestSupplier, Function<RequestDto, ResponseDto> httpSendMethod, Function<String, T> scrapingFunction, Supplier<RequestDto> logout) {
     RequestDto requestDto = requestSupplier.get();
     ResponseDto responseDto = httpSendMethod.apply(requestDto);
-    if (!(responseDto.getStatus() == 200)) {
+    if (!(responseDto.status == 200)) {
       httpSendMethod.apply(logout.get());
       throw new RuntimeException("Status code error during getting login page.");
     }
-    T result = scrapingFunction.apply(responseDto.getResponseBody());
+    T result = scrapingFunction.apply(responseDto.responseBody);
     return new ProcessedResult<>(responseDto, result);
   }
 
