@@ -6,13 +6,13 @@ import static scraper.Header.ACCEPT;
 import static scraper.Header.ACCEPT_LANGUAGE;
 import static scraper.Header.USER_AGENT;
 
-public class SantanderRequestProvider {
+public class SantanderHttpRequestsProvider {
   public final String HOST;
   public final String PATH = "/centrum24-web";
   public final String DASHBOARD_PATH = "/centrum24-web/multi";
   public final String LOGOUT = "/logout";
 
-  public SantanderRequestProvider(String HOST) {
+  public SantanderHttpRequestsProvider(String HOST) {
     this.HOST = HOST;
   }
 

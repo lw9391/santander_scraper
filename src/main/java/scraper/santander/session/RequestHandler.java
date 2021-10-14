@@ -20,10 +20,10 @@ import static scraper.santander.PathsNames.*;
 
 public class RequestHandler {
   private final HttpRequestSender sender;
-  private final SantanderRequestProvider provider;
+  private final SantanderHttpRequestsProvider provider;
 
 
-  public RequestHandler(HttpRequestSender sender, SantanderRequestProvider provider) {
+  public RequestHandler(HttpRequestSender sender, SantanderHttpRequestsProvider provider) {
     this.sender = sender;
     this.provider = provider;
   }

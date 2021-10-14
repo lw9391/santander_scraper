@@ -26,7 +26,7 @@ class RequestsHandlerTest {
   @BeforeAll
   static void setUp() throws IOException {
     HttpRequestSender requestSender = new OkHttpRequestsSender();
-    SantanderRequestProvider provider = new SantanderRequestProvider("http://localhost:8889");
+    SantanderHttpRequestsProvider provider = new SantanderHttpRequestsProvider("http://localhost:8889");
     requestsHandler = new RequestHandler(requestSender, provider);
     server = new MockWebServer();
     server.start(8889);
