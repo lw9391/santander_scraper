@@ -42,6 +42,56 @@ public class MockWebServerResponsesProvider {
     return server;
   }
 
+  public static MockWebServer enqueueLoginPage(MockWebServer server) {
+    server.enqueue(loginPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueXmlWithPathForNikPage(MockWebServer server) {
+    server.enqueue(xmlWithPathForNikPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueNikPage(MockWebServer server) {
+    server.enqueue(postNikResponse());
+    return server;
+  }
+
+  public static MockWebServer enqueuePasswordPage(MockWebServer server) {
+    server.enqueue(passwordPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueSessionMapPage(MockWebServer server) {
+    server.enqueue(sessionMapResponse());
+    return server;
+  }
+
+  public static MockWebServer enqueueTokenPage(MockWebServer server) {
+    server.enqueue(tokenPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueDashboardPage(MockWebServer server) {
+    server.enqueue(dashboardPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueLogoutPage(MockWebServer server) {
+    server.enqueue(logoutPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueProductsPage(MockWebServer server) {
+    server.enqueue(productsPage());
+    return server;
+  }
+
+  public static MockWebServer enqueueInvalidLoginPage(MockWebServer server) {
+    server.enqueue(invalidLoginPage());
+    return server;
+  }
+
   private static MockResponse loginRedirect() {
     return new MockResponse()
             .setResponseCode(302)

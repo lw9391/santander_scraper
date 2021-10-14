@@ -75,8 +75,8 @@ public class DataScraper {
     return part.substring(0, endIndex);
   }
 
-  public static String scrapeTokenPathFromPasswordResponse(String passwordResponesPageHtml) {
-    String attribute = getAttributeFromHtml(passwordResponesPageHtml, "authenticationForm", "action");
+  public static String scrapeSmsCodePathFromPasswordResponse(String passwordResponsePageHtml) {
+    String attribute = getAttributeFromHtml(passwordResponsePageHtml, "authenticationForm", "action");
     int startIndex = attribute.indexOf("/crypt.");
     return attribute.substring(startIndex);
   }
@@ -87,8 +87,8 @@ public class DataScraper {
             .attr(attribute);
   }
 
-  public static String scrapeInvalidLoginDiv(String tokenResponseHtml) {
-    Element logoutInfo = Jsoup.parse(tokenResponseHtml).getElementById("wylogowanie");
+  public static String scrapeInvalidLoginDiv(String smsCodeResponseHtml) {
+    Element logoutInfo = Jsoup.parse(smsCodeResponseHtml).getElementById("wylogowanie");
     if (logoutInfo == null) {
       return "";
     }

@@ -1,155 +1,133 @@
 package scraper.santander.session;
 
-import org.junit.jupiter.api.BeforeEach;
+import okhttp3.mockwebserver.MockWebServer;
+import org.junit.jupiter.api.AfterAll;
+import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.junit.jupiter.MockitoExtension;
 import scraper.AccountDetails;
+import scraper.InvalidCredentialsException;
 import scraper.connections.HttpRequestSender;
-import scraper.santander.PathsNames;
-import scraper.connections.ResponseDto;
+import scraper.connections.okhttp.OkHttpRequestsSender;
+import scraper.santander.MockWebServerResponsesProvider;
 
 import java.io.IOException;
-import java.net.URL;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 
-import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.Mockito.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static scraper.santander.PathsNames.*;
+import static scraper.santander.session.RequestHandler.RequestSummary;
 
-@ExtendWith(MockitoExtension.class)
 class RequestsHandlerTest {
-  private RequestHandler requestsHandler;
-  private HttpRequestSender senderMock;
-  private SantanderRequestProvider provider;
+  private static RequestHandler requestsHandler;
+  private static MockWebServer server;
 
-  @BeforeEach
-  void setUp() {
-    senderMock = mock(HttpRequestSender.class);
-    provider = new SantanderRequestProvider("localhost");
-    requestsHandler = new RequestHandler(senderMock, provider);
+  @BeforeAll
+  static void setUp() throws IOException {
+    HttpRequestSender requestSender = new OkHttpRequestsSender();
+    SantanderRequestProvider provider = new SantanderRequestProvider("http://localhost:8889");
+    requestsHandler = new RequestHandler(requestSender, provider);
+    server = new MockWebServer();
+    server.start(8889);
   }
 
   @Test
-  void sendRequestForLoginPageParamTest() {
-    String logPage = testDataSupplier("src/test/resources/http/1logPage.html");
+  void sendLoginPageRequestTest() {
+    MockWebServerResponsesProvider.enqueueLoginPage(server);
 
-    ResponseDto response = mock(ResponseDto.class);
-    when(response.getResponseBody()).thenReturn(logPage);
-    when(response.getStatus()).thenReturn(200);
+    RequestSummary requestSummary = requestsHandler.sendLoginPageRequest();
 
-    when(response.getRequestUrl()).thenReturn("https://google.pl");
-    when(senderMock.sendGET(provider.GETLoginPage())).thenReturn(response);
-    String loginPageParam = requestsHandler.sendLoginPageRequest();
-    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", loginPageParam);
+    String scrapedPath = requestSummary.scrapedPaths.get(REDIRECT_XML);
+    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", scrapedPath);
+    assertEquals("http://localhost:8889/centrum24-web/login", requestSummary.refererForNextRequest);
   }
 
   @Test
-  void sendRequestForXmlWithParamTest() {
-    String xml = testDataSupplier("src/test/resources/http/2redirectXml.xml");
+  void sendRedirectXmlRequestTest() {
+    MockWebServerResponsesProvider.enqueueXmlWithPathForNikPage(server);
+    RequestSummary input = new RequestSummary(Map.of(REDIRECT_XML, "/path"), "login?referer");
 
-    ResponseDto responseMock = mock(ResponseDto.class);
+    RequestSummary requestSummary = requestsHandler.sendRedirectXmlRequest(input);
 
-    when(responseMock.getResponseBody()).thenReturn(xml);
-    when(responseMock.getStatus()).thenReturn(200);
-
-    when(senderMock.sendGET(any())).thenReturn(responseMock);
-
-    String response = requestsHandler.sendRedirectXmlRequest("query");
-    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", response);
+    String scrapedPath = requestSummary.scrapedPaths.get(NIK_PAGE);
+    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", scrapedPath);
   }
 
   @Test
-  void sendNikRequestAndGetXmlRedirectTest() {
-    String xml = testDataSupplier("src/test/resources/http/3redirectXml.xml");
+  void sendNikRequestTest() {
+    MockWebServerResponsesProvider.enqueueNikPage(server);
+    RequestSummary input = new RequestSummary(Map.of(NIK_PAGE, "/path"), "login?referer");
 
-    ResponseDto responseMock = mock(ResponseDto.class);
-    when(responseMock.getResponseBody()).thenReturn(xml);
-    when(responseMock.getStatus()).thenReturn(200);
+    RequestSummary requestSummary = requestsHandler.sendNikRequest(input, "111111");
 
-    when(senderMock.sendPOST(provider.POSTNik("?x=query", "111111", "login?referer"))).thenReturn(responseMock);
-
-    String response = requestsHandler.sendNikRequest("?x=query", "111111");
-    assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", response);
+    String scrapedPath = requestSummary.scrapedPaths.get(PASS_PAGE);
+    assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", scrapedPath);
   }
 
   @Test
-  void sendPasswordPageRequestTest() throws IOException {
-    String html = testDataSupplier("src/test/resources/http/4loginpage.html");
+  void sendPasswordPageRequestTest() {
+    MockWebServerResponsesProvider.enqueuePasswordPage(server);
+    RequestSummary input = new RequestSummary(Map.of(PASS_PAGE, "/path"), "login?referer");
 
-    ResponseDto passPageMock = mock(ResponseDto.class);
+    RequestSummary requestSummary = requestsHandler.sendPasswordPageRequest(input);
 
-    when(passPageMock.getResponseBody()).thenReturn(html);
-    when(passPageMock.getStatus()).thenReturn(200);
-    when(passPageMock.getRequestUrl()).thenReturn("https://google.pl");
-
-    when(senderMock.sendGET(provider.GETPasswordPage("path", "login?referer"))).thenReturn(passPageMock);
-    URL url = new URL("https://google.pl");
-
-    Map<PathsNames, String> paths = requestsHandler.sendPasswordPageRequest("path");
-    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", paths.get(PathsNames.PASSWORD));
-    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_YLJ6XzBNKJtQSbN-NdTTUaXMzfLzxBZ9EURsRnaBBQxR_jFThmXQm0zbzjNSjxOtMufJ-0MGGRcS6TA4seUNnspto52VanATw/brK0a", paths.get(PathsNames.SESSION_MAP));
+    String passwordPath = requestSummary.scrapedPaths.get(PASSWORD);
+    String sessionMapPath = requestSummary.scrapedPaths.get(SESSION_MAP);
+    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", passwordPath);
+    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_YLJ6XzBNKJtQSbN-NdTTUaXMzfLzxBZ9EURsRnaBBQxR_jFThmXQm0zbzjNSjxOtMufJ-0MGGRcS6TA4seUNnspto52VanATw/brK0a", sessionMapPath);
+    assertEquals("http://localhost:8889/centrum24-web/path", requestSummary.refererForNextRequest);
   }
 
   @Test
-  void sendPasswordRequestAndGetAccessPageTest() throws IOException {
-    String html = testDataSupplier("src/test/resources/http/5tokenpage.html");
+  void sendPasswordRequestTest() {
+    MockWebServerResponsesProvider.enqueueTokenPage(server);
+    RequestSummary input = new RequestSummary(Map.of(PASSWORD, "/path"), "login?referer");
 
-    ResponseDto htmlWithTokenMock = mock(ResponseDto.class);
-    when(htmlWithTokenMock.getResponseBody()).thenReturn(html);
-    when(htmlWithTokenMock.getStatus()).thenReturn(200);
-    when(htmlWithTokenMock.getRequestUrl()).thenReturn("https://google.pl");
+    RequestSummary requestSummary = requestsHandler.sendPasswordRequest(input, "password");
 
-    when(senderMock.sendPOST(provider.POSTPassword("path", "password", "login?referer"))).thenReturn(htmlWithTokenMock);
-    URL url = new URL("https://google.pl");
-
-    String response = requestsHandler.sendPasswordRequest("path", "password");
-    assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", response);
+    String path = requestSummary.scrapedPaths.get(SMS_CODE);
+    assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", path);
+    assertEquals("http://localhost:8889/centrum24-web/path", requestSummary.refererForNextRequest);
   }
 
   @Test
-  void sendTokenRequestTest() throws IOException {
-    String html = testDataSupplier("src/test/resources/http/6dashboard.html");
+  void sendSmsCodeRequestTest() {
+    MockWebServerResponsesProvider.enqueueDashboardPage(server);
+    RequestSummary input = new RequestSummary(Map.of(SMS_CODE, "/path"), "login?referer");
 
-    ResponseDto htmlWithDashboardMock = mock(ResponseDto.class);
+    RequestSummary requestSummary = requestsHandler.sendSmsCodeRequest(input, "111-111");
 
-    when(htmlWithDashboardMock.getResponseBody()).thenReturn(html);
-    when(htmlWithDashboardMock.getStatus()).thenReturn(200);
-    when(htmlWithDashboardMock.getRequestUrl()).thenReturn("https://google.pl");
+    String logoutPath = requestSummary.scrapedPaths.get(LOGOUT);
+    String productsPath = requestSummary.scrapedPaths.get(PRODUCTS);
+    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", logoutPath);
+    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", productsPath);
+    assertEquals("http://localhost:8889/centrum24-web/path", requestSummary.refererForNextRequest);
+  }
 
-    when(senderMock.sendPOST(provider.POSTToken("path", "111-111", "login?referer"))).thenReturn(htmlWithDashboardMock);
-    URL url = new URL("https://google.pl");
+  @Test
+  void sendSmsCodeRequestInvalidLoginPageThrowsException() {
+    MockWebServerResponsesProvider.enqueueInvalidLoginPage(server);
+    RequestSummary input = new RequestSummary(Map.of(SMS_CODE, "/path"), "login?referer");
 
-    var paths = requestsHandler.sendTokenRequest("path", "111-111");
-    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", paths.get(PathsNames.LOGOUT));
-    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", paths.get(PathsNames.PRODUCTS));
+    assertThrows(InvalidCredentialsException.class, () -> requestsHandler.sendSmsCodeRequest(input, "111-111"));
   }
 
   @Test
   void scrapeAccountsInformationTest() {
-    String html = testDataSupplier("src/test/resources/http/7products.html");
+    MockWebServerResponsesProvider.enqueueProductsPage(server);
+    RequestSummary input = new RequestSummary(Map.of(PRODUCTS, "/path"), "login?referer");
 
-    ResponseDto productsPage = mock(ResponseDto.class);
-    when(productsPage.getResponseBody()).thenReturn(html);
-    when(productsPage.getStatus()).thenReturn(200);
-    when(senderMock.sendGET(provider.GETProductsPage("/path", "login?referer"))).thenReturn(productsPage);
-    List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation("/path");
+    List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation(input);
+
     assertEquals("112,00 PLN", accountDetailsList.get(0).getBalance());
     assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).getAccountName());
     assertEquals("0,38 PLN", accountDetailsList.get(1).getBalance());
     assertEquals("Konto Oszczednosciowe w PLN", accountDetailsList.get(1).getAccountName());
   }
 
-  private static String testDataSupplier(String filePath) {
-    Path path = Paths.get(filePath);
-    try {
-      return Files.readString(path, StandardCharsets.UTF_8);
-    } catch (IOException e) {
-      throw new RuntimeException(e);
-    }
+  @AfterAll
+  static void tearDown() throws IOException {
+    server.shutdown();
   }
 }

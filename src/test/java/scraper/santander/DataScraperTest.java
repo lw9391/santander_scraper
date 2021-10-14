@@ -48,7 +48,7 @@ class DataScraperTest {
   @Test
   void scrapeTokenPathFromPasswordResponse() {
     String page = testDataSupplier("src/test/resources/http/5tokenpage.html");
-    String scrapedPath = DataScraper.scrapeTokenPathFromPasswordResponse(page);
+    String scrapedPath = DataScraper.scrapeSmsCodePathFromPasswordResponse(page);
     assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", scrapedPath);
   }
 
@@ -58,7 +58,10 @@ class DataScraperTest {
     String invalidLoginInfo = DataScraper.scrapeInvalidLoginDiv(invalidCrudPage);
     boolean expectedTrue = invalidLoginInfo.contains("wylogowanie");
     assertTrue(expectedTrue);
+  }
 
+  @Test
+  void scrapeInvalidLoginDivOnDashboardPage() {
     String dashboard = testDataSupplier("src/test/resources/http/6dashboard.html");
     String expectedEmpty = DataScraper.scrapeInvalidLoginDiv(dashboard);
     assertTrue(expectedEmpty.isEmpty());

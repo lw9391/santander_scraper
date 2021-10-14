@@ -2,12 +2,10 @@ package scraper.santander.session;
 
 import scraper.AccountDetails;
 import scraper.santander.Credentials;
-import scraper.santander.PathsNames;
 
 import java.util.List;
-import java.util.Map;
 
-import static scraper.santander.PathsNames.*;
+import static scraper.santander.session.RequestHandler.RequestSummary;
 
 public class SantanderSession {
   private final RequestHandler requestHandler;
@@ -17,25 +15,25 @@ public class SantanderSession {
   }
 
   public FirstAuthFactorToken firstAuthorizationFactor(Credentials credentials) {
-    String pathForXml = requestHandler.sendLoginPageRequest();
-    String pathForNikPage = requestHandler.sendRedirectXmlRequest(pathForXml);
+    RequestSummary loginPageReqSummary = requestHandler.sendLoginPageRequest();
+    RequestSummary redirectXmlReqSummary = requestHandler.sendRedirectXmlRequest(loginPageReqSummary);
     pauseExecution();
-    String pathForPassPage = requestHandler.sendNikRequest(pathForNikPage, credentials.accountNumber);
-    Map<PathsNames, String> pathsForSessionMapAndPassword = requestHandler.sendPasswordPageRequest(pathForPassPage);
-    requestHandler.sendSessionMapRequest(pathsForSessionMapAndPassword.get(SESSION_MAP));
+    RequestSummary nikReqSummary = requestHandler.sendNikRequest(redirectXmlReqSummary, credentials.accountNumber);
+    RequestSummary passPageReqSummary = requestHandler.sendPasswordPageRequest(nikReqSummary);
+    requestHandler.sendSessionMapRequest(passPageReqSummary);
     pauseExecution();
-    String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(pathsForSessionMapAndPassword.get(PASSWORD), credentials.password);
+    RequestSummary smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passPageReqSummary, credentials.password);
     return new FirstAuthFactorToken(smsCodeConfirmationPath);
   }
 
   public SecondAuthFactorToken secondAuthorizationFactor(FirstAuthFactorToken token, String smsCode) {
-    Map<PathsNames, String> paths = requestHandler.sendTokenRequest(token.smsCodeConfirmationPath, smsCode);
-    return new SecondAuthFactorToken(paths.get(LOGOUT), paths.get(PRODUCTS));
+    RequestSummary tokenReqSummary = requestHandler.sendSmsCodeRequest(token.passwordReqSummary, smsCode);
+    return new SecondAuthFactorToken(tokenReqSummary);
   }
 
   public List<AccountDetails> scrapeAccountsDetails(SecondAuthFactorToken token) {
-    List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(token.productsPath);
-    requestHandler.sendLogoutRequest(token.logOutPath);
+    List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(token.tokenReqSummary);
+    requestHandler.sendLogoutRequest(token.tokenReqSummary);
     return accountsDetails;
   }
 
@@ -48,20 +46,18 @@ public class SantanderSession {
   }
 
   public static class FirstAuthFactorToken {
-    private final String smsCodeConfirmationPath;
+    private final RequestSummary passwordReqSummary;
 
-    private FirstAuthFactorToken(String smsCodeConfirmationPath) {
-      this.smsCodeConfirmationPath = smsCodeConfirmationPath;
+    private FirstAuthFactorToken(RequestSummary passwordReqSummary) {
+      this.passwordReqSummary = passwordReqSummary;
     }
   }
 
   public static class SecondAuthFactorToken {
-    private final String logOutPath;
-    private final String productsPath;
+    private final RequestSummary tokenReqSummary;
 
-    private SecondAuthFactorToken(String logOutPath, String productsPath) {
-      this.logOutPath = logOutPath;
-      this.productsPath = productsPath;
+    private SecondAuthFactorToken(RequestSummary tokenReqSummary) {
+      this.tokenReqSummary = tokenReqSummary;
     }
   }
 }

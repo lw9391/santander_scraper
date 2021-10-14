@@ -80,7 +80,7 @@ public class SantanderRequestProvider {
             .build();
   }
 
-  public RequestDto POSTToken(String path, String token, String referer) {
+  public RequestDto POSTSmsCode(String path, String token, String referer) {
     RequestDto.Builder builder = RequestDto.builder();
     setCommonHeaders(builder);
     return builder.setUrl(HOST + PATH + path)
