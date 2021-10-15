@@ -7,9 +7,7 @@ import scraper.connections.RequestDto;
 import scraper.connections.ResponseDto;
 import scraper.santander.DataScraper;
 import scraper.santander.PathsNames;
-import scraper.util.DataBuilder;
 
-import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import java.util.Map;
@@ -19,103 +17,67 @@ import java.util.function.Supplier;
 import static scraper.santander.PathsNames.*;
 
 public class RequestHandler {
+
   private final HttpRequestSender sender;
   private final SantanderHttpRequestsProvider provider;
-
 
   public RequestHandler(HttpRequestSender sender, SantanderHttpRequestsProvider provider) {
     this.sender = sender;
     this.provider = provider;
   }
 
-  public RequestSummary sendLoginPageRequest() {
+  public String sendLoginPageRequest() {
     ProcessedResult<String> processedResult = sendAndProcess(provider::GETLoginPage, sender::sendGET, DataScraper::scrapeXmlPathFromLoginPage);
-    String referer = processedResult.response.requestUrl;
-    return new RequestSummary(Map.of(REDIRECT_XML, processedResult.data), referer);
+    return processedResult.data;
   }
 
-  public RequestSummary sendRedirectXmlRequest(RequestSummary loginPageReqSummary) {
+  public String sendRedirectXmlRequest(String path) {
     long timestamp = new Date().getTime();
-    String path = loginPageReqSummary.scrapedPaths.get(REDIRECT_XML);
-    String queryForXml = path + "&_=" + timestamp;
-    String referer = loginPageReqSummary.refererForNextRequest;
+    String fullPathForXml = path + "&_=" + timestamp;
 
-    Supplier<RequestDto> request = () -> provider.GETXmlWithPathForNikPage(queryForXml, referer);
+    Supplier<RequestDto> request = () -> provider.GETXmlWithPathForNikPage(fullPathForXml);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapeNikPagePathFromRedirectXml);
-    return new RequestSummary(Map.of(NIK_PAGE, processedResult.data), referer);
+    return processedResult.data;
   }
 
-  public RequestSummary sendNikRequest(RequestSummary redirectXmlReqSummary, String nik) {
-    String path = redirectXmlReqSummary.scrapedPaths.get(NIK_PAGE);
-    String referer = redirectXmlReqSummary.refererForNextRequest;
-    Supplier<RequestDto> request = () -> provider.POSTNik(path, nik, referer);
+  public String sendNikRequest(String path, String nik) {
+    Supplier<RequestDto> request = () -> provider.POSTNik(path, nik);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendPOST, DataScraper::scrapePasswordPagePathFromNikResponse);
-    return new RequestSummary(Map.of(PASS_PAGE, processedResult.data), referer);
+    return processedResult.data;
   }
 
-  public RequestSummary sendPasswordPageRequest(RequestSummary nikReqSummary) {
-    String path = nikReqSummary.scrapedPaths.get(PASS_PAGE);
-    String referer = nikReqSummary.refererForNextRequest;
-    Supplier<RequestDto> request = () -> provider.GETPasswordPage(path, referer);
+  public String sendPasswordPageRequest(String path) {
+    Supplier<RequestDto> request = () -> provider.GETPasswordPage(path);
     ProcessedResult<Map<PathsNames, String>> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapePathsFromPasswordPage);
-    String updatedReferer = processedResult.response.requestUrl;
-    return new RequestSummary(processedResult.data, updatedReferer);
+    return processedResult.data.get(PASSWORD);
   }
 
-  public void sendSessionMapRequest(RequestSummary passwordReqSummary) {
-    String path = passwordReqSummary.scrapedPaths.get(SESSION_MAP);
-    String mapSettings =
-            "true%2Ctrue%2Ctrue%2Ctrue%2Cfalse%2Ctrue%2Cfalse%2C1300%2C1.5%2C1300%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Ctrue%2Cfalse%2Cfalse%2Cfalse%2Cfalse%2Cfalse%2Cfalse%2Ctrue%2Cfalse%2Cfalse";
-    long timestamp = new Date().getTime();
-    String queryParams = DataBuilder.buildQueryParams("sessionMap", mapSettings, "_", String.valueOf(timestamp));
-    String referer = passwordReqSummary.refererForNextRequest;
-
-    Supplier<RequestDto> request = () -> provider.GETSendSessionMap(path + queryParams, referer);
-    sendAndProcess(request, sender::sendGET, Function.identity());
-  }
-
-  public RequestSummary sendPasswordRequest(RequestSummary passPageReqSummary, String password) {
-    String path = passPageReqSummary.scrapedPaths.get(PASSWORD);
-    String referer = passPageReqSummary.refererForNextRequest;
-    Supplier<RequestDto> request = () -> provider.POSTPassword(path, password, referer);
+  public String sendPasswordRequest(String path, String password) {
+    Supplier<RequestDto> request = () -> provider.POSTPassword(path, password);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendPOST, DataScraper::scrapeSmsCodePathFromPasswordResponse);
-    String updatedReferer = processedResult.response.requestUrl;
-    return new RequestSummary(Map.of(SMS_CODE, processedResult.data), updatedReferer);
+    return processedResult.data;
   }
 
-  public RequestSummary sendSmsCodeRequest(RequestSummary passwordReqSummary, String token) {
-    String path = passwordReqSummary.scrapedPaths.get(SMS_CODE);
-    String referer= passwordReqSummary.refererForNextRequest;
-    Supplier<RequestDto> request = () -> provider.POSTSmsCode(path, token, referer);
+  public String sendSmsCodeRequest(String path, String smsCode) {
+    Supplier<RequestDto> request = () -> provider.POSTSmsCode(path, smsCode);
     ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendPOST, DataScraper::scrapeInvalidLoginDiv);
     if (!processedResult.data.isEmpty()) {
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
     }
-    Map<PathsNames, String> paths = DataScraper.scrapePathsFromDashboardPage(processedResult.response.responseBody);
-
-    String updatedReferer = processedResult.response.requestUrl;
-    return new RequestSummary(paths, updatedReferer);
+    return DataScraper.scrapePathsFromDashboardPage(processedResult.response.responseBody).get(PRODUCTS);
   }
 
-  public List<AccountDetails> scrapeAccountsInformation(RequestSummary tokenReqSummary) {
-    String path = tokenReqSummary.scrapedPaths.get(PRODUCTS);
-    String referer = tokenReqSummary.refererForNextRequest;
-    Supplier<RequestDto> request = () -> provider.GETProductsPage(path, referer);
-    Supplier<RequestDto> logout = () -> provider.GETEmergencyLogout(referer);
+  public List<AccountDetails> scrapeAccountsInformation(String path) {
+    Supplier<RequestDto> request = () -> provider.GETProductsPage(path);
+    Supplier<RequestDto> logout = provider::GETLogout;
     ProcessedResult<List<AccountDetails>> processedResult = sendAndProcess(request, sender::sendGET, DataScraper::scrapeAccountsInformationFromProductsPage, logout);
 
     return processedResult.data;
   }
 
-  public void sendLogoutRequest(RequestSummary tokenReqSummary) {
-    String path = tokenReqSummary.scrapedPaths.get(LOGOUT);
-    String referer = tokenReqSummary.refererForNextRequest;
-    Supplier<RequestDto> request = () -> provider.GETLogout(path, referer);
-    ProcessedResult<String> processedResult = sendAndProcess(request, sender::sendGET, Function.identity());
-    if (!processedResult.response.requestUrl.equals(provider.HOST + provider.PATH + provider.LOGOUT)) {
-      RequestDto logout = provider.GETEmergencyLogout(referer);
-      sender.sendGET(logout);
-    }
+  public void sendLogoutRequest() {
+    Supplier<RequestDto> request = provider::GETLogout;
+    sendAndProcess(request, sender::sendGET, Function.identity());
   }
 
   private static <T> ProcessedResult<T> sendAndProcess(Supplier<RequestDto> requestSupplier, Function<RequestDto, ResponseDto> httpSendMethod, Function<String, T> scrapingFunction) {
@@ -149,13 +111,4 @@ public class RequestHandler {
     }
   }
 
-  static class RequestSummary {
-    public final Map<PathsNames,String> scrapedPaths;
-    public final String refererForNextRequest;
-
-    public RequestSummary(Map<PathsNames, String> scrapedPaths, String refererForNextRequest) {
-      this.scrapedPaths = Collections.unmodifiableMap(scrapedPaths);
-      this.refererForNextRequest = refererForNextRequest;
-    }
-  }
 }

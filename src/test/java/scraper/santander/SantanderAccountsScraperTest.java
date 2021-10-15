@@ -18,6 +18,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class SantanderAccountsScraperTest {
+
   private static MockWebServer mockWebServer;
 
   @BeforeAll
@@ -56,14 +57,14 @@ public class SantanderAccountsScraperTest {
     assertThrows(InvalidCredentialsException.class, () -> scraper.run(nik, password));
   }
 
-  private SantanderSession initSession() {
+  private static SantanderSession initSession() {
     HttpRequestSender sender = new OkHttpRequestsSender();
     SantanderHttpRequestsProvider provider = new SantanderHttpRequestsProvider(readHostFromMockServer());
     RequestHandler requestHandler = new RequestHandler(sender, provider);
     return new SantanderSession(requestHandler);
   }
 
-  private String readHostFromMockServer() {
+  private static String readHostFromMockServer() {
     String host = mockWebServer.url("").toString();
     return host.substring(0, host.length() - 1); //rid of ending backslash
   }
@@ -72,4 +73,5 @@ public class SantanderAccountsScraperTest {
   static void tearDown() throws IOException {
     mockWebServer.shutdown();
   }
+
 }

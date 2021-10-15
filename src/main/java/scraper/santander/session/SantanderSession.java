@@ -5,9 +5,8 @@ import scraper.santander.Credentials;
 
 import java.util.List;
 
-import static scraper.santander.session.RequestHandler.RequestSummary;
-
 public class SantanderSession {
+
   private final RequestHandler requestHandler;
 
   public SantanderSession(RequestHandler requestHandler) {
@@ -15,49 +14,43 @@ public class SantanderSession {
   }
 
   public FirstAuthFactorToken firstAuthorizationFactor(Credentials credentials) {
-    RequestSummary loginPageReqSummary = requestHandler.sendLoginPageRequest();
-    RequestSummary redirectXmlReqSummary = requestHandler.sendRedirectXmlRequest(loginPageReqSummary);
-    pauseExecution();
-    RequestSummary nikReqSummary = requestHandler.sendNikRequest(redirectXmlReqSummary, credentials.accountNumber);
-    RequestSummary passPageReqSummary = requestHandler.sendPasswordPageRequest(nikReqSummary);
-    requestHandler.sendSessionMapRequest(passPageReqSummary);
-    pauseExecution();
-    RequestSummary smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passPageReqSummary, credentials.password);
+    String redirectXmlPath = requestHandler.sendLoginPageRequest();
+    String nikPagePath = requestHandler.sendRedirectXmlRequest(redirectXmlPath);
+    String passPagePath = requestHandler.sendNikRequest(nikPagePath, credentials.accountNumber);
+    String passwordPath = requestHandler.sendPasswordPageRequest(passPagePath);
+    String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passwordPath, credentials.password);
     return new FirstAuthFactorToken(smsCodeConfirmationPath);
   }
 
   public SecondAuthFactorToken secondAuthorizationFactor(FirstAuthFactorToken token, String smsCode) {
-    RequestSummary tokenReqSummary = requestHandler.sendSmsCodeRequest(token.passwordReqSummary, smsCode);
-    return new SecondAuthFactorToken(tokenReqSummary);
+    String productsPath = requestHandler.sendSmsCodeRequest(token.smsCodeConfirmationPath, smsCode);
+    return new SecondAuthFactorToken(productsPath);
   }
 
   public List<AccountDetails> scrapeAccountsDetails(SecondAuthFactorToken token) {
-    List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(token.tokenReqSummary);
-    requestHandler.sendLogoutRequest(token.tokenReqSummary);
+    List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(token.productsPath);
+    requestHandler.sendLogoutRequest();
     return accountsDetails;
   }
 
-  private void pauseExecution() {
-    try {
-      Thread.sleep(1500);
-    } catch (InterruptedException e) {
-      throw new RuntimeException("This should never happen.", e);
-    }
-  }
-
   public static class FirstAuthFactorToken {
-    private final RequestSummary passwordReqSummary;
 
-    private FirstAuthFactorToken(RequestSummary passwordReqSummary) {
-      this.passwordReqSummary = passwordReqSummary;
+    private final String smsCodeConfirmationPath;
+
+    private FirstAuthFactorToken(String smsCodeConfirmationPath) {
+      this.smsCodeConfirmationPath = smsCodeConfirmationPath;
     }
+
   }
 
   public static class SecondAuthFactorToken {
-    private final RequestSummary tokenReqSummary;
 
-    private SecondAuthFactorToken(RequestSummary tokenReqSummary) {
-      this.tokenReqSummary = tokenReqSummary;
+    private final String productsPath;
+
+    private SecondAuthFactorToken(String productsPath) {
+      this.productsPath = productsPath;
     }
+
   }
+
 }

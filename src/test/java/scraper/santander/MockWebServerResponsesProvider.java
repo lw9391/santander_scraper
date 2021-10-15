@@ -19,7 +19,6 @@ public class MockWebServerResponsesProvider {
     server.enqueue(xmlWithPathForNikPage());
     server.enqueue(postNikResponse());
     server.enqueue(passwordPage());
-    server.enqueue(sessionMapResponse());
     server.enqueue(tokenPage());
     server.enqueue(dashboardPage());
     server.enqueue(productsPage());
@@ -35,7 +34,6 @@ public class MockWebServerResponsesProvider {
     server.enqueue(xmlWithPathForNikPage());
     server.enqueue(postNikResponse());
     server.enqueue(passwordPage());
-    server.enqueue(sessionMapResponse());
     server.enqueue(tokenPage());
     server.enqueue(invalidLoginPage());
 
@@ -62,11 +60,6 @@ public class MockWebServerResponsesProvider {
     return server;
   }
 
-  public static MockWebServer enqueueSessionMapPage(MockWebServer server) {
-    server.enqueue(sessionMapResponse());
-    return server;
-  }
-
   public static MockWebServer enqueueTokenPage(MockWebServer server) {
     server.enqueue(tokenPage());
     return server;
@@ -74,11 +67,6 @@ public class MockWebServerResponsesProvider {
 
   public static MockWebServer enqueueDashboardPage(MockWebServer server) {
     server.enqueue(dashboardPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueLogoutPage(MockWebServer server) {
-    server.enqueue(logoutPage());
     return server;
   }
 
@@ -124,12 +112,6 @@ public class MockWebServerResponsesProvider {
     return new MockResponse()
             .setBody(body)
             .setHeader("Content-Type", "text/html; charset=UTF-8");
-  }
-
-  private static MockResponse sessionMapResponse() {
-    return new MockResponse()
-            .setBody("<?xml version=\"1.0\" encoding=\"UTF-8\"?><ajax-response></ajax-response>")
-            .setHeader("Content-Type", "text/xml; charset=UTF-8");
   }
 
   private static MockResponse tokenPage() {

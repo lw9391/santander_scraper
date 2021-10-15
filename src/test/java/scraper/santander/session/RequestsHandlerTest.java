@@ -12,14 +12,12 @@ import scraper.santander.MockWebServerResponsesProvider;
 
 import java.io.IOException;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
-import static scraper.santander.PathsNames.*;
-import static scraper.santander.session.RequestHandler.RequestSummary;
 
 class RequestsHandlerTest {
+
   private static RequestHandler requestsHandler;
   private static MockWebServer server;
 
@@ -36,89 +34,68 @@ class RequestsHandlerTest {
   void sendLoginPageRequestTest() {
     MockWebServerResponsesProvider.enqueueLoginPage(server);
 
-    RequestSummary requestSummary = requestsHandler.sendLoginPageRequest();
+    String redirectXmlPath = requestsHandler.sendLoginPageRequest();
 
-    String scrapedPath = requestSummary.scrapedPaths.get(REDIRECT_XML);
-    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", scrapedPath);
-    assertEquals("http://localhost:8889/centrum24-web/login", requestSummary.refererForNextRequest);
+    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2FI3qkyM18bV", redirectXmlPath);
   }
 
   @Test
   void sendRedirectXmlRequestTest() {
     MockWebServerResponsesProvider.enqueueXmlWithPathForNikPage(server);
-    RequestSummary input = new RequestSummary(Map.of(REDIRECT_XML, "/path"), "login?referer");
 
-    RequestSummary requestSummary = requestsHandler.sendRedirectXmlRequest(input);
+    String nikPath = requestsHandler.sendRedirectXmlRequest("/path");
 
-    String scrapedPath = requestSummary.scrapedPaths.get(NIK_PAGE);
-    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", scrapedPath);
+    assertEquals("/login?x=psSMC6gVvVpYkVO8biaMI7tUqDDpYQzXOM_jr6v8ttKTh5E-e7iMgxJxSTtwaxrIe8mQhG9jUN5lx1Yyr-wI2Jq7iUgK71WU9KRSiD9ZXtSc6N1yJH61vg", nikPath);
   }
 
   @Test
   void sendNikRequestTest() {
     MockWebServerResponsesProvider.enqueueNikPage(server);
-    RequestSummary input = new RequestSummary(Map.of(NIK_PAGE, "/path"), "login?referer");
 
-    RequestSummary requestSummary = requestsHandler.sendNikRequest(input, "111111");
+    String passPagePath = requestsHandler.sendNikRequest("path", "111111");
 
-    String scrapedPath = requestSummary.scrapedPaths.get(PASS_PAGE);
-    assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", scrapedPath);
+    assertEquals("/crypt.brKnpZUkktuD2YnBIm0vpQ/brK0a", passPagePath);
   }
 
   @Test
   void sendPasswordPageRequestTest() {
     MockWebServerResponsesProvider.enqueuePasswordPage(server);
-    RequestSummary input = new RequestSummary(Map.of(PASS_PAGE, "/path"), "login?referer");
 
-    RequestSummary requestSummary = requestsHandler.sendPasswordPageRequest(input);
+    String passwordPath = requestsHandler.sendPasswordPageRequest("/path");
 
-    String passwordPath = requestSummary.scrapedPaths.get(PASSWORD);
-    String sessionMapPath = requestSummary.scrapedPaths.get(SESSION_MAP);
     assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", passwordPath);
-    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_YLJ6XzBNKJtQSbN-NdTTUaXMzfLzxBZ9EURsRnaBBQxR_jFThmXQm0zbzjNSjxOtMufJ-0MGGRcS6TA4seUNnspto52VanATw/brK0a", sessionMapPath);
-    assertEquals("http://localhost:8889/centrum24-web/path", requestSummary.refererForNextRequest);
   }
 
   @Test
   void sendPasswordRequestTest() {
     MockWebServerResponsesProvider.enqueueTokenPage(server);
-    RequestSummary input = new RequestSummary(Map.of(PASSWORD, "/path"), "login?referer");
 
-    RequestSummary requestSummary = requestsHandler.sendPasswordRequest(input, "password");
+    String smsCodePath = requestsHandler.sendPasswordRequest("/path", "password");
 
-    String path = requestSummary.scrapedPaths.get(SMS_CODE);
-    assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", path);
-    assertEquals("http://localhost:8889/centrum24-web/path", requestSummary.refererForNextRequest);
+    assertEquals("/crypt.brKnpZUkktvUK1iu4qXMi9bnZ5hezbPacPk819Dz6-8g_orQ4Xq-FjTWUHuDABm_P42aHIYvzffjV0KTJBs5ldLgqxB1y_j3MyHdo2lsyqlmW45BWuI_jcLCy__ihsl4/brK0a", smsCodePath);
   }
 
   @Test
   void sendSmsCodeRequestTest() {
     MockWebServerResponsesProvider.enqueueDashboardPage(server);
-    RequestSummary input = new RequestSummary(Map.of(SMS_CODE, "/path"), "login?referer");
 
-    RequestSummary requestSummary = requestsHandler.sendSmsCodeRequest(input, "111-111");
+    String productsPath = requestsHandler.sendSmsCodeRequest("/path", "111-111");
 
-    String logoutPath = requestSummary.scrapedPaths.get(LOGOUT);
-    String productsPath = requestSummary.scrapedPaths.get(PRODUCTS);
-    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", logoutPath);
     assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", productsPath);
-    assertEquals("http://localhost:8889/centrum24-web/path", requestSummary.refererForNextRequest);
   }
 
   @Test
   void sendSmsCodeRequestInvalidLoginPageThrowsException() {
     MockWebServerResponsesProvider.enqueueInvalidLoginPage(server);
-    RequestSummary input = new RequestSummary(Map.of(SMS_CODE, "/path"), "login?referer");
 
-    assertThrows(InvalidCredentialsException.class, () -> requestsHandler.sendSmsCodeRequest(input, "111-111"));
+    assertThrows(InvalidCredentialsException.class, () -> requestsHandler.sendSmsCodeRequest("path", "111-111"));
   }
 
   @Test
   void scrapeAccountsInformationTest() {
     MockWebServerResponsesProvider.enqueueProductsPage(server);
-    RequestSummary input = new RequestSummary(Map.of(PRODUCTS, "/path"), "login?referer");
 
-    List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation(input);
+    List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation("path");
 
     assertEquals("112,00 PLN", accountDetailsList.get(0).getBalance());
     assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).getAccountName());
@@ -130,4 +107,5 @@ class RequestsHandlerTest {
   static void tearDown() throws IOException {
     server.shutdown();
   }
+
 }
