@@ -10,12 +10,8 @@ import scraper.AccountDetails;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static scraper.santander.PathsNames.PASSWORD;
-import static scraper.santander.PathsNames.SESSION_MAP;
 
 public class DataScraper {
 
@@ -51,21 +47,11 @@ public class DataScraper {
     return xmlDoc.select(tagName).html();
   }
 
-  public static Map<PathsNames, String> scrapePathsFromPasswordPage(String passwordPageHtml) {
-    String pathForSessionMap = scrapePathForSessionMapRequest(passwordPageHtml);
-
+  public static String scrapePathsFromPasswordPage(String passwordPageHtml) {
     String attribute = getAttributeFromHtml(passwordPageHtml, "pinForm", "action");
     int startIndex = attribute.indexOf("/crypt.");
-    String pathForPasswordRequest = attribute.substring(startIndex);
 
-    return Map.of(SESSION_MAP, pathForSessionMap, PASSWORD, pathForPasswordRequest);
-  }
-
-  private static String scrapePathForSessionMapRequest(String html) {
-    Document document = Jsoup.parse(html);
-    Elements head = document.select("head");
-    String script = head.select("script").not("[src]").not("[id]").html();
-    return getSubstringBetween(script, "/crypt", "\"");
+    return attribute.substring(startIndex);
   }
 
   private static String getSubstringBetween(String input, String start, String end) {
@@ -95,20 +81,10 @@ public class DataScraper {
     return logoutInfo.outerHtml();
   }
 
-  public static Map<PathsNames, String> scrapePathsFromDashboardPage(String dashboardPageHtml) {
-    String logoutDiv = getFromHtmlByClass(dashboardPageHtml, "logout");
-    String logoutPath = Jsoup.parse(logoutDiv).select("a").attr("href").substring(1);
-
+  public static String scrapePathsFromDashboardPage(String dashboardPageHtml) {
     String productsLi = getFromHtmlById(dashboardPageHtml, "menu_all_products");
-    String productsPath = Jsoup.parse(productsLi).select("a").attr("href").substring(1);
 
-    return Map.of(PathsNames.LOGOUT, logoutPath, PathsNames.PRODUCTS, productsPath);
-  }
-
-  private static String getFromHtmlByClass(String html, String clazz) {
-    return Jsoup.parse(html)
-            .getElementsByClass(clazz)
-            .outerHtml();
+    return Jsoup.parse(productsLi).select("a").attr("href").substring(1);
   }
 
   private static String getFromHtmlById(String html, String id) {

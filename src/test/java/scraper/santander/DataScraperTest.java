@@ -9,7 +9,6 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
-import java.util.Map;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -40,9 +39,8 @@ class DataScraperTest {
   @Test
   void scrapePathsFromPasswordPage() {
     String page = testDataSupplier("src/test/resources/http/4loginpage.html");
-    Map<PathsNames, String> scrapedPaths = DataScraper.scrapePathsFromPasswordPage(page);
-    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", scrapedPaths.get(PathsNames.PASSWORD));
-    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_YLJ6XzBNKJtQSbN-NdTTUaXMzfLzxBZ9EURsRnaBBQxR_jFThmXQm0zbzjNSjxOtMufJ-0MGGRcS6TA4seUNnspto52VanATw/brK0a", scrapedPaths.get(PathsNames.SESSION_MAP));
+    String scrapedPath = DataScraper.scrapePathsFromPasswordPage(page);
+    assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", scrapedPath);
   }
 
   @Test
@@ -70,9 +68,8 @@ class DataScraperTest {
   @Test
   void scrapePathsFromDashboardPage() {
     String page = testDataSupplier("src/test/resources/http/6dashboard.html");
-    Map<PathsNames, String> scrapedPaths = DataScraper.scrapePathsFromDashboardPage(page);
-    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jESpGENeIF4xRXVg0UDT17jg", scrapedPaths.get(PathsNames.LOGOUT));
-    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", scrapedPaths.get(PathsNames.PRODUCTS));
+    String scrapedPath = DataScraper.scrapePathsFromDashboardPage(page);
+    assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", scrapedPath);
   }
 
   @Test
@@ -90,4 +87,5 @@ class DataScraperTest {
       throw new RuntimeException(e);
     }
   }
+
 }
