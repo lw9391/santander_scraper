@@ -7,7 +7,7 @@ import java.util.List;
 public interface ViewController {
   String readInput();
 
-  void displayMessage(String message);
+  void displayPromptForSmsCode();
 
   void displayOutput(List<AccountDetails> accountsList);
 }

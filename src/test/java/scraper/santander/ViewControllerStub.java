@@ -20,7 +20,7 @@ public class ViewControllerStub implements ViewController {
   }
 
   @Override
-  public void displayMessage(String message) {
+  public void displayPromptForSmsCode() {
 
   }
 

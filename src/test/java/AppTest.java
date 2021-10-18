@@ -3,29 +3,34 @@ import scraper.App;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.io.PrintStream;
 import java.util.Scanner;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
-import static scraper.santander.SantanderAccountsScraper.PROMPT_FOR_SMS_CODE;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
-public class AcceptanceTest {
 
-  public static void main(String[] args) {
-    PrintStream outContent = new PrintStream(new ByteArrayOutputStream());
+public class AppTest {
+
+  public static void main(String[] args) throws IOException {
+    ByteArrayOutputStream outContent = new ByteArrayOutputStream();
     PrintStream originalSystemOut = System.out;
     String[] credentials = readCredentials();
 
-    System.setOut(outContent);
+    System.setOut(new PrintStream(outContent));
     App.main(credentials[0], credentials[1]);
     String gatheredOutput = outContent.toString();
     System.setOut(originalSystemOut);
     outContent.close();
 
-    if (gatheredOutput.length() > PROMPT_FOR_SMS_CODE.length()) {
-      System.out.println("Test passed");
-    } else {
-      System.out.println("Test failed");
-    }
+    String balanceRegex = "([0-9]{1,3}\\s)*[0-9]{1,3}\\,[0-9]{2}";
+    Pattern pattern = Pattern.compile(balanceRegex);
+    Matcher matcher = pattern.matcher(gatheredOutput);
+    boolean containsAnyAmount = matcher.find();
+
+    assertTrue(containsAnyAmount);
   }
 
   private static String[] readCredentials() {

@@ -13,7 +13,7 @@ import static scraper.santander.session.SantanderSession.FirstAuthFactorToken;
 import static scraper.santander.session.SantanderSession.SecondAuthFactorToken;
 
 public class SantanderAccountsScraper {
-  public static final String PROMPT_FOR_SMS_CODE = "Wprowadz sms-kod:";
+
   private final SantanderSession session;
   private final ViewController viewController;
 
@@ -31,13 +31,13 @@ public class SantanderAccountsScraper {
   }
 
   private String readSmsCode() {
-    viewController.displayMessage(PROMPT_FOR_SMS_CODE);
+    viewController.displayPromptForSmsCode();
     String smsCode = viewController.readInput();
     verifyToken(smsCode);
     return smsCode;
   }
 
-  private void verifyToken(String token) {
+  private static void verifyToken(String token) {
     String regex = "[0-9]{3}\\-[0-9]{3}";
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(token);
