@@ -1,12 +1,11 @@
 package scraper;
 
-import scraper.connections.HttpRequestSender;
-import scraper.connections.okhttp.OkHttpRequestsSender;
-import scraper.santander.SantanderAccountsScraper;
-import scraper.santander.session.RequestHandler;
-import scraper.santander.session.SantanderHttpRequestsProvider;
-import scraper.santander.session.SantanderSession;
-import scraper.view.ConsoleController;
+import scraper.domain.connections.HttpRequestSender;
+import scraper.domain.connections.okhttp.OkHttpRequestsSender;
+import scraper.domain.santander.SantanderAccountsScraper;
+import scraper.domain.santander.session.RequestHandler;
+import scraper.domain.santander.session.SantanderHttpRequestsProvider;
+import scraper.domain.santander.session.SantanderSession;
 
 public class App {
 

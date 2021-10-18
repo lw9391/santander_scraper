@@ -1,6 +1,6 @@
-package scraper.santander.session;
+package scraper.domain.santander.session;
 
-import scraper.connections.RequestDto;
+import scraper.domain.connections.RequestDto;
 
 public class SantanderHttpRequestsProvider {
 

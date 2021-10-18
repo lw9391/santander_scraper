@@ -1,12 +1,12 @@
-package scraper.connections.okhttp;
+package scraper.domain.connections.okhttp;
 
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.Response;
-import scraper.connections.HttpRequestSender;
-import scraper.connections.RequestDto;
-import scraper.connections.ResponseDto;
+import scraper.domain.connections.HttpRequestSender;
+import scraper.domain.connections.RequestDto;
+import scraper.domain.connections.ResponseDto;
 
 import java.io.IOException;
 import java.net.CookieManager;

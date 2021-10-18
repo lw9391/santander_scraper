@@ -1,11 +1,11 @@
-package scraper.santander.session;
+package scraper.domain.santander.session;
 
-import scraper.AccountDetails;
-import scraper.InvalidCredentialsException;
-import scraper.connections.HttpRequestSender;
-import scraper.connections.RequestDto;
-import scraper.connections.ResponseDto;
-import scraper.santander.DataScraper;
+import scraper.domain.AccountDetails;
+import scraper.domain.InvalidCredentialsException;
+import scraper.domain.connections.HttpRequestSender;
+import scraper.domain.connections.RequestDto;
+import scraper.domain.connections.ResponseDto;
+import scraper.domain.santander.DataScraper;
 
 import java.util.Date;
 import java.util.List;

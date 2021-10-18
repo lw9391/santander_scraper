@@ -1,14 +1,14 @@
-package scraper.santander.session;
+package scraper.domain.santander.session;
 
 import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import scraper.AccountDetails;
-import scraper.InvalidCredentialsException;
-import scraper.connections.HttpRequestSender;
-import scraper.connections.okhttp.OkHttpRequestsSender;
-import scraper.santander.MockWebServerResponsesProvider;
+import scraper.domain.AccountDetails;
+import scraper.domain.InvalidCredentialsException;
+import scraper.domain.connections.HttpRequestSender;
+import scraper.domain.connections.okhttp.OkHttpRequestsSender;
+import scraper.domain.santander.MockWebServerResponsesProvider;
 
 import java.io.IOException;
 import java.util.List;

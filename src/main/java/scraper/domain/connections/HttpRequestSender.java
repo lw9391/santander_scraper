@@ -1,4 +1,4 @@
-package scraper.connections;
+package scraper.domain.connections;
 
 public interface HttpRequestSender {
 

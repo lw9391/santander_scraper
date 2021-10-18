@@ -1,7 +1,7 @@
-package scraper.santander.session;
+package scraper.domain.santander.session;
 
-import scraper.AccountDetails;
-import scraper.santander.Credentials;
+import scraper.domain.AccountDetails;
+import scraper.domain.santander.Credentials;
 
 import java.util.List;
 

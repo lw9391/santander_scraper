@@ -1,4 +1,4 @@
-import scraper.App;
+package scraper;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;

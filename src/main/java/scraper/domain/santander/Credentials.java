@@ -1,6 +1,6 @@
-package scraper.santander;
+package scraper.domain.santander;
 
-import scraper.InvalidCredentialsException;
+import scraper.domain.InvalidCredentialsException;
 
 public record Credentials(String accountNumber, String password) {
 

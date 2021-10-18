@@ -1,16 +1,16 @@
-package scraper.santander;
+package scraper.domain.santander;
 
-import scraper.AccountDetails;
-import scraper.santander.session.SantanderSession;
-import scraper.view.ViewController;
-import scraper.InvalidCredentialsException;
+import scraper.domain.AccountDetails;
+import scraper.domain.santander.session.SantanderSession;
+import scraper.ViewController;
+import scraper.domain.InvalidCredentialsException;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static scraper.santander.session.SantanderSession.FirstAuthFactorToken;
-import static scraper.santander.session.SantanderSession.SecondAuthFactorToken;
+import static scraper.domain.santander.session.SantanderSession.FirstAuthFactorToken;
+import static scraper.domain.santander.session.SantanderSession.SecondAuthFactorToken;
 
 public class SantanderAccountsScraper {
 

@@ -1,4 +1,4 @@
-package scraper.connections.okhttp;
+package scraper.domain.connections.okhttp;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
@@ -6,8 +6,8 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import okhttp3.ResponseBody;
-import scraper.connections.RequestDto;
-import scraper.connections.ResponseDto;
+import scraper.domain.connections.RequestDto;
+import scraper.domain.connections.ResponseDto;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
