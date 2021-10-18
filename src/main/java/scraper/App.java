@@ -14,7 +14,6 @@ public class App {
     if (args.length != 2)
       throw new IllegalStateException("Wprowadź nik i hasło przez parametry wiersza poleceń.");
 
-
     SantanderAccountsScraper scraper = initScraper();
     scraper.run(args[0], args[1]);
   }
