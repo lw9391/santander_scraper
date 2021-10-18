@@ -8,6 +8,7 @@ import java.util.Map;
 import java.util.Objects;
 
 public class RequestDto {
+
   public final Map<String, String> headers;
   public final String url;
   public final List<FormBodyPair> formBody;
@@ -60,26 +61,8 @@ public class RequestDto {
     return Objects.hash(headers, url, formBody);
   }
 
-  public static class FormBodyPair {
-    public final String name;
-    public final String value;
+  public static record FormBodyPair(String name, String value) {
 
-    public FormBodyPair(String name, String value) {
-      this.name = name;
-      this.value = value;
-    }
-
-    @Override
-    public boolean equals(Object o) {
-      if (this == o) return true;
-      if (o == null || getClass() != o.getClass()) return false;
-      FormBodyPair that = (FormBodyPair) o;
-      return Objects.equals(name, that.name) && Objects.equals(value, that.value);
-    }
-
-    @Override
-    public int hashCode() {
-      return Objects.hash(name, value);
-    }
   }
+
 }

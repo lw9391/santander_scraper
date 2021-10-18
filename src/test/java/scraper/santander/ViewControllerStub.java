@@ -32,4 +32,5 @@ public class ViewControllerStub implements ViewController {
   public List<AccountDetails> getStoredDetails() {
     return storedDetails;
   }
+
 }

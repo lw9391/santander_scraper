@@ -26,4 +26,5 @@ public class ConsoleController implements ViewController {
   public void displayOutput(List<AccountDetails> accountsList) {
     accountsList.forEach(System.out::println);
   }
+
 }

@@ -82,7 +82,7 @@ public class OkHttpMapper {
       return RequestBody.create(new byte[]{0});
     }
     FormBody.Builder formBuilder = new FormBody.Builder();
-    formBodyPairs.forEach(formBodyPair -> formBuilder.add(formBodyPair.name, formBodyPair.value));
+    formBodyPairs.forEach(formBodyPair -> formBuilder.add(formBodyPair.name(), formBodyPair.value()));
     return formBuilder.build();
   }
 }

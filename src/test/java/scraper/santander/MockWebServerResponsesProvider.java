@@ -10,6 +10,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 
 public class MockWebServerResponsesProvider {
+
   public static final String PATH = "/centrum24-web";
   public static final String LOGOUT = "/centrum24-web/logout";
 
@@ -162,4 +163,5 @@ public class MockWebServerResponsesProvider {
       throw new RuntimeException(e);
     }
   }
+
 }

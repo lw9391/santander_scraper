@@ -11,9 +11,9 @@ import scraper.view.ConsoleController;
 public class App {
 
   public static void main(String... args) {
-    if (args.length != 2) {
+    if (args.length != 2)
       throw new IllegalStateException("Wprowadź nik i hasło przez parametry wiersza poleceń.");
-    }
+
 
     SantanderAccountsScraper scraper = initScraper();
     scraper.run(args[0], args[1]);
@@ -26,4 +26,5 @@ public class App {
     SantanderSession session = new SantanderSession(requestHandler);
     return new SantanderAccountsScraper(session, new ConsoleController());
   }
+
 }

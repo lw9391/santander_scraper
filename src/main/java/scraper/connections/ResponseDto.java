@@ -4,6 +4,7 @@ import java.util.Collections;
 import java.util.Map;
 
 public class ResponseDto {
+
   public final Map<String, String> responseHeaders;
   public final String responseBody;
   public final String requestUrl;
@@ -64,4 +65,5 @@ public class ResponseDto {
     sb.append(responseBody);
     return sb.toString();
   }
+
 }
