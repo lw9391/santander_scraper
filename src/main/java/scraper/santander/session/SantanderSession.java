@@ -16,9 +16,9 @@ public class SantanderSession {
   public FirstAuthFactorToken firstAuthorizationFactor(Credentials credentials) {
     String redirectXmlPath = requestHandler.sendLoginPageRequest();
     String nikPagePath = requestHandler.sendRedirectXmlRequest(redirectXmlPath);
-    String passPagePath = requestHandler.sendNikRequest(nikPagePath, credentials.accountNumber);
+    String passPagePath = requestHandler.sendNikRequest(nikPagePath, credentials.accountNumber());
     String passwordPath = requestHandler.sendPasswordPageRequest(passPagePath);
-    String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passwordPath, credentials.password);
+    String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passwordPath, credentials.password());
     return new FirstAuthFactorToken(smsCodeConfirmationPath);
   }
 

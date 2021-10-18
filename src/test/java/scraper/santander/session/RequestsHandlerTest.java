@@ -97,10 +97,10 @@ class RequestsHandlerTest {
 
     List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation("path");
 
-    assertEquals("112,00 PLN", accountDetailsList.get(0).getBalance());
-    assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).getAccountName());
-    assertEquals("0,38 PLN", accountDetailsList.get(1).getBalance());
-    assertEquals("Konto Oszczednosciowe w PLN", accountDetailsList.get(1).getAccountName());
+    assertEquals("112,00 PLN", accountDetailsList.get(0).balance());
+    assertEquals("Ekstrakonto Plus", accountDetailsList.get(0).accountName());
+    assertEquals("0,38 PLN", accountDetailsList.get(1).balance());
+    assertEquals("Konto Oszczednosciowe w PLN", accountDetailsList.get(1).accountName());
   }
 
   @AfterAll

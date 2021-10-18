@@ -33,16 +33,16 @@ public class SantanderAccountsScraper {
   private String readSmsCode() {
     viewController.displayPromptForSmsCode();
     String smsCode = viewController.readInput();
-    verifyToken(smsCode);
+    assertTokenHasValidFormat(smsCode);
     return smsCode;
   }
 
-  private static void verifyToken(String token) {
+  private static void assertTokenHasValidFormat(String token) {
     String regex = "[0-9]{3}\\-[0-9]{3}";
     Pattern pattern = Pattern.compile(regex);
     Matcher matcher = pattern.matcher(token);
-    if (!matcher.matches()) {
+    if (!matcher.matches())
       throw new InvalidCredentialsException("Provided token has invalid format.");
-    }
   }
+
 }
