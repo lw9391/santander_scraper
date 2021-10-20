@@ -4,7 +4,7 @@ import scraper.domain.connections.HttpRequestSender;
 import scraper.domain.connections.okhttp.OkHttpRequestsSender;
 import scraper.domain.santander.SantanderAccountsScraper;
 import scraper.domain.santander.session.RequestHandler;
-import scraper.domain.santander.session.SantanderHttpRequestsProvider;
+import scraper.domain.santander.session.HttpRequests;
 import scraper.domain.santander.session.SantanderSession;
 
 public class App {
@@ -19,7 +19,7 @@ public class App {
 
   private static SantanderAccountsScraper initScraper() {
     HttpRequestSender sender = new OkHttpRequestsSender();
-    SantanderHttpRequestsProvider provider = new SantanderHttpRequestsProvider("https://www.centrum24.pl");
+    HttpRequests provider = new HttpRequests("https://www.centrum24.pl/centrum24-web");
     RequestHandler requestHandler = new RequestHandler(sender, provider);
     SantanderSession session = new SantanderSession(requestHandler);
     return new SantanderAccountsScraper(session, new Console());

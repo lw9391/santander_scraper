@@ -9,7 +9,7 @@ import scraper.domain.InvalidCredentialsException;
 import scraper.domain.connections.HttpRequestSender;
 import scraper.domain.connections.okhttp.OkHttpRequestsSender;
 import scraper.domain.santander.session.RequestHandler;
-import scraper.domain.santander.session.SantanderHttpRequestsProvider;
+import scraper.domain.santander.session.HttpRequests;
 import scraper.domain.santander.session.SantanderSession;
 
 import java.io.IOException;
@@ -59,7 +59,7 @@ public class SantanderAccountsScraperTest {
 
   private static SantanderSession initSession() {
     HttpRequestSender sender = new OkHttpRequestsSender();
-    SantanderHttpRequestsProvider provider = new SantanderHttpRequestsProvider(readHostFromMockServer());
+    HttpRequests provider = new HttpRequests(readHostFromMockServer());
     RequestHandler requestHandler = new RequestHandler(sender, provider);
     return new SantanderSession(requestHandler);
   }

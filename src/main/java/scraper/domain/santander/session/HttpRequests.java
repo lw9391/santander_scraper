@@ -2,26 +2,25 @@ package scraper.domain.santander.session;
 
 import scraper.domain.connections.RequestDto;
 
-public class SantanderHttpRequestsProvider {
+public class HttpRequests {
 
-  public final String HOST;
-  public final String PATH = "/centrum24-web";
-  public final String DASHBOARD_PATH = "/centrum24-web/multi";
-  public final String LOGOUT = "/logout";
+  public final String baseUrl;
+  public final String dashboardPath = "/multi";
+  public final String logoutPath = "/logout";
 
-  public SantanderHttpRequestsProvider(String HOST) {
-    this.HOST = HOST;
+  public HttpRequests(String baseUrl) {
+    this.baseUrl = baseUrl;
   }
 
-  public RequestDto GETLoginPage() {
+  public RequestDto loginPage() {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + "/login")
+    return builder.setUrl(baseUrl + "/login")
             .build();
   }
 
-  public RequestDto GETXmlWithPathForNikPage(String path) {
+  public RequestDto redirectXml(String path) {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + path)
+    return builder.setUrl(baseUrl + path)
             .setHeader("Wicket-Ajax", "true")
             .setHeader("Wicket-Ajax-BaseURL", ".")
             .setHeader("Wicket-FocusedElementId", "input_nik")
@@ -29,9 +28,9 @@ public class SantanderHttpRequestsProvider {
             .build();
   }
 
-  public RequestDto POSTNik(String path, String nik) {
+  public RequestDto nik(String path, String nik) {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + path)
+    return builder.setUrl(baseUrl + path)
             .addFormBodyPair("nik", nik)
             .addFormBodyPair("dp", "")
             .addFormBodyPair("loginButton", "1")
@@ -42,37 +41,37 @@ public class SantanderHttpRequestsProvider {
             .build();
   }
 
-  public RequestDto GETPasswordPage(String path) {
+  public RequestDto passwordPage(String path) {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + path)
+    return builder.setUrl(baseUrl + path)
             .build();
   }
 
-  public RequestDto POSTPassword(String path, String password) {
+  public RequestDto password(String path, String password) {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + path)
+    return builder.setUrl(baseUrl + path)
             .addFormBodyPair("pinFragment:pin", password)
             .addFormBodyPair("loginButton", "Dalej")
             .build();
   }
 
-  public RequestDto POSTSmsCode(String path, String token) {
+  public RequestDto smsCode(String path, String token) {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + path)
+    return builder.setUrl(baseUrl + path)
             .addFormBodyPair("response", token)
             .addFormBodyPair("loginButton", "Dalej")
             .build();
   }
 
-  public RequestDto GETProductsPage(String path) {
+  public RequestDto productsPage(String path) {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + DASHBOARD_PATH + path)
+    return builder.setUrl(baseUrl + dashboardPath + path)
             .build();
   }
 
-  public RequestDto GETLogout() {
+  public RequestDto logout() {
     RequestDto.Builder builder = RequestDto.builder();
-    return builder.setUrl(HOST + PATH + LOGOUT)
+    return builder.setUrl(baseUrl + logoutPath)
             .build();
   }
 
