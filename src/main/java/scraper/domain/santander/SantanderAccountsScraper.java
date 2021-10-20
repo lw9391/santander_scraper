@@ -2,7 +2,7 @@ package scraper.domain.santander;
 
 import scraper.domain.AccountDetails;
 import scraper.domain.santander.session.SantanderSession;
-import scraper.ViewController;
+import scraper.domain.View;
 import scraper.domain.InvalidCredentialsException;
 
 import java.util.List;
@@ -15,11 +15,11 @@ import static scraper.domain.santander.session.SantanderSession.SecondAuthFactor
 public class SantanderAccountsScraper {
 
   private final SantanderSession session;
-  private final ViewController viewController;
+  private final View view;
 
-  public SantanderAccountsScraper(SantanderSession session, ViewController viewController) {
+  public SantanderAccountsScraper(SantanderSession session, View view) {
     this.session = session;
-    this.viewController = viewController;
+    this.view = view;
   }
 
   public void run(String nik, String password) {
@@ -27,12 +27,11 @@ public class SantanderAccountsScraper {
     FirstAuthFactorToken firstAuthFactorToken = session.firstAuthorizationFactor(credentials);
     SecondAuthFactorToken secondAuthFactorToken = session.secondAuthorizationFactor(firstAuthFactorToken, readSmsCode());
     List<AccountDetails> accountDetails = session.scrapeAccountsDetails(secondAuthFactorToken);
-    viewController.displayOutput(accountDetails);
+    view.display(accountDetails);
   }
 
   private String readSmsCode() {
-    viewController.displayPromptForSmsCode();
-    String smsCode = viewController.readInput();
+    String smsCode = view.readSmsCode();
     assertTokenHasValidFormat(smsCode);
     return smsCode;
   }

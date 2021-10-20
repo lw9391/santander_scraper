@@ -1,31 +1,26 @@
 package scraper.domain.santander;
 
 import scraper.domain.AccountDetails;
-import scraper.ViewController;
+import scraper.domain.View;
 
 import java.util.ArrayList;
 import java.util.List;
 
-public class ViewControllerStub implements ViewController {
+public class ViewStub implements View {
 
   private final List<AccountDetails> storedDetails;
 
-  public ViewControllerStub() {
+  public ViewStub() {
     storedDetails = new ArrayList<>();
   }
 
   @Override
-  public String readInput() {
+  public String readSmsCode() {
     return "111-111";
   }
 
   @Override
-  public void displayPromptForSmsCode() {
-
-  }
-
-  @Override
-  public void displayOutput(List<AccountDetails> accountsList) {
+  public void display(List<AccountDetails> accountsList) {
     storedDetails.addAll(accountsList);
   }
 

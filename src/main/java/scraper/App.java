@@ -22,7 +22,7 @@ public class App {
     SantanderHttpRequestsProvider provider = new SantanderHttpRequestsProvider("https://www.centrum24.pl");
     RequestHandler requestHandler = new RequestHandler(sender, provider);
     SantanderSession session = new SantanderSession(requestHandler);
-    return new SantanderAccountsScraper(session, new ConsoleController());
+    return new SantanderAccountsScraper(session, new Console());
   }
 
 }

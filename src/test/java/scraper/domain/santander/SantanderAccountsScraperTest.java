@@ -31,7 +31,7 @@ public class SantanderAccountsScraperTest {
   void runAndGetExpectedResult() {
     String nik = "111111";
     String password = "password";
-    ViewControllerStub viewControllerStub = new ViewControllerStub();
+    ViewStub viewControllerStub = new ViewStub();
     MockWebServerResponsesProvider.enqueueResponses(mockWebServer);
     SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
 
@@ -50,7 +50,7 @@ public class SantanderAccountsScraperTest {
   void runWithInvalidCredentialsThrowsException() {
     String nik = "111111";
     String password = "password";
-    ViewControllerStub viewControllerStub = new ViewControllerStub();
+    ViewStub viewControllerStub = new ViewStub();
     MockWebServerResponsesProvider.enqueueResponsesForInvalidCredentials(mockWebServer);
     SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
 
