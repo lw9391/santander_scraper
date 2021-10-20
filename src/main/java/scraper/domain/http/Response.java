@@ -5,50 +5,50 @@ import java.util.Map;
 
 public class Response {
 
-  public final Map<String, String> responseHeaders;
-  public final String responseBody;
-  public final String requestUrl;
+  public final Map<String, String> headers;
+  public final String body;
+  public final String url;
   public final int status;
 
-  private Response(Map<String, String> responseHeaders, String responseBody, String requestUrl, int status) {
-    this.responseHeaders = responseHeaders;
-    this.responseBody = responseBody;
-    this.requestUrl = requestUrl;
+  private Response(Map<String, String> headers, String body, String url, int status) {
+    this.headers = headers;
+    this.body = body;
+    this.url = url;
     this.status = status;
   }
 
-  public static ResponseDtoBuilder builder() {
-    return new ResponseDtoBuilder();
+  public static Builder builder() {
+    return new Builder();
   }
 
-  public static class ResponseDtoBuilder {
-    private Map<String, String> responseHeaders;
-    private String responseBody;
-    private String requestUrl;
+  public static class Builder {
+    private Map<String, String> headers;
+    private String body;
+    private String url;
     private int status;
 
-    public ResponseDtoBuilder setResponseHeaders(Map<String, String> responseHeaders) {
-      this.responseHeaders = Collections.unmodifiableMap(responseHeaders);
+    public Builder setHeaders(Map<String, String> headers) {
+      this.headers = Collections.unmodifiableMap(headers);
       return this;
     }
 
-    public ResponseDtoBuilder setResponseBody(String responseBody) {
-      this.responseBody = responseBody;
+    public Builder setBody(String body) {
+      this.body = body;
       return this;
     }
 
-    public ResponseDtoBuilder setRequestUrl(String requestUrl) {
-      this.requestUrl = requestUrl;
+    public Builder setUrl(String url) {
+      this.url = url;
       return this;
     }
 
-    public ResponseDtoBuilder setStatus(int status) {
+    public Builder setStatus(int status) {
       this.status = status;
       return this;
     }
 
     public Response build() {
-      return new Response(responseHeaders, responseBody, requestUrl, status);
+      return new Response(headers, body, url, status);
     }
   }
 
@@ -56,13 +56,13 @@ public class Response {
   public String toString() {
     StringBuilder sb = new StringBuilder();
     sb.append("Status: ").append(status);
-    sb.append("Request url: ").append(requestUrl);
+    sb.append("Request url: ").append(url);
     sb.append("\n");
     sb.append("Response headers:");
     sb.append("\n");
-    responseHeaders.forEach((name, value) -> sb.append(name).append(", ").append(value).append("\n"));
+    headers.forEach((name, value) -> sb.append(name).append(", ").append(value).append("\n"));
     sb.append("Response body:");
-    sb.append(responseBody);
+    sb.append(body);
     return sb.toString();
   }
 

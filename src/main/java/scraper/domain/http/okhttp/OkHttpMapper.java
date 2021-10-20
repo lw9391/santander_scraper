@@ -13,22 +13,25 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import static scraper.domain.http.Request.Method.*;
+
 public class OkHttpMapper {
-  public static Response mapToDto(okhttp3.Response response) throws IOException {
-    Response.ResponseDtoBuilder builder = Response.builder();
 
-    Map<String, String> responseHeaders = headersToMap(response.headers());
+  public static Response mapResponse(okhttp3.Response okResponse) throws IOException {
+    Response.Builder builder = Response.builder();
 
-    String requestUrl = response.request()
+    Map<String, String> headers = headersToMap(okResponse.headers());
+
+    String requestUrl = okResponse.request()
             .url()
             .toString();
 
-    String responseBodyString = extractResponseBody(response);
+    String body = extractResponseBody(okResponse);
 
-    return builder.setResponseBody(responseBodyString)
-            .setResponseHeaders(responseHeaders)
-            .setRequestUrl(requestUrl)
-            .setStatus(response.code())
+    return builder.setBody(body)
+            .setHeaders(headers)
+            .setUrl(requestUrl)
+            .setStatus(okResponse.code())
             .build();
   }
 
@@ -41,46 +44,48 @@ public class OkHttpMapper {
   private static String extractResponseBody(okhttp3.Response response) throws IOException {
     String responseBodyString = "";
 
-    ResponseBody responseBody = response.body();
-    if (responseBody != null) {
+    ResponseBody body = response.body();
+    if (body != null) {
       byte[] bytes = response.body().bytes();
       responseBodyString = new String(bytes, StandardCharsets.UTF_8);
     }
     return responseBodyString;
   }
 
-  public static okhttp3.Request mapDtoToGetRequest(Request request) {
-    if (!request.formBody.isEmpty()) {
-      throw new UnsupportedOperationException("GET with request body is not allowed.");
-    }
+  public static okhttp3.Request mapRequest(Request request) {
     Headers headers = Headers.of(request.headers);
     String url = request.url;
+    okhttp3.Request.Builder builder;
 
-    return new okhttp3.Request.Builder()
-            .url(url)
+    if (request.method == GET)
+      builder = initBuilderWithGet(request);
+    else
+      builder = initBuilderWithPost(request);
+
+    return builder.url(url)
             .headers(headers)
-            .get()
             .build();
   }
 
-  public static okhttp3.Request mapDtoToPostRequest(Request request) {
-    Headers headers = Headers.of(request.headers);
-    RequestBody body = buildFormBody(request.formBody);
-    String url = request.url;
+  private static okhttp3.Request.Builder initBuilderWithGet(Request request) {
+    if (!request.formBody.isEmpty())
+      throw new UnsupportedOperationException("GET with request body is not allowed.");
 
+    return new okhttp3.Request.Builder().get();
+  }
+
+  private static okhttp3.Request.Builder initBuilderWithPost(Request request) {
     return new okhttp3.Request.Builder()
-            .url(url)
-            .headers(headers)
-            .post(body)
-            .build();
+            .post(buildFormBody(request.formBody));
   }
 
   private static RequestBody buildFormBody(List<Request.FormBodyPair> formBodyPairs) {
-    if (formBodyPairs.isEmpty()) {
+    if (formBodyPairs.isEmpty())
       return RequestBody.create(new byte[]{0});
-    }
+
     FormBody.Builder formBuilder = new FormBody.Builder();
     formBodyPairs.forEach(formBodyPair -> formBuilder.add(formBodyPair.name(), formBodyPair.value()));
     return formBuilder.build();
   }
+
 }

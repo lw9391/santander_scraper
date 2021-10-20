@@ -26,15 +26,8 @@ public class OkHttpFetcher implements HttpFetcher {
   }
 
   @Override
-  public Response sendGET(Request request) {
-    okhttp3.Request okRequest = OkHttpMapper.mapDtoToGetRequest(request);
-
-    return sendHttpRequest(okRequest);
-  }
-
-  @Override
-  public Response sendPOST(Request request) {
-    okhttp3.Request okRequest = OkHttpMapper.mapDtoToPostRequest(request);
+  public Response send(Request request) {
+    okhttp3.Request okRequest = OkHttpMapper.mapRequest(request);
 
     return sendHttpRequest(okRequest);
   }
@@ -42,7 +35,7 @@ public class OkHttpFetcher implements HttpFetcher {
   private Response sendHttpRequest(okhttp3.Request okRequest) {
     try {
       okhttp3.Response okResponse = client.newCall(okRequest).execute();
-      Response response = OkHttpMapper.mapToDto(okResponse);
+      Response response = OkHttpMapper.mapResponse(okResponse);
       okResponse.close();
       return response;
     } catch (IOException e) {

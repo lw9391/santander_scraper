@@ -15,16 +15,16 @@ import java.util.function.UnaryOperator;
 
 public class RequestHandler {
 
-  private final HttpFetcher sender;
+  private final HttpFetcher fetcher;
   private final HttpRequests requests;
 
-  public RequestHandler(HttpFetcher sender, HttpRequests requests) {
-    this.sender = sender;
+  public RequestHandler(HttpFetcher fetcher, HttpRequests requests) {
+    this.fetcher = fetcher;
     this.requests = requests;
   }
 
   public String sendLoginPageRequest() {
-    return sendRequestAndProcessResponseBody(requests::loginPage, sender::sendGET, DataScraper::scrapeXmlPathFromLoginPage);
+    return sendRequestAndProcessResponseBody(requests::loginPage, DataScraper::scrapeXmlPathFromLoginPage);
   }
 
   public String sendRedirectXmlRequest(String path) {
@@ -32,27 +32,27 @@ public class RequestHandler {
     String fullPathForXml = path + "&_=" + timestamp;
 
     Supplier<Request> request = () -> requests.redirectXml(fullPathForXml);
-    return sendRequestAndProcessResponseBody(request, sender::sendGET, DataScraper::scrapeNikPagePathFromRedirectXml);
+    return sendRequestAndProcessResponseBody(request, DataScraper::scrapeNikPagePathFromRedirectXml);
   }
 
   public String sendNikRequest(String path, String nik) {
     Supplier<Request> request = () -> requests.nik(path, nik);
-    return sendRequestAndProcessResponseBody(request, sender::sendPOST, DataScraper::scrapePasswordPagePathFromNikResponse);
+    return sendRequestAndProcessResponseBody(request, DataScraper::scrapePasswordPagePathFromNikResponse);
   }
 
   public String sendPasswordPageRequest(String path) {
     Supplier<Request> request = () -> requests.passwordPage(path);
-    return sendRequestAndProcessResponseBody(request, sender::sendGET, DataScraper::scrapePathsFromPasswordPage);
+    return sendRequestAndProcessResponseBody(request, DataScraper::scrapePathsFromPasswordPage);
   }
 
   public String sendPasswordRequest(String path, String password) {
     Supplier<Request> request = () -> requests.password(path, password);
-    return sendRequestAndProcessResponseBody(request, sender::sendPOST, DataScraper::scrapeSmsCodePathFromPasswordResponse);
+    return sendRequestAndProcessResponseBody(request, DataScraper::scrapeSmsCodePathFromPasswordResponse);
   }
 
   public String sendSmsCodeRequest(String path, String smsCode) {
     Supplier<Request> request = () -> requests.smsCode(path, smsCode);
-    String responseBody = sendRequestAndProcessResponseBody(request, sender::sendPOST, UnaryOperator.identity());
+    String responseBody = sendRequestAndProcessResponseBody(request, UnaryOperator.identity());
     String invalidLoginDiv = DataScraper.scrapeInvalidLoginDiv(responseBody);
     if (!invalidLoginDiv.isEmpty())
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
@@ -64,31 +64,31 @@ public class RequestHandler {
     Supplier<Request> request = () -> requests.productsPage(path);
     Supplier<Request> logout = requests::logout;
 
-    return sendRequestAndProcessResponseBody(request, sender::sendGET, DataScraper::scrapeAccountsInformationFromProductsPage, logout);
+    return sendRequestAndProcessResponseBody(request, DataScraper::scrapeAccountsInformationFromProductsPage, logout);
   }
 
   public void sendLogoutRequest() {
     Supplier<Request> request = requests::logout;
-    sendRequestAndProcessResponseBody(request, sender::sendGET, UnaryOperator.identity());
+    sendRequestAndProcessResponseBody(request, UnaryOperator.identity());
   }
 
-  private static String sendRequestAndProcessResponseBody(Supplier<Request> requestSupplier, Function<Request, Response> httpSendMethod, UnaryOperator<String> scrapingFunction) {
+  private String sendRequestAndProcessResponseBody(Supplier<Request> requestSupplier, UnaryOperator<String> scrapingFunction) {
     Request request = requestSupplier.get();
-    Response response = httpSendMethod.apply(request);
+    Response response = fetcher.send(request);
     if (!(response.status == 200))
       throw new RuntimeException("Status code error during getting login page.");
 
-    return scrapingFunction.apply(response.responseBody);
+    return scrapingFunction.apply(response.body);
   }
 
-  private static List<AccountDetails> sendRequestAndProcessResponseBody(Supplier<Request> requestSupplier, Function<Request, Response> httpSendMethod, Function<String, List<AccountDetails>> scrapingFunction, Supplier<Request> logout) {
+  private List<AccountDetails> sendRequestAndProcessResponseBody(Supplier<Request> requestSupplier, Function<String, List<AccountDetails>> scrapingFunction, Supplier<Request> logout) {
     Request request = requestSupplier.get();
-    Response response = httpSendMethod.apply(request);
+    Response response = fetcher.send(request);
     if (!(response.status == 200)) {
-      httpSendMethod.apply(logout.get());
+      fetcher.send(logout.get());
       throw new RuntimeException("Status code error during getting login page.");
     }
-    return scrapingFunction.apply(response.responseBody);
+    return scrapingFunction.apply(response.body);
   }
 
 }

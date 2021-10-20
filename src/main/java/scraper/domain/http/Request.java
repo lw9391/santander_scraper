@@ -12,21 +12,42 @@ public class Request {
   public final Map<String, String> headers;
   public final String url;
   public final List<FormBodyPair> formBody;
+  public final Method method;
 
-  private Request(Map<String, String> headers, String url, List<FormBodyPair> formBody) {
+  private Request(Map<String, String> headers, String url, List<FormBodyPair> formBody, Method method) {
     this.headers = headers;
     this.url = url;
     this.formBody = formBody;
+    this.method = method;
   }
 
   public static Request.Builder builder() {
     return new Request.Builder();
   }
 
+  @Override
+  public boolean equals(Object o) {
+    if (this == o) return true;
+    if (o == null || getClass() != o.getClass()) return false;
+    Request request = (Request) o;
+    return headers.equals(request.headers) && url.equals(request.url) && formBody.equals(request.formBody) && method == request.method;
+  }
+
+  @Override
+  public int hashCode() {
+    return Objects.hash(headers, url, formBody, method);
+  }
+
+  public enum Method {
+    GET,
+    POST
+  }
+
   public static class Builder {
-    private Map<String, String> headers = new HashMap<>();
+    private final Map<String, String> headers = new HashMap<>();
     private String url;
-    private List<FormBodyPair> formBodyPairs = new ArrayList<>();
+    private final List<FormBodyPair> formBodyPairs = new ArrayList<>();
+    private Method method;
 
     public Request.Builder setHeader(String headerName, String headerValue) {
       headers.put(headerName, headerValue);
@@ -43,22 +64,14 @@ public class Request {
       return this;
     }
 
-    public Request build() {
-      return new Request(Collections.unmodifiableMap(headers), url, Collections.unmodifiableList(formBodyPairs));
+    public Request.Builder setMethod(Method method) {
+      this.method = method;
+      return this;
     }
-  }
 
-  @Override
-  public boolean equals(Object o) {
-    if (this == o) return true;
-    if (o == null || getClass() != o.getClass()) return false;
-    Request that = (Request) o;
-    return Objects.equals(headers, that.headers) && Objects.equals(url, that.url) && Objects.equals(formBody, that.formBody);
-  }
-
-  @Override
-  public int hashCode() {
-    return Objects.hash(headers, url, formBody);
+    public Request build() {
+      return new Request(Collections.unmodifiableMap(headers), url, Collections.unmodifiableList(formBodyPairs), method);
+    }
   }
 
   public static record FormBodyPair(String name, String value) {
