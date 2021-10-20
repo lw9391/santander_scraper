@@ -2,4 +2,4 @@ build
 .gradle
 .idea
 application
-/credentials.txt
+src/test/resources/scraper/credentials
