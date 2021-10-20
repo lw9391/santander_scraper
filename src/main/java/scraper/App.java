@@ -1,11 +1,11 @@
 package scraper;
 
-import scraper.domain.connections.HttpRequestSender;
-import scraper.domain.connections.okhttp.OkHttpRequestsSender;
-import scraper.domain.santander.SantanderAccountsScraper;
+import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.okhttp.OkHttpFetcher;
+import scraper.domain.santander.AccountsScraper;
 import scraper.domain.santander.session.RequestHandler;
 import scraper.domain.santander.session.HttpRequests;
-import scraper.domain.santander.session.SantanderSession;
+import scraper.domain.santander.session.Session;
 
 public class App {
 
@@ -13,16 +13,16 @@ public class App {
     if (args.length != 2)
       throw new IllegalStateException("Wprowadź nik i hasło przez parametry wiersza poleceń.");
 
-    SantanderAccountsScraper scraper = initScraper();
+    AccountsScraper scraper = initScraper();
     scraper.run(args[0], args[1]);
   }
 
-  private static SantanderAccountsScraper initScraper() {
-    HttpRequestSender sender = new OkHttpRequestsSender();
+  private static AccountsScraper initScraper() {
+    HttpFetcher sender = new OkHttpFetcher();
     HttpRequests provider = new HttpRequests("https://www.centrum24.pl/centrum24-web");
     RequestHandler requestHandler = new RequestHandler(sender, provider);
-    SantanderSession session = new SantanderSession(requestHandler);
-    return new SantanderAccountsScraper(session, new Console());
+    Session session = new Session(requestHandler);
+    return new AccountsScraper(session, new Console());
   }
 
 }

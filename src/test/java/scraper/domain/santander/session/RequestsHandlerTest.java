@@ -6,9 +6,9 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
-import scraper.domain.connections.HttpRequestSender;
-import scraper.domain.connections.okhttp.OkHttpRequestsSender;
-import scraper.domain.santander.MockWebServerResponsesProvider;
+import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.okhttp.OkHttpFetcher;
+import scraper.domain.santander.MockWebServerResponses;
 
 import java.io.IOException;
 import java.util.List;
@@ -23,7 +23,7 @@ class RequestsHandlerTest {
 
   @BeforeAll
   static void setUp() throws IOException {
-    HttpRequestSender requestSender = new OkHttpRequestsSender();
+    HttpFetcher requestSender = new OkHttpFetcher();
     HttpRequests provider = new HttpRequests("http://localhost:8889/");
     requestsHandler = new RequestHandler(requestSender, provider);
     server = new MockWebServer();
@@ -32,7 +32,7 @@ class RequestsHandlerTest {
 
   @Test
   void sendLoginPageRequestTest() {
-    MockWebServerResponsesProvider.enqueueLoginPage(server);
+    MockWebServerResponses.enqueueLoginPage(server);
 
     String redirectXmlPath = requestsHandler.sendLoginPageRequest();
 
@@ -41,7 +41,7 @@ class RequestsHandlerTest {
 
   @Test
   void sendRedirectXmlRequestTest() {
-    MockWebServerResponsesProvider.enqueueXmlWithPathForNikPage(server);
+    MockWebServerResponses.enqueueXmlWithPathForNikPage(server);
 
     String nikPath = requestsHandler.sendRedirectXmlRequest("/path");
 
@@ -50,7 +50,7 @@ class RequestsHandlerTest {
 
   @Test
   void sendNikRequestTest() {
-    MockWebServerResponsesProvider.enqueueNikPage(server);
+    MockWebServerResponses.enqueueNikPage(server);
 
     String passPagePath = requestsHandler.sendNikRequest("path", "111111");
 
@@ -59,7 +59,7 @@ class RequestsHandlerTest {
 
   @Test
   void sendPasswordPageRequestTest() {
-    MockWebServerResponsesProvider.enqueuePasswordPage(server);
+    MockWebServerResponses.enqueuePasswordPage(server);
 
     String passwordPath = requestsHandler.sendPasswordPageRequest("/path");
 
@@ -68,7 +68,7 @@ class RequestsHandlerTest {
 
   @Test
   void sendPasswordRequestTest() {
-    MockWebServerResponsesProvider.enqueueTokenPage(server);
+    MockWebServerResponses.enqueueTokenPage(server);
 
     String smsCodePath = requestsHandler.sendPasswordRequest("/path", "password");
 
@@ -77,7 +77,7 @@ class RequestsHandlerTest {
 
   @Test
   void sendSmsCodeRequestTest() {
-    MockWebServerResponsesProvider.enqueueDashboardPage(server);
+    MockWebServerResponses.enqueueDashboardPage(server);
 
     String productsPath = requestsHandler.sendSmsCodeRequest("/path", "111-111");
 
@@ -86,14 +86,14 @@ class RequestsHandlerTest {
 
   @Test
   void sendSmsCodeRequestInvalidLoginPageThrowsException() {
-    MockWebServerResponsesProvider.enqueueInvalidLoginPage(server);
+    MockWebServerResponses.enqueueInvalidLoginPage(server);
 
     assertThrows(InvalidCredentialsException.class, () -> requestsHandler.sendSmsCodeRequest("path", "111-111"));
   }
 
   @Test
   void scrapeAccountsInformationTest() {
-    MockWebServerResponsesProvider.enqueueProductsPage(server);
+    MockWebServerResponses.enqueueProductsPage(server);
 
     List<AccountDetails> accountDetailsList = requestsHandler.scrapeAccountsInformation("path");
 

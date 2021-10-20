@@ -9,7 +9,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MockWebServerResponsesProvider {
+public class MockWebServerResponses {
 
   public static final String PATH = "/centrum24-web";
   public static final String LOGOUT = "/centrum24-web/logout";

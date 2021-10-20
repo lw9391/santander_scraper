@@ -1,7 +1,7 @@
 package scraper.domain.santander;
 
 import scraper.domain.AccountDetails;
-import scraper.domain.santander.session.SantanderSession;
+import scraper.domain.santander.session.Session;
 import scraper.domain.View;
 import scraper.domain.InvalidCredentialsException;
 
@@ -9,15 +9,15 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-import static scraper.domain.santander.session.SantanderSession.FirstAuthFactorToken;
-import static scraper.domain.santander.session.SantanderSession.SecondAuthFactorToken;
+import static scraper.domain.santander.session.Session.FirstAuthFactorToken;
+import static scraper.domain.santander.session.Session.SecondAuthFactorToken;
 
-public class SantanderAccountsScraper {
+public class AccountsScraper {
 
-  private final SantanderSession session;
+  private final Session session;
   private final View view;
 
-  public SantanderAccountsScraper(SantanderSession session, View view) {
+  public AccountsScraper(Session session, View view) {
     this.session = session;
     this.view = view;
   }

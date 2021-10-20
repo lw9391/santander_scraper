@@ -5,11 +5,11 @@ import scraper.domain.santander.Credentials;
 
 import java.util.List;
 
-public class SantanderSession {
+public class Session {
 
   private final RequestHandler requestHandler;
 
-  public SantanderSession(RequestHandler requestHandler) {
+  public Session(RequestHandler requestHandler) {
     this.requestHandler = requestHandler;
   }
 

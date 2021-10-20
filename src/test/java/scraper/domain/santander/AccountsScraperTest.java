@@ -6,18 +6,18 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
-import scraper.domain.connections.HttpRequestSender;
-import scraper.domain.connections.okhttp.OkHttpRequestsSender;
+import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.okhttp.OkHttpFetcher;
 import scraper.domain.santander.session.RequestHandler;
 import scraper.domain.santander.session.HttpRequests;
-import scraper.domain.santander.session.SantanderSession;
+import scraper.domain.santander.session.Session;
 
 import java.io.IOException;
 import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
-public class SantanderAccountsScraperTest {
+public class AccountsScraperTest {
 
   private static MockWebServer mockWebServer;
 
@@ -32,8 +32,8 @@ public class SantanderAccountsScraperTest {
     String nik = "111111";
     String password = "password";
     ViewStub viewControllerStub = new ViewStub();
-    MockWebServerResponsesProvider.enqueueResponses(mockWebServer);
-    SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
+    MockWebServerResponses.enqueueResponses(mockWebServer);
+    AccountsScraper scraper = new AccountsScraper(initSession(), viewControllerStub);
 
     scraper.run(nik, password);
 
@@ -51,17 +51,17 @@ public class SantanderAccountsScraperTest {
     String nik = "111111";
     String password = "password";
     ViewStub viewControllerStub = new ViewStub();
-    MockWebServerResponsesProvider.enqueueResponsesForInvalidCredentials(mockWebServer);
-    SantanderAccountsScraper scraper = new SantanderAccountsScraper(initSession(), viewControllerStub);
+    MockWebServerResponses.enqueueResponsesForInvalidCredentials(mockWebServer);
+    AccountsScraper scraper = new AccountsScraper(initSession(), viewControllerStub);
 
     assertThrows(InvalidCredentialsException.class, () -> scraper.run(nik, password));
   }
 
-  private static SantanderSession initSession() {
-    HttpRequestSender sender = new OkHttpRequestsSender();
+  private static Session initSession() {
+    HttpFetcher sender = new OkHttpFetcher();
     HttpRequests provider = new HttpRequests(readHostFromMockServer());
     RequestHandler requestHandler = new RequestHandler(sender, provider);
-    return new SantanderSession(requestHandler);
+    return new Session(requestHandler);
   }
 
   private static String readHostFromMockServer() {

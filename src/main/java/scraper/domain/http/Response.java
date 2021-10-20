@@ -1,16 +1,16 @@
-package scraper.domain.connections;
+package scraper.domain.http;
 
 import java.util.Collections;
 import java.util.Map;
 
-public class ResponseDto {
+public class Response {
 
   public final Map<String, String> responseHeaders;
   public final String responseBody;
   public final String requestUrl;
   public final int status;
 
-  private ResponseDto(Map<String, String> responseHeaders, String responseBody, String requestUrl, int status) {
+  private Response(Map<String, String> responseHeaders, String responseBody, String requestUrl, int status) {
     this.responseHeaders = responseHeaders;
     this.responseBody = responseBody;
     this.requestUrl = requestUrl;
@@ -47,8 +47,8 @@ public class ResponseDto {
       return this;
     }
 
-    public ResponseDto build() {
-      return new ResponseDto(responseHeaders, responseBody, requestUrl, status);
+    public Response build() {
+      return new Response(responseHeaders, responseBody, requestUrl, status);
     }
   }
 

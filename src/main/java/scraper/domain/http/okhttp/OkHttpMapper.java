@@ -1,13 +1,11 @@
-package scraper.domain.connections.okhttp;
+package scraper.domain.http.okhttp;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
-import okhttp3.Request;
 import okhttp3.RequestBody;
-import okhttp3.Response;
 import okhttp3.ResponseBody;
-import scraper.domain.connections.RequestDto;
-import scraper.domain.connections.ResponseDto;
+import scraper.domain.http.Request;
+import scraper.domain.http.Response;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -16,8 +14,8 @@ import java.util.List;
 import java.util.Map;
 
 public class OkHttpMapper {
-  public static ResponseDto mapToDto(Response response) throws IOException {
-    ResponseDto.ResponseDtoBuilder builder = ResponseDto.builder();
+  public static Response mapToDto(okhttp3.Response response) throws IOException {
+    Response.ResponseDtoBuilder builder = Response.builder();
 
     Map<String, String> responseHeaders = headersToMap(response.headers());
 
@@ -40,7 +38,7 @@ public class OkHttpMapper {
     return result;
   }
 
-  private static String extractResponseBody(Response response) throws IOException {
+  private static String extractResponseBody(okhttp3.Response response) throws IOException {
     String responseBodyString = "";
 
     ResponseBody responseBody = response.body();
@@ -51,33 +49,33 @@ public class OkHttpMapper {
     return responseBodyString;
   }
 
-  public static Request mapDtoToGetRequest(RequestDto requestDto) {
-    if (!requestDto.formBody.isEmpty()) {
+  public static okhttp3.Request mapDtoToGetRequest(Request request) {
+    if (!request.formBody.isEmpty()) {
       throw new UnsupportedOperationException("GET with request body is not allowed.");
     }
-    Headers headers = Headers.of(requestDto.headers);
-    String url = requestDto.url;
+    Headers headers = Headers.of(request.headers);
+    String url = request.url;
 
-    return new Request.Builder()
+    return new okhttp3.Request.Builder()
             .url(url)
             .headers(headers)
             .get()
             .build();
   }
 
-  public static Request mapDtoToPostRequest(RequestDto requestDto) {
-    Headers headers = Headers.of(requestDto.headers);
-    RequestBody body = buildFormBody(requestDto.formBody);
-    String url = requestDto.url;
+  public static okhttp3.Request mapDtoToPostRequest(Request request) {
+    Headers headers = Headers.of(request.headers);
+    RequestBody body = buildFormBody(request.formBody);
+    String url = request.url;
 
-    return new Request.Builder()
+    return new okhttp3.Request.Builder()
             .url(url)
             .headers(headers)
             .post(body)
             .build();
   }
 
-  private static RequestBody buildFormBody(List<RequestDto.FormBodyPair> formBodyPairs) {
+  private static RequestBody buildFormBody(List<Request.FormBodyPair> formBodyPairs) {
     if (formBodyPairs.isEmpty()) {
       return RequestBody.create(new byte[]{0});
     }
