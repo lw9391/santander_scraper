@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
-import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.Fetcher;
 import scraper.domain.http.okhttp.OkHttpFetcher;
 import scraper.domain.santander.MockWebServerResponses;
 
@@ -23,7 +23,7 @@ class RequestsHandlerTest {
 
   @BeforeAll
   static void setUp() throws IOException {
-    HttpFetcher requestSender = new OkHttpFetcher();
+    Fetcher requestSender = new OkHttpFetcher();
     HttpRequests provider = new HttpRequests("http://localhost:8889/");
     requestsHandler = new RequestHandler(requestSender, provider);
     server = new MockWebServer();

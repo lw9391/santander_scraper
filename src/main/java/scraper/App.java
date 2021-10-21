@@ -1,6 +1,6 @@
 package scraper;
 
-import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.Fetcher;
 import scraper.domain.http.okhttp.OkHttpFetcher;
 import scraper.domain.santander.AccountsScraper;
 import scraper.domain.santander.session.RequestHandler;
@@ -18,7 +18,7 @@ public class App {
   }
 
   private static AccountsScraper initScraper() {
-    HttpFetcher sender = new OkHttpFetcher();
+    Fetcher sender = new OkHttpFetcher();
     HttpRequests provider = new HttpRequests("https://www.centrum24.pl/centrum24-web");
     RequestHandler requestHandler = new RequestHandler(sender, provider);
     Session session = new Session(requestHandler);

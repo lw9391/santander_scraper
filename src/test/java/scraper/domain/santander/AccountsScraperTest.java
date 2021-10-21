@@ -6,7 +6,7 @@ import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
-import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.Fetcher;
 import scraper.domain.http.okhttp.OkHttpFetcher;
 import scraper.domain.santander.session.RequestHandler;
 import scraper.domain.santander.session.HttpRequests;
@@ -58,7 +58,7 @@ public class AccountsScraperTest {
   }
 
   private static Session initSession() {
-    HttpFetcher sender = new OkHttpFetcher();
+    Fetcher sender = new OkHttpFetcher();
     HttpRequests provider = new HttpRequests(readHostFromMockServer());
     RequestHandler requestHandler = new RequestHandler(sender, provider);
     return new Session(requestHandler);

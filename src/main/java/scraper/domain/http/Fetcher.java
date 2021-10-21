@@ -1,6 +1,6 @@
 package scraper.domain.http;
 
-public interface HttpFetcher {
+public interface Fetcher {
 
   Response send(Request request);
 

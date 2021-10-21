@@ -1,4 +1,4 @@
-package scraper.domain.santander;
+package scraper.domain.santander.session;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;

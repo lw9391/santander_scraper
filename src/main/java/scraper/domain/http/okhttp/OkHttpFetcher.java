@@ -2,7 +2,7 @@ package scraper.domain.http.okhttp;
 
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
-import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.Fetcher;
 import scraper.domain.http.Request;
 import scraper.domain.http.Response;
 
@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
-public class OkHttpFetcher implements HttpFetcher {
+public class OkHttpFetcher implements Fetcher {
 
   private final OkHttpClient client;
 

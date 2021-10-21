@@ -2,20 +2,20 @@ package scraper.domain.santander.session;
 
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
-import scraper.domain.http.HttpFetcher;
+import scraper.domain.http.Fetcher;
 import scraper.domain.http.Response;
 
 import java.util.Date;
 import java.util.List;
 
-import static scraper.domain.santander.DataScraper.*;
+import static scraper.domain.santander.session.DataScraper.*;
 
 public class RequestHandler {
 
-  private final HttpFetcher fetcher;
+  private final Fetcher fetcher;
   private final HttpRequests requests;
 
-  public RequestHandler(HttpFetcher fetcher, HttpRequests requests) {
+  public RequestHandler(Fetcher fetcher, HttpRequests requests) {
     this.fetcher = fetcher;
     this.requests = requests;
   }
