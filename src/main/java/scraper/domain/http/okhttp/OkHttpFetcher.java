@@ -28,8 +28,11 @@ public class OkHttpFetcher implements HttpFetcher {
   @Override
   public Response send(Request request) {
     okhttp3.Request okRequest = OkHttpMapper.mapRequest(request);
+    Response response = sendHttpRequest(okRequest);
+    if (response.status != 200)
+      throw new RuntimeException("Status code error.");
 
-    return sendHttpRequest(okRequest);
+    return response;
   }
 
   private Response sendHttpRequest(okhttp3.Request okRequest) {

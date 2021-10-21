@@ -3,15 +3,12 @@ package scraper.domain.santander.session;
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
 import scraper.domain.http.HttpFetcher;
-import scraper.domain.http.Request;
 import scraper.domain.http.Response;
-import scraper.domain.santander.DataScraper;
 
 import java.util.Date;
 import java.util.List;
-import java.util.function.Function;
-import java.util.function.Supplier;
-import java.util.function.UnaryOperator;
+
+import static scraper.domain.santander.DataScraper.*;
 
 public class RequestHandler {
 
@@ -24,71 +21,49 @@ public class RequestHandler {
   }
 
   public String sendLoginPageRequest() {
-    return sendRequestAndProcessResponseBody(requests::loginPage, DataScraper::scrapeXmlPathFromLoginPage);
+    Response response = fetcher.send(requests.loginPage());
+    return scrapeXmlPathFromLoginPage(response.body);
   }
 
   public String sendRedirectXmlRequest(String path) {
     long timestamp = new Date().getTime();
     String fullPathForXml = path + "&_=" + timestamp;
 
-    Supplier<Request> request = () -> requests.redirectXml(fullPathForXml);
-    return sendRequestAndProcessResponseBody(request, DataScraper::scrapeNikPagePathFromRedirectXml);
+    Response response = fetcher.send(requests.redirectXml(fullPathForXml));
+    return scrapeNikPagePathFromRedirectXml(response.body);
   }
 
   public String sendNikRequest(String path, String nik) {
-    Supplier<Request> request = () -> requests.nik(path, nik);
-    return sendRequestAndProcessResponseBody(request, DataScraper::scrapePasswordPagePathFromNikResponse);
+    Response response = fetcher.send(requests.nik(path, nik));
+    return scrapePasswordPagePathFromNikResponse(response.body);
   }
 
   public String sendPasswordPageRequest(String path) {
-    Supplier<Request> request = () -> requests.passwordPage(path);
-    return sendRequestAndProcessResponseBody(request, DataScraper::scrapePathsFromPasswordPage);
+    Response response = fetcher.send(requests.passwordPage(path));
+    return scrapePasswordPathFromPasswordPage(response.body);
   }
 
   public String sendPasswordRequest(String path, String password) {
-    Supplier<Request> request = () -> requests.password(path, password);
-    return sendRequestAndProcessResponseBody(request, DataScraper::scrapeSmsCodePathFromPasswordResponse);
+    Response response = fetcher.send(requests.password(path, password));
+    return scrapeSmsCodePathFromPasswordResponse(response.body);
   }
 
   public String sendSmsCodeRequest(String path, String smsCode) {
-    Supplier<Request> request = () -> requests.smsCode(path, smsCode);
-    String responseBody = sendRequestAndProcessResponseBody(request, UnaryOperator.identity());
-    String invalidLoginDiv = DataScraper.scrapeInvalidLoginDiv(responseBody);
+    Response response = fetcher.send(requests.smsCode(path, smsCode));
+    String invalidLoginDiv = scrapeInvalidLoginDiv(response.body);
     if (!invalidLoginDiv.isEmpty())
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
 
-    return DataScraper.scrapePathsFromDashboardPage(responseBody);
+    return scrapeProductsPathFromDashboardPage(response.body);
   }
 
   public List<AccountDetails> scrapeAccountsInformation(String path) {
-    Supplier<Request> request = () -> requests.productsPage(path);
-    Supplier<Request> logout = requests::logout;
-
-    return sendRequestAndProcessResponseBody(request, DataScraper::scrapeAccountsInformationFromProductsPage, logout);
+    Response response = fetcher.send(requests.productsPage(path));
+    return scrapeAccountsInformationFromProductsPage(response.body);
   }
 
   public void sendLogoutRequest() {
-    Supplier<Request> request = requests::logout;
-    sendRequestAndProcessResponseBody(request, UnaryOperator.identity());
-  }
-
-  private String sendRequestAndProcessResponseBody(Supplier<Request> requestSupplier, UnaryOperator<String> scrapingFunction) {
-    Request request = requestSupplier.get();
-    Response response = fetcher.send(request);
-    if (!(response.status == 200))
-      throw new RuntimeException("Status code error during getting login page.");
-
-    return scrapingFunction.apply(response.body);
-  }
-
-  private List<AccountDetails> sendRequestAndProcessResponseBody(Supplier<Request> requestSupplier, Function<String, List<AccountDetails>> scrapingFunction, Supplier<Request> logout) {
-    Request request = requestSupplier.get();
-    Response response = fetcher.send(request);
-    if (!(response.status == 200)) {
-      fetcher.send(logout.get());
-      throw new RuntimeException("Status code error during getting login page.");
-    }
-    return scrapingFunction.apply(response.body);
+    fetcher.send(requests.logout());
   }
 
 }

@@ -39,7 +39,7 @@ class DataScraperTest {
   @Test
   void scrapePathsFromPasswordPage() {
     String page = testDataSupplier("src/test/resources/http/4loginpage.html");
-    String scrapedPath = DataScraper.scrapePathsFromPasswordPage(page);
+    String scrapedPath = DataScraper.scrapePasswordPathFromPasswordPage(page);
     assertEquals("/crypt.brKnpZUkktsTyMD4fDym_SLk_R9DvRZrI8wCGgwoOlCfiXbbYM9ZJhVOk0kArlJ9bSYrrEyANi1n2ESVzY5GrffYXOGcjl9xFRMTUc2Ufq8/brK0a", scrapedPath);
   }
 
@@ -68,7 +68,7 @@ class DataScraperTest {
   @Test
   void scrapePathsFromDashboardPage() {
     String page = testDataSupplier("src/test/resources/http/6dashboard.html");
-    String scrapedPath = DataScraper.scrapePathsFromDashboardPage(page);
+    String scrapedPath = DataScraper.scrapeProductsPathFromDashboardPage(page);
     assertEquals("/dashboard?x=dhkGTXuV40VOHTFeXCsiKQwa_Jf2z0jEA84g18nLiMe2NjQEn9CgFQ9xGEI9imD2CH07NF_4-1SHx_N-xlO3J6tWfhjyQ0YhzvUgX_37trHGKjggK4JpehiAzGO9SxQrE1fghwvJtv5JhxKwamTKQYMQ0ZoNYzV8EmMYKU9r_Zo", scrapedPath);
   }
 

@@ -47,7 +47,7 @@ public class DataScraper {
     return xmlDoc.select(tagName).html();
   }
 
-  public static String scrapePathsFromPasswordPage(String passwordPageHtml) {
+  public static String scrapePasswordPathFromPasswordPage(String passwordPageHtml) {
     String attribute = getAttributeFromHtml(passwordPageHtml, "pinForm", "action");
     int startIndex = attribute.indexOf("/crypt.");
 
@@ -81,7 +81,7 @@ public class DataScraper {
     return logoutInfo.outerHtml();
   }
 
-  public static String scrapePathsFromDashboardPage(String dashboardPageHtml) {
+  public static String scrapeProductsPathFromDashboardPage(String dashboardPageHtml) {
     String productsLi = getFromHtmlById(dashboardPageHtml, "menu_all_products");
 
     return Jsoup.parse(productsLi).select("a").attr("href").substring(1);
@@ -109,9 +109,9 @@ public class DataScraper {
     Element table = Jsoup.parse(html)
             .getElementById(categoryId)
             .selectFirst("table");
-    if (table == null) {
+    if (table == null)
       return personalAccounts;
-    }
+
     Elements rows = table.select("tbody")
             .select("tr");
     for (Element row : rows) {
