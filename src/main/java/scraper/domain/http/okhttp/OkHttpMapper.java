@@ -15,9 +15,9 @@ import java.util.Map;
 
 import static scraper.domain.http.Request.Method.*;
 
-public class OkHttpMapper {
+class OkHttpMapper {
 
-  public static Response mapResponse(okhttp3.Response okResponse) throws IOException {
+  static Response mapResponse(okhttp3.Response okResponse) throws IOException {
     Response.Builder builder = Response.builder();
 
     Map<String, String> headers = headersToMap(okResponse.headers());
@@ -52,7 +52,7 @@ public class OkHttpMapper {
     return responseBodyString;
   }
 
-  public static okhttp3.Request mapRequest(Request request) {
+  static okhttp3.Request mapRequest(Request request) {
     Headers headers = Headers.of(request.headers);
     String url = request.url;
     okhttp3.Request.Builder builder;

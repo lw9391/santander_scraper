@@ -6,22 +6,20 @@ import static scraper.domain.http.Request.Method.*;
 
 public class HttpRequests {
 
-  public final String baseUrl;
-  public final String dashboardPath = "/multi";
-  public final String logoutPath = "/logout";
+  private final String baseUrl;
 
   public HttpRequests(String baseUrl) {
     this.baseUrl = baseUrl;
   }
 
-  public Request loginPage() {
+  Request loginPage() {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + "/login")
             .setMethod(GET)
             .build();
   }
 
-  public Request redirectXml(String path) {
+  Request redirectXml(String path) {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .setHeader("Wicket-Ajax", "true")
@@ -32,7 +30,7 @@ public class HttpRequests {
             .build();
   }
 
-  public Request nik(String path, String nik) {
+  Request nik(String path, String nik) {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .addFormBodyPair("nik", nik)
@@ -46,14 +44,14 @@ public class HttpRequests {
             .build();
   }
 
-  public Request passwordPage(String path) {
+  Request passwordPage(String path) {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .setMethod(GET)
             .build();
   }
 
-  public Request password(String path, String password) {
+  Request password(String path, String password) {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .addFormBodyPair("pinFragment:pin", password)
@@ -62,7 +60,7 @@ public class HttpRequests {
             .build();
   }
 
-  public Request smsCode(String path, String token) {
+  Request smsCode(String path, String token) {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .addFormBodyPair("response", token)
@@ -71,16 +69,16 @@ public class HttpRequests {
             .build();
   }
 
-  public Request productsPage(String path) {
+  Request productsPage(String path) {
     Request.Builder builder = Request.builder();
-    return builder.setUrl(baseUrl + dashboardPath + path)
+    return builder.setUrl(baseUrl + "/multi" + path)
             .setMethod(GET)
             .build();
   }
 
-  public Request logout() {
+  Request logout() {
     Request.Builder builder = Request.builder();
-    return builder.setUrl(baseUrl + logoutPath)
+    return builder.setUrl(baseUrl + "/logout")
             .setMethod(GET)
             .build();
   }
