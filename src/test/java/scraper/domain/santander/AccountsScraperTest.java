@@ -42,8 +42,7 @@ public class AccountsScraperTest {
 
   private static List<AccountDetails> expectedResult() {
     AccountDetails accountOne = new AccountDetails("Ekstrakonto Plus", "112,00 PLN");
-    AccountDetails accountTwo = new AccountDetails("Konto Oszczednosciowe w PLN", "0,38 PLN");
-    return List.of(accountOne, accountTwo);
+    return List.of(accountOne);
   }
 
   @Test

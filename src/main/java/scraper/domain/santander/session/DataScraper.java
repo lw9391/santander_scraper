@@ -91,17 +91,10 @@ public class DataScraper {
   }
 
   public static List<AccountDetails> scrapeAccountsInformationFromProductsPage(String productsPageHtml) {
-    List<AccountDetails> accountDetails = new ArrayList<>();
-    List<AccountDetails> personalAccounts = getInformationAbout(productsPageHtml, "avistaAccountsBoxContent");
-    accountDetails.addAll(personalAccounts);
-    List<AccountDetails> deposits = getInformationAbout(productsPageHtml, "deposits");
-    accountDetails.addAll(deposits);
-    List<AccountDetails> savings = getInformationAbout(productsPageHtml, "savings");
-    accountDetails.addAll(savings);
-    return accountDetails;
+    return extractAccounts(productsPageHtml, "avistaAccountsBoxContent");
   }
 
-  private static List<AccountDetails> getInformationAbout(String html, String categoryId) {
+  private static List<AccountDetails> extractAccounts(String html, String categoryId) {
     List<AccountDetails> personalAccounts = new ArrayList<>();
     Element table = Jsoup.parse(html)
             .getElementById(categoryId)

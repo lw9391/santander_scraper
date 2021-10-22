@@ -76,7 +76,7 @@ class DataScraperTest {
   void scrapeAccountsInformationFromProductsPage() {
     String page = testDataSupplier("src/test/resources/http/7products.html");
     List<AccountDetails> accountDetails = DataScraper.scrapeAccountsInformationFromProductsPage(page);
-    assertEquals(2, accountDetails.size());
+    assertEquals(1, accountDetails.size());
   }
 
   private static String testDataSupplier(String filePath) {
