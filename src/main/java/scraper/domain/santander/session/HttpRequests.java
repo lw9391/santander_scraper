@@ -34,8 +34,6 @@ public class HttpRequests {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .addFormBodyPair("nik", nik)
-            .addFormBodyPair("dp", "")
-            .addFormBodyPair("loginButton", "1")
             .setHeader("Wicket-Ajax", "true")
             .setHeader("Wicket-Ajax-BaseURL", ".")
             .setHeader("Wicket-FocusedElementId", "okBtn2")
@@ -55,7 +53,6 @@ public class HttpRequests {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .addFormBodyPair("pinFragment:pin", password)
-            .addFormBodyPair("loginButton", "Dalej")
             .setMethod(POST)
             .build();
   }
@@ -64,7 +61,6 @@ public class HttpRequests {
     Request.Builder builder = Request.builder();
     return builder.setUrl(baseUrl + path)
             .addFormBodyPair("response", token)
-            .addFormBodyPair("loginButton", "Dalej")
             .setMethod(POST)
             .build();
   }
