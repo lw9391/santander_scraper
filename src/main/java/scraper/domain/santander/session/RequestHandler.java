@@ -50,8 +50,7 @@ public class RequestHandler {
 
   public String sendSmsCodeRequest(String path, String smsCode) {
     Response response = fetcher.send(requests.smsCode(path, smsCode));
-    String invalidLoginDiv = scrapeInvalidLoginDiv(response.body);
-    if (!invalidLoginDiv.isEmpty())
+    if (!hasLogoutButton(response.body))
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
 
     return scrapeProductsPathFromDashboardPage(response.body);

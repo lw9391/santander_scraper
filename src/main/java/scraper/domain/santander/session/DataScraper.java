@@ -73,12 +73,9 @@ public class DataScraper {
             .attr(attribute);
   }
 
-  public static String scrapeInvalidLoginDiv(String smsCodeResponseHtml) {
-    Element logoutInfo = Jsoup.parse(smsCodeResponseHtml).getElementById("wylogowanie");
-    if (logoutInfo == null) {
-      return "";
-    }
-    return logoutInfo.outerHtml();
+  public static boolean hasLogoutButton(String smsCodeResponseHtml) {
+    Element logout = Jsoup.parse(smsCodeResponseHtml).getElementsByClass("logout").first();
+    return logout != null;
   }
 
   public static String scrapeProductsPathFromDashboardPage(String dashboardPageHtml) {

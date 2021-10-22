@@ -11,8 +11,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 class DataScraperTest {
 
@@ -52,18 +51,18 @@ class DataScraperTest {
   }
 
   @Test
-  void scrapeInvalidLoginDiv() {
-    String invalidCrudPage = testDataSupplier("src/test/resources/http/8invalidCrudPage.html");
-    String invalidLoginInfo = DataScraper.scrapeInvalidLoginDiv(invalidCrudPage);
-    boolean expectedTrue = invalidLoginInfo.contains("wylogowanie");
-    assertTrue(expectedTrue);
+  void scrapeLogoutButton() {
+    String dashboard = testDataSupplier("src/test/resources/http/6dashboard.html");
+    boolean hasLogoutButton = DataScraper.hasLogoutButton(dashboard);
+
+    assertTrue(hasLogoutButton);
   }
 
   @Test
-  void scrapeInvalidLoginDivOnDashboardPage() {
-    String dashboard = testDataSupplier("src/test/resources/http/6dashboard.html");
-    String expectedEmpty = DataScraper.scrapeInvalidLoginDiv(dashboard);
-    assertTrue(expectedEmpty.isEmpty());
+  void scrapeLogoutButtonOnInvalidCrudPageExpectEmpty() {
+    String invalidCrudPage = testDataSupplier("src/test/resources/http/8invalidCrudPage.html");
+    boolean hasLogoutButton = DataScraper.hasLogoutButton(invalidCrudPage);
+    assertFalse(hasLogoutButton);
   }
 
   @Test
