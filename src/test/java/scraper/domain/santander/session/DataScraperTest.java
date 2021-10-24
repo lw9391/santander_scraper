@@ -1,8 +1,7 @@
-package scraper.domain.santander;
+package scraper.domain.santander.session;
 
 import org.junit.jupiter.api.Test;
 import scraper.domain.AccountDetails;
-import scraper.domain.santander.session.DataScraper;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

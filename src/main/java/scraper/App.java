@@ -3,8 +3,7 @@ package scraper;
 import scraper.domain.http.Fetcher;
 import scraper.domain.http.okhttp.OkHttpFetcher;
 import scraper.domain.santander.AccountsScraper;
-import scraper.domain.santander.session.RequestHandler;
-import scraper.domain.santander.session.HttpRequests;
+import scraper.domain.santander.session.HttpExchanges;
 import scraper.domain.santander.session.Session;
 
 public class App {
@@ -18,10 +17,9 @@ public class App {
   }
 
   private static AccountsScraper initScraper() {
-    Fetcher sender = new OkHttpFetcher();
-    HttpRequests provider = new HttpRequests("https://www.centrum24.pl/centrum24-web");
-    RequestHandler requestHandler = new RequestHandler(sender, provider);
-    Session session = new Session(requestHandler);
+    Fetcher fetcher = new OkHttpFetcher();
+    HttpExchanges exchanges = new HttpExchanges("https://www.centrum24.pl/centrum24-web", fetcher);
+    Session session = new Session(exchanges);
     return new AccountsScraper(session, new Console());
   }
 

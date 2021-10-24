@@ -1,16 +1,21 @@
 package scraper.domain.santander.session;
 
 import scraper.domain.AccountDetails;
+import scraper.domain.InvalidCredentialsException;
+import scraper.domain.http.Response;
 import scraper.domain.santander.Credentials;
 
+import java.util.Date;
 import java.util.List;
+
+import static scraper.domain.santander.session.DataScraper.*;
 
 public class Session {
 
-  private final RequestHandler requestHandler;
+  private final HttpExchanges exchanges;
 
-  public Session(RequestHandler requestHandler) {
-    this.requestHandler = requestHandler;
+  public Session(HttpExchanges exchanges) {
+    this.exchanges = exchanges;
   }
 
   public FirstLayerAuthenticator initAuthenticator(Credentials credentials) {
@@ -38,12 +43,19 @@ public class Session {
     }
 
     private SecondLayerAuthenticator authenticate() {
-      String redirectXmlPath = requestHandler.sendLoginPageRequest();
-      String nikPagePath = requestHandler.sendRedirectXmlRequest(redirectXmlPath);
-      String passPagePath = requestHandler.sendNikRequest(nikPagePath, credentials.accountNumber());
-      String passwordPath = requestHandler.sendPasswordPageRequest(passPagePath);
-      String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passwordPath, credentials.password());
+      String redirectXmlPath = scrapeXmlPathFromLoginPage(exchanges.loginPage().body);
+      String nikPagePath = extractPathFromRedirectRequest(redirectXmlPath);
+      String passPagePath = scrapePasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()).body);
+      String passwordPath = scrapePasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath).body);
+      String smsCodeConfirmationPath = scrapeSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()).body);
       return new SecondLayerAuthenticator(smsCodeConfirmationPath);
+    }
+
+    private String extractPathFromRedirectRequest(String basePath) {
+      long timestamp = new Date().getTime();
+      String fullPathForXml = basePath + "&_=" + timestamp;
+      Response response = exchanges.redirectXml(fullPathForXml);
+      return scrapeNikPagePathFromRedirectXml(response.body);
     }
 
   }
@@ -57,7 +69,10 @@ public class Session {
     }
 
     private AccountsImporter authenticate(String smsCode) {
-      String productsPath = requestHandler.sendSmsCodeRequest(smsCodeConfirmationPath, smsCode);
+      Response response = exchanges.smsCode(smsCodeConfirmationPath, smsCode);
+      if (!hasLogoutButton(response.body))
+        throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
+      String productsPath = scrapeProductsPathFromDashboardPage(response.body);
       return new AccountsImporter(productsPath);
     }
 
@@ -72,8 +87,9 @@ public class Session {
     }
 
     private List<AccountDetails> importAccounts() {
-      List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(productsPath);
-      requestHandler.sendLogoutRequest();
+      Response response = exchanges.productsPage(productsPath);
+      List<AccountDetails> accountsDetails = scrapeAccountsInformationFromProductsPage(response.body);
+      exchanges.logout();
       return accountsDetails;
     }
 
