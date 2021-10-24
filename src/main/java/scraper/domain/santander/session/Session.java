@@ -8,7 +8,7 @@ import scraper.domain.santander.Credentials;
 import java.util.Date;
 import java.util.List;
 
-import static scraper.domain.santander.session.DataScraper.*;
+import static scraper.domain.santander.session.HttpResponseParser.*;
 
 public class Session {
 
@@ -43,11 +43,11 @@ public class Session {
     }
 
     private SecondLayerAuthenticator authenticate() {
-      String redirectXmlPath = scrapeXmlPathFromLoginPage(exchanges.loginPage().body);
+      String redirectXmlPath = extractXmlPathFromLoginPage(exchanges.loginPage().body);
       String nikPagePath = extractPathFromRedirectRequest(redirectXmlPath);
-      String passPagePath = scrapePasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()).body);
-      String passwordPath = scrapePasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath).body);
-      String smsCodeConfirmationPath = scrapeSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()).body);
+      String passPagePath = extractPasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()).body);
+      String passwordPath = extractPasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath).body);
+      String smsCodeConfirmationPath = extractSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()).body);
       return new SecondLayerAuthenticator(smsCodeConfirmationPath);
     }
 
@@ -55,7 +55,7 @@ public class Session {
       long timestamp = new Date().getTime();
       String fullPathForXml = basePath + "&_=" + timestamp;
       Response response = exchanges.redirectXml(fullPathForXml);
-      return scrapeNikPagePathFromRedirectXml(response.body);
+      return extractNikPagePathFromRedirectXml(response.body);
     }
 
   }
@@ -72,7 +72,7 @@ public class Session {
       Response response = exchanges.smsCode(smsCodeConfirmationPath, smsCode);
       if (!hasLogoutButton(response.body))
         throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
-      String productsPath = scrapeProductsPathFromDashboardPage(response.body);
+      String productsPath = extractProductsPathFromDashboardPage(response.body);
       return new AccountsImporter(productsPath);
     }
 
@@ -88,7 +88,7 @@ public class Session {
 
     private List<AccountDetails> importAccounts() {
       Response response = exchanges.productsPage(productsPath);
-      List<AccountDetails> accountsDetails = scrapeAccountsInformationFromProductsPage(response.body);
+      List<AccountDetails> accountsDetails = extractAccountsInformationFromProductsPage(response.body);
       exchanges.logout();
       return accountsDetails;
     }

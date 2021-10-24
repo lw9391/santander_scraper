@@ -13,16 +13,16 @@ import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
-public class DataScraper {
+public class HttpResponseParser {
 
-  public static String scrapeXmlPathFromLoginPage(String loginPageHtml) {
+  public static String extractXmlPathFromLoginPage(String loginPageHtml) {
     String scriptWithQuery = getFromHtmlById(loginPageHtml, "DpsBtnEnable");
     String regexToFindJson = "\\{\"u\":\".*?\"\\}";
     String json = findInString(scriptWithQuery, regexToFindJson).get(0);
     return getJsonValue(json, "u").substring(1);
   }
 
-  public static String scrapeNikPagePathFromRedirectXml(String redirectXml) {
+  public static String extractNikPagePathFromRedirectXml(String redirectXml) {
     String jsFunction = getXmlElement(redirectXml, "evaluate");
     String regexToFindJson = "\\{\"u\":\".*?\\}";
     String json = findInString(jsFunction, regexToFindJson).get(0);
@@ -37,7 +37,7 @@ public class DataScraper {
     return jsonObject.get(fields[fields.length - 1]).getAsString();
   }
 
-  public static String scrapePasswordPagePathFromNikResponse(String nikResponsePageHtml) {
+  public static String extractPasswordPagePathFromNikResponse(String nikResponsePageHtml) {
     String redirectElement = getXmlElement(nikResponsePageHtml, "redirect");
     return getSubstringBetween(redirectElement, "/", "]");
   }
@@ -47,10 +47,9 @@ public class DataScraper {
     return xmlDoc.select(tagName).html();
   }
 
-  public static String scrapePasswordPathFromPasswordPage(String passwordPageHtml) {
+  public static String extractPasswordPathFromPasswordPage(String passwordPageHtml) {
     String attribute = getAttributeFromHtml(passwordPageHtml, "pinForm", "action");
     int startIndex = attribute.indexOf("/crypt.");
-
     return attribute.substring(startIndex);
   }
 
@@ -61,7 +60,7 @@ public class DataScraper {
     return part.substring(0, endIndex);
   }
 
-  public static String scrapeSmsCodePathFromPasswordResponse(String passwordResponsePageHtml) {
+  public static String extractSmsCodePathFromPasswordResponse(String passwordResponsePageHtml) {
     String attribute = getAttributeFromHtml(passwordResponsePageHtml, "authenticationForm", "action");
     int startIndex = attribute.indexOf("/crypt.");
     return attribute.substring(startIndex);
@@ -78,10 +77,12 @@ public class DataScraper {
     return logout != null;
   }
 
-  public static String scrapeProductsPathFromDashboardPage(String dashboardPageHtml) {
+  public static String extractProductsPathFromDashboardPage(String dashboardPageHtml) {
     String productsLi = getFromHtmlById(dashboardPageHtml, "menu_all_products");
-
-    return Jsoup.parse(productsLi).select("a").attr("href").substring(1);
+    return Jsoup.parse(productsLi)
+            .select("a")
+            .attr("href")
+            .substring(1);
   }
 
   private static String getFromHtmlById(String html, String id) {
@@ -90,7 +91,7 @@ public class DataScraper {
             .html();
   }
 
-  public static List<AccountDetails> scrapeAccountsInformationFromProductsPage(String productsPageHtml) {
+  public static List<AccountDetails> extractAccountsInformationFromProductsPage(String productsPageHtml) {
     return extractAccounts(productsPageHtml, "avistaAccountsBoxContent");
   }
 
@@ -101,23 +102,26 @@ public class DataScraper {
             .selectFirst("table");
     if (table == null)
       return personalAccounts;
+    personalAccounts.addAll(extractAccountsFromTable(table));
+    return personalAccounts;
+  }
 
-    Elements rows = table.select("tbody")
-            .select("tr");
+  private static List<AccountDetails> extractAccountsFromTable(Element table) {
+    List<AccountDetails> accountDetails = new ArrayList<>();
+    Elements rows = table.select("tbody tr");
     for (Element row : rows) {
       String accountName = row.getElementsByClass("name")
-              .select("div")
-              .select("a")
-              .html();
+              .select("div a")
+              .text();
       String balanceCurrency = row.getElementsByClass("money")
               .first()
               .select("div")
-              .html()
+              .text()
               .replaceAll("&nbsp;", " ");
-      AccountDetails accountDetail = new AccountDetails(accountName, balanceCurrency);
-      personalAccounts.add(accountDetail);
+      AccountDetails account = new AccountDetails(accountName, balanceCurrency);
+      accountDetails.add(account);
     }
-    return personalAccounts;
+    return accountDetails;
   }
 
   private static List<String> findInString(String input, String regex) {
