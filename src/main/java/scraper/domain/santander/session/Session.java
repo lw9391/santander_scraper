@@ -13,42 +13,68 @@ public class Session {
     this.requestHandler = requestHandler;
   }
 
-  public FirstAuthFactorToken firstAuthorizationFactor(Credentials credentials) {
-    String redirectXmlPath = requestHandler.sendLoginPageRequest();
-    String nikPagePath = requestHandler.sendRedirectXmlRequest(redirectXmlPath);
-    String passPagePath = requestHandler.sendNikRequest(nikPagePath, credentials.accountNumber());
-    String passwordPath = requestHandler.sendPasswordPageRequest(passPagePath);
-    String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passwordPath, credentials.password());
-    return new FirstAuthFactorToken(smsCodeConfirmationPath);
+  public FirstLayerAuthenticator initAuthenticator(Credentials credentials) {
+    return new FirstLayerAuthenticator(credentials);
   }
 
-  public SecondAuthFactorToken secondAuthorizationFactor(FirstAuthFactorToken token, String smsCode) {
-    String productsPath = requestHandler.sendSmsCodeRequest(token.smsCodeConfirmationPath, smsCode);
-    return new SecondAuthFactorToken(productsPath);
+  public SecondLayerAuthenticator firstAuthenticationFactor(FirstLayerAuthenticator authenticator) {
+    return authenticator.authenticate();
   }
 
-  public List<AccountDetails> scrapeAccountsDetails(SecondAuthFactorToken token) {
-    List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(token.productsPath);
-    requestHandler.sendLogoutRequest();
-    return accountsDetails;
+  public AccountsImporter secondAuthenticationFactor(SecondLayerAuthenticator authenticator, String smsCode) {
+    return authenticator.authenticate(smsCode);
   }
 
-  public static class FirstAuthFactorToken {
+  public List<AccountDetails> importAccounts(AccountsImporter importer) {
+    return importer.importAccounts();
+  }
 
-    private final String smsCodeConfirmationPath;
+  public class FirstLayerAuthenticator {
 
-    private FirstAuthFactorToken(String smsCodeConfirmationPath) {
-      this.smsCodeConfirmationPath = smsCodeConfirmationPath;
+    private final Credentials credentials;
+
+    private FirstLayerAuthenticator(Credentials credentials) {
+      this.credentials = credentials;
+    }
+
+    private SecondLayerAuthenticator authenticate() {
+      String redirectXmlPath = requestHandler.sendLoginPageRequest();
+      String nikPagePath = requestHandler.sendRedirectXmlRequest(redirectXmlPath);
+      String passPagePath = requestHandler.sendNikRequest(nikPagePath, credentials.accountNumber());
+      String passwordPath = requestHandler.sendPasswordPageRequest(passPagePath);
+      String smsCodeConfirmationPath = requestHandler.sendPasswordRequest(passwordPath, credentials.password());
+      return new SecondLayerAuthenticator(smsCodeConfirmationPath);
     }
 
   }
 
-  public static class SecondAuthFactorToken {
+  public class SecondLayerAuthenticator {
+
+    private final String smsCodeConfirmationPath;
+
+    private SecondLayerAuthenticator(String smsCodeConfirmationPath) {
+      this.smsCodeConfirmationPath = smsCodeConfirmationPath;
+    }
+
+    private AccountsImporter authenticate(String smsCode) {
+      String productsPath = requestHandler.sendSmsCodeRequest(smsCodeConfirmationPath, smsCode);
+      return new AccountsImporter(productsPath);
+    }
+
+  }
+
+  public class AccountsImporter {
 
     private final String productsPath;
 
-    private SecondAuthFactorToken(String productsPath) {
+    private AccountsImporter(String productsPath) {
       this.productsPath = productsPath;
+    }
+
+    private List<AccountDetails> importAccounts() {
+      List<AccountDetails> accountsDetails = requestHandler.scrapeAccountsInformation(productsPath);
+      requestHandler.sendLogoutRequest();
+      return accountsDetails;
     }
 
   }

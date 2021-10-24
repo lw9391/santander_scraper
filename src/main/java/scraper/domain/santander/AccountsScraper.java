@@ -1,16 +1,13 @@
 package scraper.domain.santander;
 
 import scraper.domain.AccountDetails;
-import scraper.domain.santander.session.Session;
-import scraper.domain.View;
 import scraper.domain.InvalidCredentialsException;
+import scraper.domain.View;
+import scraper.domain.santander.session.Session;
 
 import java.util.List;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-
-import static scraper.domain.santander.session.Session.FirstAuthFactorToken;
-import static scraper.domain.santander.session.Session.SecondAuthFactorToken;
 
 public class AccountsScraper {
 
@@ -24,10 +21,11 @@ public class AccountsScraper {
 
   public void run(String nik, String password) {
     Credentials credentials = new Credentials(nik, password);
-    FirstAuthFactorToken firstAuthFactorToken = session.firstAuthorizationFactor(credentials);
-    SecondAuthFactorToken secondAuthFactorToken = session.secondAuthorizationFactor(firstAuthFactorToken, readSmsCode());
-    List<AccountDetails> accountDetails = session.scrapeAccountsDetails(secondAuthFactorToken);
-    view.display(accountDetails);
+    Session.FirstLayerAuthenticator authenticator = session.initAuthenticator(credentials);
+    Session.SecondLayerAuthenticator secondLayerAuthenticator = session.firstAuthenticationFactor(authenticator);
+    Session.AccountsImporter accountsImporter = session.secondAuthenticationFactor(secondLayerAuthenticator, readSmsCode());
+    List<AccountDetails> accountsDetails = session.importAccounts(accountsImporter);
+    view.display(accountsDetails);
   }
 
   private String readSmsCode() {
