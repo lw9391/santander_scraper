@@ -5,7 +5,7 @@ import scraper.santander.AccountDetails;
 
 import java.util.List;
 
-import static scraper.santander.actions.HttpResponseParser.extractAccountsInformationFromProductsPage;
+import static scraper.santander.actions.ResponseParser.extractAccountsInformation;
 
 public class ImportAccounts {
 
@@ -18,8 +18,8 @@ public class ImportAccounts {
   }
 
   public List<AccountDetails> run() {
-    Document response = session.productsPage(productsPath);
-    List<AccountDetails> accountsDetails = extractAccountsInformationFromProductsPage(response);
+    Document productsPage = session.productsPage(productsPath);
+    List<AccountDetails> accountsDetails = extractAccountsInformation(productsPage);
     session.logout();
     return accountsDetails;
   }

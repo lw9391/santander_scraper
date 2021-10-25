@@ -5,32 +5,32 @@ import scraper.santander.Credentials;
 
 import java.util.Date;
 
-import static scraper.santander.actions.HttpResponseParser.*;
+import static scraper.santander.actions.ResponseParser.*;
 
 public class SubmitLoginAndPassword {
 
-  private final SantanderHttpApi exchanges;
+  private final SantanderHttpApi api;
   private final Credentials credentials;
 
   public SubmitLoginAndPassword(SantanderHttpApi session, Credentials credentials) {
-    exchanges = session;
+    api = session;
     this.credentials = credentials;
   }
 
   public SubmitSmsCode run() {
-    String redirectXmlPath = extractXmlPathFromLoginPage(exchanges.loginPage());
+    String redirectXmlPath = extractXmlPath(api.loginPage());
     String nikPagePath = extractPathFromRedirectRequest(redirectXmlPath);
-    String passPagePath = extractPasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()));
-    String passwordPath = extractPasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath));
-    String smsCodeConfirmationPath = extractSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()));
-    return new SubmitSmsCode(exchanges, smsCodeConfirmationPath);
+    String passPagePath = extractPasswordPagePath(api.nik(nikPagePath, credentials.accountNumber()));
+    String passwordPath = extractPasswordPath(api.passwordPage(passPagePath));
+    String smsCodeConfirmationPath = extractSmsCodePath(api.password(passwordPath, credentials.password()));
+    return new SubmitSmsCode(api, smsCodeConfirmationPath);
   }
 
   private String extractPathFromRedirectRequest(String basePath) {
     long timestamp = new Date().getTime();
     String fullPathForXml = basePath + "&_=" + timestamp;
-    Document response = exchanges.redirectXml(fullPathForXml);
-    return extractNikPagePathFromRedirectXml(response);
+    Document response = api.redirectXml(fullPathForXml);
+    return extractNikPagePath(response);
   }
 
 }
