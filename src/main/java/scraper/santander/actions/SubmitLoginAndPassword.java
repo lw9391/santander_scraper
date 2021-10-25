@@ -1,7 +1,7 @@
 package scraper.santander.actions;
 
+import org.jsoup.nodes.Document;
 import scraper.santander.Credentials;
-import scraper.santander.http.Response;
 
 import java.util.Date;
 
@@ -18,19 +18,19 @@ public class SubmitLoginAndPassword {
   }
 
   public SubmitSmsCode run() {
-    String redirectXmlPath = extractXmlPathFromLoginPage(exchanges.loginPage().body);
+    String redirectXmlPath = extractXmlPathFromLoginPage(exchanges.loginPage());
     String nikPagePath = extractPathFromRedirectRequest(redirectXmlPath);
-    String passPagePath = extractPasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()).body);
-    String passwordPath = extractPasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath).body);
-    String smsCodeConfirmationPath = extractSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()).body);
+    String passPagePath = extractPasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()));
+    String passwordPath = extractPasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath));
+    String smsCodeConfirmationPath = extractSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()));
     return new SubmitSmsCode(exchanges, smsCodeConfirmationPath);
   }
 
   private String extractPathFromRedirectRequest(String basePath) {
     long timestamp = new Date().getTime();
     String fullPathForXml = basePath + "&_=" + timestamp;
-    Response response = exchanges.redirectXml(fullPathForXml);
-    return extractNikPagePathFromRedirectXml(response.body);
+    Document response = exchanges.redirectXml(fullPathForXml);
+    return extractNikPagePathFromRedirectXml(response);
   }
 
 }

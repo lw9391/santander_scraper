@@ -15,15 +15,15 @@ import java.util.regex.Pattern;
 
 public class HttpResponseParser {
 
-  public static String extractXmlPathFromLoginPage(String loginPageHtml) {
-    String scriptWithQuery = getFromHtmlById(loginPageHtml, "DpsBtnEnable");
+  public static String extractXmlPathFromLoginPage(Document loginPageHtml) {
+    String scriptWithQuery = loginPageHtml.getElementById("DpsBtnEnable").html();
     String regexToFindJson = "\\{\"u\":\".*?\"\\}";
     String json = findInString(scriptWithQuery, regexToFindJson).get(0);
     return getJsonValue(json, "u").substring(1);
   }
 
-  public static String extractNikPagePathFromRedirectXml(String redirectXml) {
-    String jsFunction = getXmlElement(redirectXml, "evaluate");
+  public static String extractNikPagePathFromRedirectXml(Document redirectXml) {
+    String jsFunction = redirectXml.select("evaluate").html();
     String regexToFindJson = "\\{\"u\":\".*?\\}";
     String json = findInString(jsFunction, regexToFindJson).get(0);
     return getJsonValue(json, "u").substring(1);
@@ -37,18 +37,19 @@ public class HttpResponseParser {
     return jsonObject.get(fields[fields.length - 1]).getAsString();
   }
 
-  public static String extractPasswordPagePathFromNikResponse(String nikResponsePageHtml) {
-    String redirectElement = getXmlElement(nikResponsePageHtml, "redirect");
+  public static String extractPasswordPagePathFromNikResponse(Document nikResponsePageHtml) {
+    String redirectElement = nikResponsePageHtml.select("redirect").html();
     return getSubstringBetween(redirectElement, "/", "]");
   }
 
   private static String getXmlElement(String xml, String tagName) {
-    Document xmlDoc = Jsoup.parse(xml, "", org.jsoup.parser.Parser.xmlParser());
+    Document xmlDoc = Jsoup.parse(xml);
     return xmlDoc.select(tagName).html();
   }
 
-  public static String extractPasswordPathFromPasswordPage(String passwordPageHtml) {
-    String attribute = getAttributeFromHtml(passwordPageHtml, "pinForm", "action");
+  public static String extractPasswordPathFromPasswordPage(Document passwordPageHtml) {
+    String attribute = passwordPageHtml.getElementById("pinForm")
+            .attr("action");
     int startIndex = attribute.indexOf("/crypt.");
     return attribute.substring(startIndex);
   }
@@ -60,8 +61,9 @@ public class HttpResponseParser {
     return part.substring(0, endIndex);
   }
 
-  public static String extractSmsCodePathFromPasswordResponse(String passwordResponsePageHtml) {
-    String attribute = getAttributeFromHtml(passwordResponsePageHtml, "authenticationForm", "action");
+  public static String extractSmsCodePathFromPasswordResponse(Document passwordResponsePageHtml) {
+    String attribute = passwordResponsePageHtml.getElementById("authenticationForm")
+            .attr("action");
     int startIndex = attribute.indexOf("/crypt.");
     return attribute.substring(startIndex);
   }
@@ -72,13 +74,14 @@ public class HttpResponseParser {
             .attr(attribute);
   }
 
-  public static boolean hasLogoutButton(String smsCodeResponseHtml) {
-    Element logout = Jsoup.parse(smsCodeResponseHtml).getElementsByClass("logout").first();
+  public static boolean hasLogoutButton(Document smsCodeResponseHtml) {
+    Element logout = smsCodeResponseHtml.getElementsByClass("logout").first();
     return logout != null;
   }
 
-  public static String extractProductsPathFromDashboardPage(String dashboardPageHtml) {
-    String productsLi = getFromHtmlById(dashboardPageHtml, "menu_all_products");
+  public static String extractProductsPathFromDashboardPage(Document dashboardPageHtml) {
+    String productsLi = dashboardPageHtml.getElementById("menu_all_products")
+            .html();
     return Jsoup.parse(productsLi)
             .select("a")
             .attr("href")
@@ -91,14 +94,9 @@ public class HttpResponseParser {
             .html();
   }
 
-  public static List<AccountDetails> extractAccountsInformationFromProductsPage(String productsPageHtml) {
-    return extractAccounts(productsPageHtml, "avistaAccountsBoxContent");
-  }
-
-  private static List<AccountDetails> extractAccounts(String html, String categoryId) {
+  public static List<AccountDetails> extractAccountsInformationFromProductsPage(Document productsPageHtml) {
     List<AccountDetails> personalAccounts = new ArrayList<>();
-    Element table = Jsoup.parse(html)
-            .getElementById(categoryId)
+    Element table = productsPageHtml.getElementById("avistaAccountsBoxContent")
             .selectFirst("table");
     if (table == null)
       return personalAccounts;

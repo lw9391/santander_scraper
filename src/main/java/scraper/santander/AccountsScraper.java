@@ -20,10 +20,9 @@ public class AccountsScraper {
   }
 
   public void run(String nik, String password) {
-    Credentials credentials = new Credentials(nik, password);
-    SubmitLoginAndPassword authenticator = new SubmitLoginAndPassword(exchanges, credentials);
-    SubmitSmsCode secondLayerAuthenticator = authenticator.run();
-    ImportAccounts accountsImporter = secondLayerAuthenticator.run(readSmsCode());
+    var credentials = new Credentials(nik, password);
+    SubmitSmsCode secondStep = new SubmitLoginAndPassword(exchanges, credentials).run();
+    ImportAccounts accountsImporter = secondStep.run(readSmsCode());
     List<AccountDetails> accountsDetails = accountsImporter.run();
     view.display(accountsDetails);
   }

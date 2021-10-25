@@ -1,7 +1,7 @@
 package scraper.santander.actions;
 
+import org.jsoup.nodes.Document;
 import scraper.santander.AccountDetails;
-import scraper.santander.http.Response;
 
 import java.util.List;
 
@@ -18,8 +18,8 @@ public class ImportAccounts {
   }
 
   public List<AccountDetails> run() {
-    Response response = session.productsPage(productsPath);
-    List<AccountDetails> accountsDetails = extractAccountsInformationFromProductsPage(response.body);
+    Document response = session.productsPage(productsPath);
+    List<AccountDetails> accountsDetails = extractAccountsInformationFromProductsPage(response);
     session.logout();
     return accountsDetails;
   }

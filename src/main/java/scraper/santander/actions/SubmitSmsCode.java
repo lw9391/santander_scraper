@@ -1,7 +1,7 @@
 package scraper.santander.actions;
 
+import org.jsoup.nodes.Document;
 import scraper.santander.InvalidCredentialsException;
-import scraper.santander.http.Response;
 
 import static scraper.santander.actions.HttpResponseParser.extractProductsPathFromDashboardPage;
 import static scraper.santander.actions.HttpResponseParser.hasLogoutButton;
@@ -17,10 +17,10 @@ public class SubmitSmsCode {
   }
 
   public ImportAccounts run(String smsCode) {
-    Response response = exchanges.smsCode(smsCodeConfirmationPath, smsCode);
-    if (!hasLogoutButton(response.body))
+    Document response = exchanges.smsCode(smsCodeConfirmationPath, smsCode);
+    if (!hasLogoutButton(response))
       throw new InvalidCredentialsException("Login failed, provided incorrect password or token.");
-    String productsPath = extractProductsPathFromDashboardPage(response.body);
+    String productsPath = extractProductsPathFromDashboardPage(response);
     return new ImportAccounts(exchanges, productsPath);
   }
 
