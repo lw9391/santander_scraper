@@ -19,3 +19,8 @@ You can also build project classic way using `./gradlew build` command in consol
 manually from build/distribution. Run the application using the `SantanderScraper` script with your account number 
 and password as command line arguments. Script is located in `SantanderScraper-1.0-SNAPSHOT/bin` in whatever location 
 you unzip it. 
+
+### Acceptance Test
+`src/test/resources/scraper/credentials.sample` contains an example file with credentials that is need for running acceptance
+test. Remove `.sample` part from filename and provide your bank credentials according to template. Git won't track
+`credentials` file. 
