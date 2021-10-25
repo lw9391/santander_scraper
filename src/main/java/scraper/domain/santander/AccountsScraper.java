@@ -3,7 +3,7 @@ package scraper.domain.santander;
 import scraper.domain.AccountDetails;
 import scraper.domain.InvalidCredentialsException;
 import scraper.domain.View;
-import scraper.domain.santander.session.Session;
+import scraper.domain.santander.session.*;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -11,20 +11,20 @@ import java.util.regex.Pattern;
 
 public class AccountsScraper {
 
-  private final Session session;
+  private final HttpExchanges exchanges;
   private final View view;
 
-  public AccountsScraper(Session session, View view) {
-    this.session = session;
+  public AccountsScraper(HttpExchanges exchanges, View view) {
+    this.exchanges = exchanges;
     this.view = view;
   }
 
   public void run(String nik, String password) {
     Credentials credentials = new Credentials(nik, password);
-    Session.FirstLayerAuthenticator authenticator = session.initAuthenticator(credentials);
-    Session.SecondLayerAuthenticator secondLayerAuthenticator = session.firstAuthenticationFactor(authenticator);
-    Session.AccountsImporter accountsImporter = session.secondAuthenticationFactor(secondLayerAuthenticator, readSmsCode());
-    List<AccountDetails> accountsDetails = session.importAccounts(accountsImporter);
+    FirstLayerAuthenticator authenticator = new FirstLayerAuthenticator(exchanges, credentials);
+    SecondLayerAuthenticator secondLayerAuthenticator = authenticator.authenticate();
+    AccountsImporter accountsImporter = secondLayerAuthenticator.authenticate(readSmsCode());
+    List<AccountDetails> accountsDetails = accountsImporter.importAccounts();
     view.display(accountsDetails);
   }
 

@@ -55,10 +55,9 @@ class AccountsScraperTest {
     assertThrows(InvalidCredentialsException.class, () -> scraper.run(nik, password));
   }
 
-  private static Session initSession() {
+  private static HttpExchanges initSession() {
     Fetcher fetcher = new OkHttpFetcher();
-    HttpExchanges exchanges = new HttpExchanges(readHostFromMockServer(), fetcher);
-    return new Session(exchanges);
+    return new HttpExchanges(readHostFromMockServer(), fetcher);
   }
 
   private static String readHostFromMockServer() {

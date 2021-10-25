@@ -17,10 +17,9 @@ public class App {
   }
 
   private static AccountsScraper initScraper() {
-    Fetcher fetcher = new OkHttpFetcher();
-    HttpExchanges exchanges = new HttpExchanges("https://www.centrum24.pl/centrum24-web", fetcher);
-    Session session = new Session(exchanges);
-    return new AccountsScraper(session, new Console());
+    var fetcher = new OkHttpFetcher();
+    var exchanges = new HttpExchanges("https://www.centrum24.pl/centrum24-web", fetcher);
+    return new AccountsScraper(exchanges, new Console());
   }
 
 }
