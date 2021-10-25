@@ -1,4 +1,4 @@
-package scraper.domain.santander;
+package scraper.santander.santander;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;

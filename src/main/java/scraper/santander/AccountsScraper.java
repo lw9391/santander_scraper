@@ -1,9 +1,9 @@
-package scraper.domain.santander;
+package scraper.santander;
 
-import scraper.domain.AccountDetails;
-import scraper.domain.InvalidCredentialsException;
-import scraper.domain.View;
-import scraper.domain.santander.session.*;
+import scraper.santander.actions.HttpExchanges;
+import scraper.santander.actions.ImportAccounts;
+import scraper.santander.actions.SubmitLoginAndPassword;
+import scraper.santander.actions.SubmitSmsCode;
 
 import java.util.List;
 import java.util.regex.Matcher;
@@ -21,10 +21,10 @@ public class AccountsScraper {
 
   public void run(String nik, String password) {
     Credentials credentials = new Credentials(nik, password);
-    FirstLayerAuthenticator authenticator = new FirstLayerAuthenticator(exchanges, credentials);
-    SecondLayerAuthenticator secondLayerAuthenticator = authenticator.authenticate();
-    AccountsImporter accountsImporter = secondLayerAuthenticator.authenticate(readSmsCode());
-    List<AccountDetails> accountsDetails = accountsImporter.importAccounts();
+    SubmitLoginAndPassword authenticator = new SubmitLoginAndPassword(exchanges, credentials);
+    SubmitSmsCode secondLayerAuthenticator = authenticator.run();
+    ImportAccounts accountsImporter = secondLayerAuthenticator.run(readSmsCode());
+    List<AccountDetails> accountsDetails = accountsImporter.run();
     view.display(accountsDetails);
   }
 

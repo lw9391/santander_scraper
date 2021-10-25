@@ -1,10 +1,8 @@
 package scraper;
 
-import scraper.domain.http.Fetcher;
-import scraper.domain.http.okhttp.OkHttpFetcher;
-import scraper.domain.santander.AccountsScraper;
-import scraper.domain.santander.session.HttpExchanges;
-import scraper.domain.santander.session.Session;
+import scraper.santander.AccountsScraper;
+import scraper.santander.actions.HttpExchanges;
+import scraper.santander.http.okhttp.OkHttpFetcher;
 
 public class App {
 

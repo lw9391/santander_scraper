@@ -1,23 +1,23 @@
-package scraper.domain.santander.session;
+package scraper.santander.actions;
 
-import scraper.domain.AccountDetails;
-import scraper.domain.http.Response;
+import scraper.santander.AccountDetails;
+import scraper.santander.http.Response;
 
 import java.util.List;
 
-import static scraper.domain.santander.session.HttpResponseParser.extractAccountsInformationFromProductsPage;
+import static scraper.santander.actions.HttpResponseParser.extractAccountsInformationFromProductsPage;
 
-public class AccountsImporter {
+public class ImportAccounts {
 
   private final HttpExchanges session;
   private final String productsPath;
 
-  AccountsImporter(HttpExchanges session, String productsPath) {
+  ImportAccounts(HttpExchanges session, String productsPath) {
     this.session = session;
     this.productsPath = productsPath;
   }
 
-  public List<AccountDetails> importAccounts() {
+  public List<AccountDetails> run() {
     Response response = session.productsPage(productsPath);
     List<AccountDetails> accountsDetails = extractAccountsInformationFromProductsPage(response.body);
     session.logout();

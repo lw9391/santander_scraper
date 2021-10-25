@@ -1,4 +1,4 @@
-package scraper.domain;
+package scraper.santander;
 
 public class InvalidCredentialsException extends RuntimeException {
 

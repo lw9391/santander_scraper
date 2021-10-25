@@ -1,29 +1,29 @@
-package scraper.domain.santander.session;
+package scraper.santander.actions;
 
-import scraper.domain.http.Response;
-import scraper.domain.santander.Credentials;
+import scraper.santander.Credentials;
+import scraper.santander.http.Response;
 
 import java.util.Date;
 
-import static scraper.domain.santander.session.HttpResponseParser.*;
+import static scraper.santander.actions.HttpResponseParser.*;
 
-public class FirstLayerAuthenticator {
+public class SubmitLoginAndPassword {
 
   private final HttpExchanges exchanges;
   private final Credentials credentials;
 
-  public FirstLayerAuthenticator(HttpExchanges session, Credentials credentials) {
-    this.exchanges = session;
+  public SubmitLoginAndPassword(HttpExchanges session, Credentials credentials) {
+    exchanges = session;
     this.credentials = credentials;
   }
 
-  public SecondLayerAuthenticator authenticate() {
+  public SubmitSmsCode run() {
     String redirectXmlPath = extractXmlPathFromLoginPage(exchanges.loginPage().body);
     String nikPagePath = extractPathFromRedirectRequest(redirectXmlPath);
     String passPagePath = extractPasswordPagePathFromNikResponse(exchanges.nik(nikPagePath, credentials.accountNumber()).body);
     String passwordPath = extractPasswordPathFromPasswordPage(exchanges.passwordPage(passPagePath).body);
     String smsCodeConfirmationPath = extractSmsCodePathFromPasswordResponse(exchanges.password(passwordPath, credentials.password()).body);
-    return new SecondLayerAuthenticator(exchanges, smsCodeConfirmationPath);
+    return new SubmitSmsCode(exchanges, smsCodeConfirmationPath);
   }
 
   private String extractPathFromRedirectRequest(String basePath) {

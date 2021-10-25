@@ -1,4 +1,4 @@
-package scraper.domain.santander.session;
+package scraper.santander.actions;
 
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
@@ -6,7 +6,7 @@ import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
-import scraper.domain.AccountDetails;
+import scraper.santander.AccountDetails;
 
 import java.util.ArrayList;
 import java.util.List;

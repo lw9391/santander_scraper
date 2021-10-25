@@ -1,10 +1,10 @@
-package scraper.domain.http.okhttp;
+package scraper.santander.http.okhttp;
 
 import okhttp3.JavaNetCookieJar;
 import okhttp3.OkHttpClient;
-import scraper.domain.http.Fetcher;
-import scraper.domain.http.Request;
-import scraper.domain.http.Response;
+import scraper.santander.http.Fetcher;
+import scraper.santander.http.Request;
+import scraper.santander.http.Response;
 
 import java.io.IOException;
 import java.net.CookieManager;
@@ -20,7 +20,7 @@ public class OkHttpFetcher implements Fetcher {
     JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
 
     OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    this.client = builder.cache(null)
+    client = builder.cache(null)
             .cookieJar(cookieJar)
             .build();
   }

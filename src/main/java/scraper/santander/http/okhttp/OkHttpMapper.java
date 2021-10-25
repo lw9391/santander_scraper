@@ -1,11 +1,11 @@
-package scraper.domain.http.okhttp;
+package scraper.santander.http.okhttp;
 
 import okhttp3.FormBody;
 import okhttp3.Headers;
 import okhttp3.RequestBody;
 import okhttp3.ResponseBody;
-import scraper.domain.http.Request;
-import scraper.domain.http.Response;
+import scraper.santander.http.Request;
+import scraper.santander.http.Response;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -13,7 +13,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
-import static scraper.domain.http.Request.Method.*;
+import static scraper.santander.http.Request.Method.GET;
 
 class OkHttpMapper {
 

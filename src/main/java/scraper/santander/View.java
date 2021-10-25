@@ -1,4 +1,4 @@
-package scraper.domain;
+package scraper.santander;
 
 import java.util.List;
 

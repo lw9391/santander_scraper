@@ -1,10 +1,11 @@
-package scraper.domain.santander.session;
+package scraper.santander.actions;
 
-import scraper.domain.http.Fetcher;
-import scraper.domain.http.Request;
-import scraper.domain.http.Response;
+import scraper.santander.http.Fetcher;
+import scraper.santander.http.Request;
+import scraper.santander.http.Response;
 
-import static scraper.domain.http.Request.Method.*;
+import static scraper.santander.http.Request.Method.GET;
+import static scraper.santander.http.Request.Method.POST;
 
 public class HttpExchanges {
 

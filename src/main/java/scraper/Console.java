@@ -1,7 +1,7 @@
 package scraper;
 
-import scraper.domain.AccountDetails;
-import scraper.domain.View;
+import scraper.santander.AccountDetails;
+import scraper.santander.View;
 
 import java.util.List;
 import java.util.Scanner;

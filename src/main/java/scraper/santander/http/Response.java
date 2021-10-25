@@ -1,4 +1,4 @@
-package scraper.domain.http;
+package scraper.santander.http;
 
 import java.util.Collections;
 import java.util.Map;

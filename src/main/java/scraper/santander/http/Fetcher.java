@@ -1,4 +1,4 @@
-package scraper.domain.http;
+package scraper.santander.http;
 
 public interface Fetcher {
 
