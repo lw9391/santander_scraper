@@ -1,14 +1,11 @@
 package scraper.santander.actions;
 
-import org.jetbrains.annotations.NotNull;
-import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
-import org.jsoup.select.Elements;
-import scraper.santander.AccountDetails;
+import scraper.santander.Account;
 
-import java.util.ArrayList;
 import java.util.List;
+import java.util.stream.Collectors;
 
 public class ResponseParser {
 
@@ -42,12 +39,6 @@ public class ResponseParser {
     return extractFormAction(passwordResponsePage, "authenticationForm");
   }
 
-  public static boolean hasLogoutButton(Document smsCodeResponse) {
-    Element logout = smsCodeResponse.getElementsByClass("logout").first();
-    return logout != null;
-  }
-
-  @NotNull
   private static String extractFormAction(Document passwordPage, String pinForm) {
     String attribute = passwordPage.getElementById(pinForm)
             .attr("action");
@@ -55,41 +46,37 @@ public class ResponseParser {
     return attribute.substring(startIndex);
   }
 
+  public static boolean hasLogoutButton(Document smsCodeResponse) {
+    Element logout = smsCodeResponse.getElementsByClass("logout").first();
+    return logout != null;
+  }
+
   public static String extractProductsPath(Document dashboardPage) {
-    String productsLi = dashboardPage.getElementById("menu_all_products")
-            .html();
-    return Jsoup.parse(productsLi)
+    return dashboardPage.getElementById("menu_all_products")
             .select("a")
             .attr("href")
             .substring(1);
   }
 
-  public static List<AccountDetails> extractAccountsInformation(Document productsPage) {
-    List<AccountDetails> personalAccounts = new ArrayList<>();
-    Element table = productsPage.getElementById("avistaAccountsBoxContent")
-            .selectFirst("table");
-    if (table == null)
-      return personalAccounts;
-    personalAccounts.addAll(extractAccountsFromTable(table));
-    return personalAccounts;
+  public static List<Account> extractAccounts(Document productsPage) {
+    return productsPage.getElementById("avistaAccountsBoxContent")
+            .selectFirst("table")
+            .select("tbody tr")
+            .stream()
+            .map(ResponseParser::extractAccount)
+            .collect(Collectors.toList());
   }
 
-  private static List<AccountDetails> extractAccountsFromTable(Element table) {
-    List<AccountDetails> accountDetails = new ArrayList<>();
-    Elements rows = table.select("tbody tr");
-    for (Element row : rows) {
-      String accountName = row.getElementsByClass("name")
-              .select("div a")
-              .text();
-      String balanceCurrency = row.getElementsByClass("money")
-              .first()
-              .select("div")
-              .text()
-              .replaceAll("&nbsp;", " ");
-      AccountDetails account = new AccountDetails(accountName, balanceCurrency);
-      accountDetails.add(account);
-    }
-    return accountDetails;
+  private static Account extractAccount(Element row) {
+    String accountName = row.getElementsByClass("name")
+            .select("div a")
+            .text();
+    String balanceCurrency = row.getElementsByClass("money")
+            .first()
+            .select("div")
+            .text()
+            .replaceAll("&nbsp;", " ");
+    return new Account(accountName, balanceCurrency);
   }
 
 }

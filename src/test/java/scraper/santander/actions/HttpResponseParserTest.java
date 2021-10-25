@@ -3,7 +3,7 @@ package scraper.santander.actions;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 import org.junit.jupiter.api.Test;
-import scraper.santander.AccountDetails;
+import scraper.santander.Account;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -76,7 +76,7 @@ class HttpResponseParserTest {
   @Test
   void scrapeAccountsInformationFromProductsPage() {
     Document page = testDataSupplier("src/test/resources/http/7products.html");
-    List<AccountDetails> accountDetails = ResponseParser.extractAccountsInformation(page);
+    List<Account> accountDetails = ResponseParser.extractAccounts(page);
     assertEquals("112,00 PLN", accountDetails.get(0).balance());
     assertEquals("Ekstrakonto Plus", accountDetails.get(0).accountName());
   }

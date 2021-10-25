@@ -1,6 +1,6 @@
 package scraper;
 
-import scraper.santander.AccountDetails;
+import scraper.santander.Account;
 import scraper.santander.View;
 
 import java.util.List;
@@ -20,7 +20,7 @@ public class Console implements View {
   }
 
   @Override
-  public void display(List<AccountDetails> accountsList) {
+  public void display(List<Account> accountsList) {
     accountsList.stream()
             .map(account -> "Account name = " + account.accountName() + ", Balance = " + account.balance())
             .forEach(System.out::println);

@@ -4,7 +4,7 @@ import okhttp3.mockwebserver.MockWebServer;
 import org.junit.jupiter.api.AfterAll;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
-import scraper.santander.AccountDetails;
+import scraper.santander.Account;
 import scraper.santander.AccountsScraper;
 import scraper.santander.InvalidCredentialsException;
 import scraper.santander.actions.SantanderHttpApi;
@@ -40,8 +40,8 @@ class AccountsScraperTest {
     assertEquals(expectedResult(), viewControllerStub.getStoredDetails());
   }
 
-  private static List<AccountDetails> expectedResult() {
-    AccountDetails accountOne = new AccountDetails("Ekstrakonto Plus", "112,00 PLN");
+  private static List<Account> expectedResult() {
+    Account accountOne = new Account("Ekstrakonto Plus", "112,00 PLN");
     return List.of(accountOne);
   }
 

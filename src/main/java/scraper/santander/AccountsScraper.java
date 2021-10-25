@@ -23,7 +23,7 @@ public class AccountsScraper {
     var credentials = new Credentials(nik, password);
     SubmitSmsCode secondStep = new SubmitLoginAndPassword(exchanges, credentials).run();
     ImportAccounts accountsImporter = secondStep.run(readSmsCode());
-    List<AccountDetails> accountsDetails = accountsImporter.run();
+    List<Account> accountsDetails = accountsImporter.run();
     view.display(accountsDetails);
   }
 

@@ -1,6 +1,6 @@
 package scraper.santander.santander;
 
-import scraper.santander.AccountDetails;
+import scraper.santander.Account;
 import scraper.santander.View;
 
 import java.util.ArrayList;
@@ -8,7 +8,7 @@ import java.util.List;
 
 public class ViewStub implements View {
 
-  private final List<AccountDetails> storedDetails;
+  private final List<Account> storedDetails;
 
   public ViewStub() {
     storedDetails = new ArrayList<>();
@@ -20,11 +20,11 @@ public class ViewStub implements View {
   }
 
   @Override
-  public void display(List<AccountDetails> accountsList) {
+  public void display(List<Account> accountsList) {
     storedDetails.addAll(accountsList);
   }
 
-  public List<AccountDetails> getStoredDetails() {
+  public List<Account> getStoredDetails() {
     return storedDetails;
   }
 

@@ -6,6 +6,6 @@ public interface View {
 
   String readSmsCode();
 
-  void display(List<AccountDetails> accountsList);
+  void display(List<Account> accountsList);
 
 }

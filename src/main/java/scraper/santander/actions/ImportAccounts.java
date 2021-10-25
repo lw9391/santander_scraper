@@ -1,11 +1,11 @@
 package scraper.santander.actions;
 
 import org.jsoup.nodes.Document;
-import scraper.santander.AccountDetails;
+import scraper.santander.Account;
 
 import java.util.List;
 
-import static scraper.santander.actions.ResponseParser.extractAccountsInformation;
+import static scraper.santander.actions.ResponseParser.extractAccounts;
 
 public class ImportAccounts {
 
@@ -17,9 +17,9 @@ public class ImportAccounts {
     this.productsPath = productsPath;
   }
 
-  public List<AccountDetails> run() {
+  public List<Account> run() {
     Document productsPage = session.productsPage(productsPath);
-    List<AccountDetails> accountsDetails = extractAccountsInformation(productsPage);
+    List<Account> accountsDetails = extractAccounts(productsPage);
     session.logout();
     return accountsDetails;
   }
