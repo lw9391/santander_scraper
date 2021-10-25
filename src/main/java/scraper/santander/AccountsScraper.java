@@ -1,7 +1,7 @@
 package scraper.santander;
 
-import scraper.santander.actions.HttpExchanges;
 import scraper.santander.actions.ImportAccounts;
+import scraper.santander.actions.SantanderHttpApi;
 import scraper.santander.actions.SubmitLoginAndPassword;
 import scraper.santander.actions.SubmitSmsCode;
 
@@ -11,10 +11,10 @@ import java.util.regex.Pattern;
 
 public class AccountsScraper {
 
-  private final HttpExchanges exchanges;
+  private final SantanderHttpApi exchanges;
   private final View view;
 
-  public AccountsScraper(HttpExchanges exchanges, View view) {
+  public AccountsScraper(SantanderHttpApi exchanges, View view) {
     this.exchanges = exchanges;
     this.view = view;
   }

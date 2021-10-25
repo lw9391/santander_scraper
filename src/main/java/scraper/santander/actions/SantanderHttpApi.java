@@ -7,12 +7,12 @@ import scraper.santander.http.Response;
 import static scraper.santander.http.Request.Method.GET;
 import static scraper.santander.http.Request.Method.POST;
 
-public class HttpExchanges {
+public class SantanderHttpApi {
 
   private final String baseUrl;
   private final Fetcher fetcher;
 
-  public HttpExchanges(String baseUrl, Fetcher fetcher) {
+  public SantanderHttpApi(String baseUrl, Fetcher fetcher) {
     this.baseUrl = baseUrl;
     this.fetcher = fetcher;
   }

@@ -8,10 +8,10 @@ import static scraper.santander.actions.HttpResponseParser.hasLogoutButton;
 
 public class SubmitSmsCode {
 
-  private final HttpExchanges exchanges;
+  private final SantanderHttpApi exchanges;
   private final String smsCodeConfirmationPath;
 
-  SubmitSmsCode(HttpExchanges session, String smsCodeConfirmationPath) {
+  SubmitSmsCode(SantanderHttpApi session, String smsCodeConfirmationPath) {
     exchanges = session;
     this.smsCodeConfirmationPath = smsCodeConfirmationPath;
   }

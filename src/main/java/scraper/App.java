@@ -1,7 +1,7 @@
 package scraper;
 
 import scraper.santander.AccountsScraper;
-import scraper.santander.actions.HttpExchanges;
+import scraper.santander.actions.SantanderHttpApi;
 import scraper.santander.http.okhttp.OkHttpFetcher;
 
 public class App {
@@ -16,7 +16,7 @@ public class App {
 
   private static AccountsScraper initScraper() {
     var fetcher = new OkHttpFetcher();
-    var exchanges = new HttpExchanges("https://www.centrum24.pl/centrum24-web", fetcher);
+    var exchanges = new SantanderHttpApi("https://www.centrum24.pl/centrum24-web", fetcher);
     return new AccountsScraper(exchanges, new Console());
   }
 

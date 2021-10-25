@@ -9,10 +9,10 @@ import static scraper.santander.actions.HttpResponseParser.*;
 
 public class SubmitLoginAndPassword {
 
-  private final HttpExchanges exchanges;
+  private final SantanderHttpApi exchanges;
   private final Credentials credentials;
 
-  public SubmitLoginAndPassword(HttpExchanges session, Credentials credentials) {
+  public SubmitLoginAndPassword(SantanderHttpApi session, Credentials credentials) {
     exchanges = session;
     this.credentials = credentials;
   }

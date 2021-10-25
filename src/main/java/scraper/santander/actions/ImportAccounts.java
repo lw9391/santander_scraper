@@ -9,10 +9,10 @@ import static scraper.santander.actions.HttpResponseParser.extractAccountsInform
 
 public class ImportAccounts {
 
-  private final HttpExchanges session;
+  private final SantanderHttpApi session;
   private final String productsPath;
 
-  ImportAccounts(HttpExchanges session, String productsPath) {
+  ImportAccounts(SantanderHttpApi session, String productsPath) {
     this.session = session;
     this.productsPath = productsPath;
   }

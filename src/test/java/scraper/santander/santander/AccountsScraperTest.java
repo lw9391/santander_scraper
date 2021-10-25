@@ -7,7 +7,7 @@ import org.junit.jupiter.api.Test;
 import scraper.santander.AccountDetails;
 import scraper.santander.AccountsScraper;
 import scraper.santander.InvalidCredentialsException;
-import scraper.santander.actions.HttpExchanges;
+import scraper.santander.actions.SantanderHttpApi;
 import scraper.santander.http.Fetcher;
 import scraper.santander.http.okhttp.OkHttpFetcher;
 
@@ -56,9 +56,9 @@ class AccountsScraperTest {
     assertThrows(InvalidCredentialsException.class, () -> scraper.run(nik, password));
   }
 
-  private static HttpExchanges initSession() {
+  private static SantanderHttpApi initSession() {
     Fetcher fetcher = new OkHttpFetcher();
-    return new HttpExchanges(readHostFromMockServer(), fetcher);
+    return new SantanderHttpApi(readHostFromMockServer(), fetcher);
   }
 
   private static String readHostFromMockServer() {
