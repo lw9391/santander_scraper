@@ -2,6 +2,9 @@ package scraper.santander.http;
 
 import java.util.*;
 
+import static java.util.Collections.unmodifiableList;
+import static java.util.Collections.unmodifiableMap;
+
 public class Request {
 
   public final Map<String, String> headers;
@@ -39,12 +42,13 @@ public class Request {
   }
 
   public static class Builder {
+
     private final Map<String, String> headers = new HashMap<>();
     private String url;
     private final List<FormBodyPair> formBodyPairs = new ArrayList<>();
     private Method method;
 
-    public Request.Builder setHeader(String headerName, String headerValue) {
+    public Request.Builder putHeader(String headerName, String headerValue) {
       headers.put(headerName, headerValue);
       return this;
     }
@@ -65,7 +69,7 @@ public class Request {
     }
 
     public Request build() {
-      return new Request(Collections.unmodifiableMap(headers), url, Collections.unmodifiableList(formBodyPairs), method);
+      return new Request(unmodifiableMap(headers), url, unmodifiableList(formBodyPairs), method);
     }
   }
 

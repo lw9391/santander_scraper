@@ -1,4 +1,4 @@
-package scraper.santander.santander;
+package scraper.santander;
 
 import okhttp3.mockwebserver.MockResponse;
 import okhttp3.mockwebserver.MockWebServer;
@@ -9,12 +9,9 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 
-public class MockWebServerResponses {
+class SantanderMock {
 
-  public static final String PATH = "/centrum24-web";
-  public static final String LOGOUT = "/centrum24-web/logout";
-
-  public static MockWebServer enqueueResponses(MockWebServer server) {
+  static void logInAndReturnAccounts(MockWebServer server) {
     server.enqueue(loginRedirect());
     server.enqueue(loginPage());
     server.enqueue(xmlWithPathForNikPage());
@@ -25,11 +22,9 @@ public class MockWebServerResponses {
     server.enqueue(productsPage());
     server.enqueue(logoutRedirect());
     server.enqueue(logoutPage());
-
-    return server;
   }
 
-  public static MockWebServer enqueueResponsesForInvalidCredentials(MockWebServer server) {
+  static void invalidCredentials(MockWebServer server) {
     server.enqueue(loginRedirect());
     server.enqueue(loginPage());
     server.enqueue(xmlWithPathForNikPage());
@@ -37,54 +32,12 @@ public class MockWebServerResponses {
     server.enqueue(passwordPage());
     server.enqueue(tokenPage());
     server.enqueue(invalidLoginPage());
-
-    return server;
-  }
-
-  public static MockWebServer enqueueLoginPage(MockWebServer server) {
-    server.enqueue(loginPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueXmlWithPathForNikPage(MockWebServer server) {
-    server.enqueue(xmlWithPathForNikPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueNikPage(MockWebServer server) {
-    server.enqueue(postNikResponse());
-    return server;
-  }
-
-  public static MockWebServer enqueuePasswordPage(MockWebServer server) {
-    server.enqueue(passwordPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueTokenPage(MockWebServer server) {
-    server.enqueue(tokenPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueDashboardPage(MockWebServer server) {
-    server.enqueue(dashboardPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueProductsPage(MockWebServer server) {
-    server.enqueue(productsPage());
-    return server;
-  }
-
-  public static MockWebServer enqueueInvalidLoginPage(MockWebServer server) {
-    server.enqueue(invalidLoginPage());
-    return server;
   }
 
   private static MockResponse loginRedirect() {
     return new MockResponse()
             .setResponseCode(302)
-            .setHeader("Location", PATH + "/login?x=vJL0iClolC8");
+            .setHeader("Location", "/centrum24-web/login?x=vJL0iClolC8");
   }
 
   private static MockResponse loginPage() {
@@ -138,7 +91,7 @@ public class MockWebServerResponses {
   private static MockResponse logoutRedirect() {
     return new MockResponse()
             .setResponseCode(302)
-            .setHeader("Location", LOGOUT);
+            .setHeader("Location", "/centrum24-web/logout");
   }
 
   private static MockResponse productsPage() {

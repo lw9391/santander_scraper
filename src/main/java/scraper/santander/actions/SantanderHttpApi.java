@@ -21,10 +21,10 @@ public record SantanderHttpApi(String baseUrl, Fetcher fetcher) {
   Document redirectXml(String path) {
     Request request = new Request.Builder()
             .setUrl(baseUrl + path)
-            .setHeader("Wicket-Ajax", "true")
-            .setHeader("Wicket-Ajax-BaseURL", ".")
-            .setHeader("Wicket-FocusedElementId", "input_nik")
-            .setHeader("X-Requested-With", "XMLHttpRequest")
+            .putHeader("Wicket-Ajax", "true")
+            .putHeader("Wicket-Ajax-BaseURL", ".")
+            .putHeader("Wicket-FocusedElementId", "input_nik")
+            .putHeader("X-Requested-With", "XMLHttpRequest")
             .setMethod(GET)
             .build();
     return fetchDocument(request);
@@ -34,10 +34,10 @@ public record SantanderHttpApi(String baseUrl, Fetcher fetcher) {
     Request request = Request.builder()
             .setUrl(baseUrl + path)
             .addFormBodyPair("nik", nik)
-            .setHeader("Wicket-Ajax", "true")
-            .setHeader("Wicket-Ajax-BaseURL", ".")
-            .setHeader("Wicket-FocusedElementId", "okBtn2")
-            .setHeader("X-Requested-With", "XMLHttpRequest")
+            .putHeader("Wicket-Ajax", "true")
+            .putHeader("Wicket-Ajax-BaseURL", ".")
+            .putHeader("Wicket-FocusedElementId", "okBtn2")
+            .putHeader("X-Requested-With", "XMLHttpRequest")
             .setMethod(POST)
             .build();
     return fetchDocument(request);
