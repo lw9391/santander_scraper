@@ -13,15 +13,11 @@ public class AppTest {
 
   public static void main(String[] args) {
     ByteArrayOutputStream outContent = new ByteArrayOutputStream();
-    PrintStream originalSystemOut = System.out;
-    String[] credentials = readCredentials();
-
     System.setOut(new PrintStream(outContent));
-    App.main(credentials[0], credentials[1]);
-    String gatheredOutput = outContent.toString();
-    System.setOut(originalSystemOut);
 
-    assertTrue(hasLinesInCorrectFormat(gatheredOutput));
+    App.main(readCredentials());
+
+    assertTrue(containsAccountLine(outContent.toString()));
   }
 
   private static String[] readCredentials() {
@@ -32,16 +28,12 @@ public class AppTest {
     return new String[]{nik, password};
   }
 
-  private static boolean hasLinesInCorrectFormat(String gatheredOutput) {
-    String[] outputLines = gatheredOutput.split("//n");
-    boolean areValid = true;
-    String lineFormatRegex = "Account name = .+, Balance = .+";
-    Pattern pattern = Pattern.compile(lineFormatRegex);
-    for (int i = 1; i < outputLines.length; i++) {
-      Matcher matcher = pattern.matcher(outputLines[i]);
-      areValid = areValid && matcher.matches();
-    }
-    return areValid;
+  private static boolean containsAccountLine(String gatheredOutput) {
+    return gatheredOutput.lines().anyMatch(line -> {
+      Pattern pattern = Pattern.compile("Account name = .+, Balance = .+");
+      Matcher matcher = pattern.matcher(line);
+      return matcher.matches();
+    });
   }
 
 }

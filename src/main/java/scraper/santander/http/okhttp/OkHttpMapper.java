@@ -51,7 +51,7 @@ class OkHttpMapper {
 
   private static RequestBody buildBody(List<Request.FormBodyPair> formBodyPairs) {
     if (formBodyPairs.isEmpty())
-      return RequestBody.create(new byte[]{0});
+      return null;
     FormBody.Builder formBuilder = new FormBody.Builder();
     formBodyPairs.forEach(formBodyPair -> formBuilder.add(formBodyPair.name(), formBodyPair.value()));
     return formBuilder.build();

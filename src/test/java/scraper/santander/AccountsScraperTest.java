@@ -35,13 +35,11 @@ class AccountsScraperTest {
 
   @Test
   void runAndGetExpectedResult() {
-    String nik = "111111";
-    String password = "password";
     var view = new ViewStub();
     SantanderMock.logInAndReturnAccounts(mockWebServer);
     AccountsScraper scraper = new AccountsScraper(createSantanderApi(), view);
 
-    scraper.run(nik, password);
+    scraper.run("111111", "password");
 
     assertEquals(List.of(new Account("Ekstrakonto Plus", "112,00 PLN")), view.getStoredDetails());
   }
