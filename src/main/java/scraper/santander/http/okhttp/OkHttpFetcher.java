@@ -7,6 +7,7 @@ import scraper.santander.http.Request;
 import scraper.santander.http.Response;
 
 import java.io.IOException;
+import java.io.UncheckedIOException;
 import java.net.CookieManager;
 import java.net.CookiePolicy;
 
@@ -15,12 +16,10 @@ public class OkHttpFetcher implements Fetcher {
   private final OkHttpClient client;
 
   public OkHttpFetcher() {
-    CookieManager cookieManager = new CookieManager();
+    var cookieManager = new CookieManager();
     cookieManager.setCookiePolicy(CookiePolicy.ACCEPT_ALL);
-    JavaNetCookieJar cookieJar = new JavaNetCookieJar(cookieManager);
-
-    OkHttpClient.Builder builder = new OkHttpClient.Builder();
-    client = builder.cache(null)
+    var cookieJar = new JavaNetCookieJar(cookieManager);
+    client = new OkHttpClient.Builder().cache(null)
             .cookieJar(cookieJar)
             .build();
   }
@@ -30,8 +29,7 @@ public class OkHttpFetcher implements Fetcher {
     okhttp3.Request okRequest = OkHttpMapper.mapRequest(request);
     Response response = sendHttpRequest(okRequest);
     if (response.status != 200)
-      throw new RuntimeException("Status code error.");
-
+      throw new RuntimeException(String.format("Error response: %s", response));
     return response;
   }
 
@@ -42,7 +40,7 @@ public class OkHttpFetcher implements Fetcher {
       okResponse.close();
       return response;
     } catch (IOException e) {
-      throw new RuntimeException(e);
+      throw new UncheckedIOException(e);
     }
   }
 
